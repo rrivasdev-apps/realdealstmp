@@ -46,7 +46,7 @@ This project is on **Next.js 16**, which has breaking changes from the Next.js m
 
 **Environment variables.** See [.env.local.example](.env.local.example) for the full list. `NEXT_PUBLIC_*` vars are exposed to the browser; `SUPABASE_SERVICE_ROLE_KEY` and `ANTHROPIC_API_KEY` are server-only and must never be prefixed `NEXT_PUBLIC_` or referenced from a Client Component.
 
-**Deployment.** Vercel auto-deploys on push to `main`. No CI config exists yet beyond Vercel's own build step (`npm run build`).
+**Deployment.** Vercel project `realdealstmp` (scope `rerss-projects`), live at https://realdealstmp.vercel.app, auto-deploys on push to `main`. No CI config exists yet beyond Vercel's own build step (`npm run build`).
 
 ## Current phase: Phase 0 (MVP)
 
@@ -133,4 +133,4 @@ Custom fields per company (Settings module) are Phase 2 — the `custom_fields` 
 
 ## Node version
 
-Node **22+** is required (`@supabase/supabase-js` declares `engines.node >= 22`) and pinned via `engines` in [package.json](package.json) and `.nvmrc`. Run `nvm use` before working in this repo. Set the Vercel project's Node.js version to 22.x to match.
+Node **24+** is pinned via `engines` in [package.json](package.json) and `.nvmrc`, matching the Vercel project's Node.js Version setting (`realdealstmp`, scope `rerss-projects`). Run `nvm use` before working in this repo. (`@supabase/supabase-js` only requires `>=22`; 24 was chosen to match what Vercel already had set rather than pin behind it.)
