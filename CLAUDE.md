@@ -131,6 +131,6 @@ Custom fields per company (Settings module) are Phase 2 — the `custom_fields` 
 - Commit small, deploy often — Phase 0 should be live on Vercel early, with real or test deal data, before Phase 1 work starts.
 - When a calculation is genuinely conditional (commission rules, profit rollups), write it as a single well-tested function others call, not logic repeated inline wherever it's needed.
 
-## Known environment mismatch
+## Node version
 
-`@supabase/supabase-js` (and its sub-dependencies) now declare `engines.node >= 22`, but local Node is 20.19.5. It currently installs and runs with a deprecation warning only, but if Supabase drops Node 20 support in a future release this will start failing outright. Upgrade local Node and set the Vercel project's Node.js version accordingly when convenient.
+Node **22+** is required (`@supabase/supabase-js` declares `engines.node >= 22`) and pinned via `engines` in [package.json](package.json) and `.nvmrc`. Run `nvm use` before working in this repo. Set the Vercel project's Node.js version to 22.x to match.
