@@ -42,7 +42,7 @@ This project is on **Next.js 16**, which has breaking changes from the Next.js m
 - [src/lib/supabase/server.ts](src/lib/supabase/server.ts) — `createClient()` for use in Server Components, Route Handlers, and Server Actions. Reads cookies via `next/headers`; must be called fresh per request (not hoisted to module scope).
 - [src/lib/supabase/client.ts](src/lib/supabase/client.ts) — `createClient()` for Client Components (`'use client'`).
 
-**Authorization.** [src/lib/supabase/auth.ts](src/lib/supabase/auth.ts) exports `requireUser()`, which every mutating Route Handler / Server Action must call and check before touching data — see [src/app/api/profile/route.ts](src/app/api/profile/route.ts) for the pattern. This is non-negotiable per project requirements: permission checks happen server-side on every mutation, never inferred from what the UI shows or hides. The proxy's optimistic cookie check is not a substitute for this.
+**Authorization.** [src/lib/supabase/auth.ts](src/lib/supabase/auth.ts) exports `requireUser()`, which every mutating Route Handler / Server Action must call and check before touching data — see [src/app/api/profile/route.ts](src/app/api/profile/route.ts) for the pattern. `requireProfile()` additionally loads the caller's `company_id`/`role` (most routes need it to scope queries/writes); `requireAdmin()` layers a `role === 'admin'` check on top, for routes like `/api/team/invite`. This is non-negotiable per project requirements: permission checks happen server-side on every mutation, never inferred from what the UI shows or hides. The proxy's optimistic cookie check is not a substitute for this. RLS policies (scoped via the `is_company_member()` Postgres function) are defense in depth underneath these checks, not a replacement for them — see `supabase/migrations/`.
 
 **Environment variables.** See [.env.local.example](.env.local.example) for the full list. `NEXT_PUBLIC_*` vars are exposed to the browser; `SUPABASE_SERVICE_ROLE_KEY` and `ANTHROPIC_API_KEY` are server-only and must never be prefixed `NEXT_PUBLIC_` or referenced from a Client Component.
 
@@ -55,8 +55,8 @@ Scope — nothing beyond this list until Phase 0 is validated with real deal dat
 - Deal Whiteboard: create/edit a deal with core fields and the full closing-date lifecycle (see data model below).
 - Basic Dashboard: lists for open (for-sale / pending) and closed (funded / not-yet-funded) deals.
 - Contact Hub: basic contact records (vendor / realtor / client / investor).
-- Single-company login (multi-tenant is Phase 3, not now).
-- Simple profit calculation: `estimated_selling_price - contract_price`. No commission engine yet — that's Phase 1, deliberately deferred because it's the piece that's historically been hardest to get right (see "Business rules" below).
+- Multi-tenant signup: this is a SaaS from day one, not a single hardcoded company. A public `/signup` page creates a new `companies` row plus its first user as `admin`; teammates join only via an admin-generated invite (Supabase's built-in `inviteUserByEmail`), landing as `role = 'member'`. Two roles for Phase 0 — `admin` (can invite/remove teammates) and `member` — nothing more granular; that's Phase 2's Employee Sentinel. What's still deferred to Phase 3 is multi-tenant *licensing/API/marketplace* — not the tenant boundary itself, which exists now.
+- Simple profit calculation: `projected_sales_price - contract_price` (see the `deals` schema below — this is the real field name from `docs/data-model.md`, not a placeholder). No commission engine yet — that's Phase 1, deliberately deferred because it's the piece that's historically been hardest to get right (see "Business rules" below).
 
 Do not build Phase 1+ features early, even if they seem easy to add "while we're in there." The point of Phase 0 is to validate the pipeline and data model cheaply before the hard parts.
 
@@ -65,11 +65,22 @@ Do not build Phase 1+ features early, even if they seem easy to add "while we're
 Refined from real screenshots of the original app — see [docs/data-model.md](docs/data-model.md) for the full reverse-engineered model (all phases) and the reasoning behind these field names. Deals are structured around an **AB contract** (wholesaler buying from the seller) in Phase 0; the **BC contract** (wholesaler selling/assigning to the end buyer/investor) is added in Phase 1 along with Offers.
 
 ```
+companies                      -- the tenant boundary; created by /api/signup, everything else belongs to one
+  id, name, created_at
+
+profiles                       -- one row per auth.users row, created by the handle_new_user trigger
+  id                            -- = auth.users.id
+  company_id                    -- FK -> companies
+  name, email
+  role                          -- 'admin' | 'member'
+  created_at
+
 deals
   id
+  company_id                   -- FK -> companies
   address
-  market_id                    -- FK -> markets
-  property_type_id             -- FK -> property_types
+  market_id                    -- FK -> markets (company-scoped)
+  property_type_id             -- FK -> property_types (global lookup)
   contract_price
   original_contract_price
   contract_date
@@ -78,9 +89,11 @@ deals
   actual_closing_date
   due_diligence_expiration
   original_due_diligence_date
-  deal_type_id                 -- FK -> deal_types
-  status_id                    -- FK -> deal_statuses (For Sale | Pending Sale | Closed | On Hold | Cancelled)
-  lead_source_id                -- FK -> lead_sources
+  projected_sales_price
+  original_projected_sales_price
+  deal_type_id                 -- FK -> deal_types (company-scoped)
+  status_id                    -- FK -> deal_statuses (For Sale | Pending Sale | Closed | On Hold | Cancelled; global lookup)
+  lead_source_id                -- FK -> lead_sources (company-scoped)
   custom_fields                -- JSONB, empty in Phase 0, used from Phase 2 on
   created_at
 
@@ -91,24 +104,20 @@ contacts
   investor_llc_id              -- FK -> investor_llcs, nullable (Phase 3, leave column, don't build the linking UI yet)
   notes
 
-contact_types (lookup)
+contact_types (global lookup)
   id, name                     -- Investor, Realtor, Lender, Vendor, Seller, Mortgage Company, etc.
 
 contact_contact_types (join)
   contact_id, contact_type_id  -- many-to-many: a contact can be multiple types
 
 contact_phone_numbers
-  id, contact_id, type_id, phone   -- unbounded child table, not fixed columns
+  id, contact_id, type_id, phone   -- unbounded child table, not fixed columns; type_id -> phone_types (global lookup)
 
 contact_emails
-  id, contact_id, type_id, email
-
-users
-  id
-  email
-  name
-  role        -- Phase 0: single role is fine; Employee Sentinel roles come in Phase 2
+  id, contact_id, type_id, email   -- type_id -> email_types (global lookup)
 ```
+
+`markets`, `deal_types`, and `lead_sources` are company-scoped lookup tables (`company_id` + `name`), seeded with generic defaults per company at signup time by `/api/signup`. `deal_statuses`, `contact_types`, `property_types`, `phone_types`, and `email_types` are global, fixed lookups seeded once by migration. None of these have a Settings UI yet — that's Phase 2; for now they're only editable via SQL/the Supabase table editor.
 
 Custom fields per company (Settings module) are Phase 2 — the `custom_fields` JSONB column above exists from the start so it's not a breaking migration later, but don't build any UI for it yet. The original app instead added ad-hoc named columns directly to the deal ("Test 1," "Test Text C," "Test NumA" are visible in its screens) — don't repeat that; anything that isn't a firm Phase 0 field belongs in `custom_fields`, not a new column.
 

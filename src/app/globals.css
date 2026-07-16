@@ -1,21 +1,84 @@
 @import "tailwindcss";
 
+/*
+ * Design tokens -- the single place to change RealDeals' color scheme.
+ * Everything below is a plain CSS variable; the @theme block maps each one
+ * to a Tailwind utility (e.g. --brand-600 -> bg-brand-600/text-brand-600).
+ * Change a value here and it updates everywhere that utility is used.
+ */
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #14151a;
+  --surface: #f6f6f8;
+  --border: #e4e4e9;
+
+  /* Brand -- primary actions, active nav state, links */
+  --brand-50: #f4f2ff;
+  --brand-100: #ebe7ff;
+  --brand-200: #d9d2ff;
+  --brand-300: #bcaeff;
+  --brand-400: #9c85ff;
+  --brand-500: #7c5cff;
+  --brand-600: #6839f2;
+  --brand-700: #572bd1;
+  --brand-800: #4725a8;
+  --brand-900: #3b2185;
+
+  /* Dark sidebar shell */
+  --sidebar: #101116;
+  --sidebar-foreground: #e7e7ec;
+  --sidebar-muted: #8b8b98;
+  --sidebar-hover: #1b1c24;
+  --sidebar-active: #6839f2;
+
+  /* Deal status colors -- one per row in deal_statuses, used for badges,
+     KPI cards, and any other place a deal's status needs a color. */
+  --status-for-sale: #d4930a;
+  --status-pending-sale: #4f5fe0;
+  --status-closed: #17915a;
+  --status-on-hold: #6b7280;
+  --status-cancelled: #d43d3d;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+
+  --color-brand-50: var(--brand-50);
+  --color-brand-100: var(--brand-100);
+  --color-brand-200: var(--brand-200);
+  --color-brand-300: var(--brand-300);
+  --color-brand-400: var(--brand-400);
+  --color-brand-500: var(--brand-500);
+  --color-brand-600: var(--brand-600);
+  --color-brand-700: var(--brand-700);
+  --color-brand-800: var(--brand-800);
+  --color-brand-900: var(--brand-900);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-muted: var(--sidebar-muted);
+  --color-sidebar-hover: var(--sidebar-hover);
+  --color-sidebar-active: var(--sidebar-active);
+
+  --color-status-for-sale: var(--status-for-sale);
+  --color-status-pending-sale: var(--status-pending-sale);
+  --color-status-closed: var(--status-closed);
+  --color-status-on-hold: var(--status-on-hold);
+  --color-status-cancelled: var(--status-cancelled);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0b0c0f;
+    --foreground: #ededf1;
+    --surface: #16171d;
+    --border: #26272f;
   }
 }
 
