@@ -11,7 +11,9 @@ export default async function DashboardPage() {
   const supabase = await createClient()
   const { data: deals } = await supabase
     .from('deals')
-    .select('id, address, contract_price, projected_sales_price, closing_date, deal_statuses(name)')
+    .select(
+      'id, address, contract_price, projected_sales_price, closing_date, actual_closing_date, deal_statuses(name)'
+    )
     .order('closing_date', { ascending: true })
 
   const byStatus = STATUS_ORDER.map((name) => {
@@ -20,10 +22,11 @@ export default async function DashboardPage() {
     return { name, count: dealsForStatus.length, profit }
   })
 
-  const openDeals = deals?.filter((deal) =>
-    ['For Sale', 'Pending Sale'].includes(deal.deal_statuses?.name ?? '')
-  )
-  const closedDeals = deals?.filter((deal) => deal.deal_statuses?.name === 'Closed')
+  const forSaleDeals = deals?.filter((deal) => deal.deal_statuses?.name === 'For Sale') ?? []
+  const pendingDeals = deals?.filter((deal) => deal.deal_statuses?.name === 'Pending Sale') ?? []
+  const closedDeals = deals?.filter((deal) => deal.deal_statuses?.name === 'Closed') ?? []
+  const fundedDeals = closedDeals.filter((deal) => deal.actual_closing_date != null)
+  const notYetFundedDeals = closedDeals.filter((deal) => deal.actual_closing_date == null)
 
   return (
     <div>
@@ -52,8 +55,10 @@ export default async function DashboardPage() {
         })}
       </div>
 
-      <DealSection title="Open deals" deals={openDeals ?? []} />
-      <DealSection title="Closed deals" deals={closedDeals ?? []} />
+      <DealSection title="For sale" deals={forSaleDeals} />
+      <DealSection title="Pending sale" deals={pendingDeals} />
+      <DealSection title="Closed & funded" deals={fundedDeals} />
+      <DealSection title="Closed, not yet funded" deals={notYetFundedDeals} />
     </div>
   )
 }
