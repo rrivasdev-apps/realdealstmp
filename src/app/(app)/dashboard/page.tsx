@@ -46,7 +46,7 @@ export default async function DashboardPage() {
                 {status.name}
               </div>
               <div className="mt-2 text-2xl font-semibold text-foreground">{status.count}</div>
-              <div className="mt-1 text-xs text-zinc-500">{currency.format(status.profit)} profit</div>
+              <div className="mt-1 text-xs text-muted-foreground">{currency.format(status.profit)} profit</div>
             </div>
           )
         })}
@@ -73,7 +73,7 @@ function DealSection({
 }) {
   return (
     <section className="mt-8">
-      <h2 className="text-sm font-medium text-zinc-500">{title}</h2>
+      <h2 className="text-sm font-medium text-muted-foreground">{title}</h2>
       <ul className="mt-2 divide-y divide-border rounded-lg border border-border bg-background">
         {deals.map((deal) => {
           const profit = calculateProfit(deal)
@@ -83,7 +83,7 @@ function DealSection({
                 <Link href={`/deals/${deal.id}`} className="font-medium text-foreground hover:text-brand-600">
                   {deal.address}
                 </Link>
-                <div className="text-sm text-zinc-500">
+                <div className="text-sm text-muted-foreground">
                   {deal.closing_date ? `Closing ${deal.closing_date}` : 'No closing date set'}
                 </div>
               </div>
@@ -91,14 +91,14 @@ function DealSection({
                 <div className="text-foreground">
                   {deal.contract_price != null ? currency.format(deal.contract_price) : '—'}
                 </div>
-                <div className="text-zinc-500">
+                <div className="text-muted-foreground">
                   {profit != null ? `Profit: ${currency.format(profit)}` : 'Profit: —'}
                 </div>
               </div>
             </li>
           )
         })}
-        {deals.length === 0 && <li className="px-4 py-3 text-sm text-zinc-500">No deals here yet.</li>}
+        {deals.length === 0 && <li className="px-4 py-3 text-sm text-muted-foreground">No deals here yet.</li>}
       </ul>
     </section>
   )

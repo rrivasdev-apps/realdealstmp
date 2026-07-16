@@ -10,7 +10,7 @@ export default async function TeamPage() {
     return (
       <div>
         <h1 className="text-xl font-semibold">Team</h1>
-        <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+        <p className="mt-2 text-sm text-muted-foreground">
           Only admins can manage the team.
         </p>
       </div>
@@ -31,14 +31,14 @@ export default async function TeamPage() {
         <InviteForm />
       </div>
 
-      <ul className="mt-8 divide-y divide-zinc-200 dark:divide-zinc-800">
+      <ul className="mt-8 divide-y divide-border">
         {members?.map((member) => (
           <li key={member.id} className="flex items-center justify-between py-3 text-sm">
             <div>
               <div className="font-medium">{member.name}</div>
-              <div className="text-zinc-600 dark:text-zinc-400">{member.email}</div>
+              <div className="text-muted-foreground">{member.email}</div>
             </div>
-            <span className="rounded-full bg-zinc-100 px-2 py-1 text-xs font-medium dark:bg-zinc-800">
+            <span className="rounded-full bg-muted px-2 py-1 text-xs font-medium">
               {member.role}
             </span>
           </li>

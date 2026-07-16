@@ -23,7 +23,7 @@ export default async function ContactsPage() {
         </Link>
       </div>
 
-      <ul className="mt-6 divide-y divide-zinc-200 dark:divide-zinc-800">
+      <ul className="mt-6 divide-y divide-border">
         {contacts?.map((contact) => {
           const types = contact.contact_contact_types
             .map((row) => row.contact_types?.name)
@@ -37,14 +37,14 @@ export default async function ContactsPage() {
               <Link href={`/contacts/${contact.id}`} className="font-medium hover:underline">
                 {contact.name}
               </Link>
-              <div className="text-sm text-zinc-600 dark:text-zinc-400">
+              <div className="text-sm text-muted-foreground">
                 {[types, phone, email].filter(Boolean).join(' · ') || 'No details yet'}
               </div>
             </li>
           )
         })}
         {contacts?.length === 0 && (
-          <li className="py-3 text-sm text-zinc-600 dark:text-zinc-400">No contacts yet.</li>
+          <li className="py-3 text-sm text-muted-foreground">No contacts yet.</li>
         )}
       </ul>
     </div>

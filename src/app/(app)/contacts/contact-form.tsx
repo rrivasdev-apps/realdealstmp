@@ -121,7 +121,7 @@ export function ContactForm({
           required
           value={values.name}
           onChange={(event) => setValues((prev) => ({ ...prev, name: event.target.value }))}
-          className="rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
+          className="rounded border border-input-border bg-input-background px-3 py-2"
         />
       </label>
 
@@ -153,7 +153,7 @@ export function ContactForm({
             <select
               value={row.type_id}
               onChange={(event) => updatePhone(index, { type_id: event.target.value })}
-              className="rounded border border-zinc-300 px-2 py-1 dark:border-zinc-700 dark:bg-zinc-900"
+              className="rounded border border-input-border bg-input-background px-2 py-1"
             >
               {phoneTypes.map((type) => (
                 <option key={type.id} value={type.id}>
@@ -165,9 +165,9 @@ export function ContactForm({
               type="tel"
               value={row.phone}
               onChange={(event) => updatePhone(index, { phone: event.target.value })}
-              className="flex-1 rounded border border-zinc-300 px-3 py-1 dark:border-zinc-700 dark:bg-zinc-900"
+              className="flex-1 rounded border border-input-border bg-input-background px-3 py-1"
             />
-            <button type="button" onClick={() => removePhone(index)} className="text-xs text-red-600">
+            <button type="button" onClick={() => removePhone(index)} className="text-xs text-danger">
               Remove
             </button>
           </div>
@@ -186,7 +186,7 @@ export function ContactForm({
             <select
               value={row.type_id}
               onChange={(event) => updateEmail(index, { type_id: event.target.value })}
-              className="rounded border border-zinc-300 px-2 py-1 dark:border-zinc-700 dark:bg-zinc-900"
+              className="rounded border border-input-border bg-input-background px-2 py-1"
             >
               {emailTypes.map((type) => (
                 <option key={type.id} value={type.id}>
@@ -198,9 +198,9 @@ export function ContactForm({
               type="email"
               value={row.email}
               onChange={(event) => updateEmail(index, { email: event.target.value })}
-              className="flex-1 rounded border border-zinc-300 px-3 py-1 dark:border-zinc-700 dark:bg-zinc-900"
+              className="flex-1 rounded border border-input-border bg-input-background px-3 py-1"
             />
-            <button type="button" onClick={() => removeEmail(index)} className="text-xs text-red-600">
+            <button type="button" onClick={() => removeEmail(index)} className="text-xs text-danger">
               Remove
             </button>
           </div>
@@ -213,11 +213,11 @@ export function ContactForm({
           value={values.notes}
           onChange={(event) => setValues((prev) => ({ ...prev, notes: event.target.value }))}
           rows={3}
-          className="rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
+          className="rounded border border-input-border bg-input-background px-3 py-2"
         />
       </label>
 
-      {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
+      {error && <p className="text-sm text-danger">{error}</p>}
 
       <button
         type="submit"

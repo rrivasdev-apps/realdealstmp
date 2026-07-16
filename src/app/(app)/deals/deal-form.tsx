@@ -97,7 +97,7 @@ export function DealForm({
           required
           value={values.address}
           onChange={(event) => set('address', event.target.value)}
-          className="rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
+          className="rounded border border-input-border bg-input-background px-3 py-2"
         />
       </label>
 
@@ -107,7 +107,7 @@ export function DealForm({
           <select
             value={values.market_id}
             onChange={(event) => set('market_id', event.target.value)}
-            className="rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
+            className="rounded border border-input-border bg-input-background px-3 py-2"
           >
             <option value="">—</option>
             {markets.map((option) => (
@@ -123,7 +123,7 @@ export function DealForm({
           <select
             value={values.property_type_id}
             onChange={(event) => set('property_type_id', event.target.value)}
-            className="rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
+            className="rounded border border-input-border bg-input-background px-3 py-2"
           >
             <option value="">—</option>
             {propertyTypes.map((option) => (
@@ -139,7 +139,7 @@ export function DealForm({
           <select
             value={values.deal_type_id}
             onChange={(event) => set('deal_type_id', event.target.value)}
-            className="rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
+            className="rounded border border-input-border bg-input-background px-3 py-2"
           >
             <option value="">—</option>
             {dealTypes.map((option) => (
@@ -155,7 +155,7 @@ export function DealForm({
           <select
             value={values.lead_source_id}
             onChange={(event) => set('lead_source_id', event.target.value)}
-            className="rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
+            className="rounded border border-input-border bg-input-background px-3 py-2"
           >
             <option value="">—</option>
             {leadSources.map((option) => (
@@ -172,7 +172,7 @@ export function DealForm({
             <select
               value={values.status_id}
               onChange={(event) => set('status_id', event.target.value)}
-              className="rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
+              className="rounded border border-input-border bg-input-background px-3 py-2"
             >
               {dealStatuses.map((option) => (
                 <option key={option.id} value={option.id}>
@@ -192,7 +192,7 @@ export function DealForm({
             step="0.01"
             value={values.contract_price}
             onChange={(event) => set('contract_price', event.target.value)}
-            className="rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
+            className="rounded border border-input-border bg-input-background px-3 py-2"
           />
         </label>
 
@@ -203,7 +203,7 @@ export function DealForm({
             step="0.01"
             value={values.projected_sales_price}
             onChange={(event) => set('projected_sales_price', event.target.value)}
-            className="rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
+            className="rounded border border-input-border bg-input-background px-3 py-2"
           />
         </label>
 
@@ -213,7 +213,7 @@ export function DealForm({
             type="date"
             value={values.contract_date}
             onChange={(event) => set('contract_date', event.target.value)}
-            className="rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
+            className="rounded border border-input-border bg-input-background px-3 py-2"
           />
         </label>
 
@@ -223,7 +223,7 @@ export function DealForm({
             type="date"
             value={values.closing_date}
             onChange={(event) => set('closing_date', event.target.value)}
-            className="rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
+            className="rounded border border-input-border bg-input-background px-3 py-2"
           />
         </label>
 
@@ -233,7 +233,7 @@ export function DealForm({
             type="date"
             value={values.due_diligence_expiration}
             onChange={(event) => set('due_diligence_expiration', event.target.value)}
-            className="rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
+            className="rounded border border-input-border bg-input-background px-3 py-2"
           />
         </label>
 
@@ -244,13 +244,13 @@ export function DealForm({
               type="date"
               value={values.actual_closing_date}
               onChange={(event) => set('actual_closing_date', event.target.value)}
-              className="rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
+              className="rounded border border-input-border bg-input-background px-3 py-2"
             />
           </label>
         )}
       </div>
 
-      {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
+      {error && <p className="text-sm text-danger">{error}</p>}
 
       <button
         type="submit"

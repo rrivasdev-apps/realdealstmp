@@ -38,7 +38,7 @@ export default function SignupPage() {
     return (
       <div className="mx-auto max-w-sm py-24 text-center">
         <h1 className="text-xl font-semibold">Check your email</h1>
-        <p className="mt-2 text-zinc-600 dark:text-zinc-400">
+        <p className="mt-2 text-muted-foreground">
           We sent a confirmation link to {email}. Click it to finish setting up{' '}
           {companyName}.
         </p>
@@ -49,7 +49,7 @@ export default function SignupPage() {
   return (
     <div className="mx-auto max-w-sm py-24">
       <h1 className="text-xl font-semibold">Create your company</h1>
-      <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+      <p className="mt-1 text-sm text-muted-foreground">
         You&apos;ll be the admin — invite teammates once you&apos;re in.
       </p>
 
@@ -61,7 +61,7 @@ export default function SignupPage() {
             required
             value={companyName}
             onChange={(event) => setCompanyName(event.target.value)}
-            className="rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
+            className="rounded border border-input-border bg-input-background px-3 py-2"
           />
         </label>
 
@@ -72,7 +72,7 @@ export default function SignupPage() {
             required
             value={name}
             onChange={(event) => setName(event.target.value)}
-            className="rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
+            className="rounded border border-input-border bg-input-background px-3 py-2"
           />
         </label>
 
@@ -83,7 +83,7 @@ export default function SignupPage() {
             required
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            className="rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
+            className="rounded border border-input-border bg-input-background px-3 py-2"
           />
         </label>
 
@@ -95,11 +95,11 @@ export default function SignupPage() {
             minLength={8}
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            className="rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
+            className="rounded border border-input-border bg-input-background px-3 py-2"
           />
         </label>
 
-        {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
+        {error && <p className="text-sm text-danger">{error}</p>}
 
         <button
           type="submit"
@@ -110,7 +110,7 @@ export default function SignupPage() {
         </button>
       </form>
 
-      <p className="mt-6 text-sm text-zinc-600 dark:text-zinc-400">
+      <p className="mt-6 text-sm text-muted-foreground">
         Already have an account?{' '}
         <Link href="/login" className="font-medium underline">
           Log in

@@ -15,7 +15,7 @@ export default async function SetPasswordPage() {
   return (
     <div className="mx-auto max-w-sm py-24">
       <h1 className="text-xl font-semibold">Set your password</h1>
-      <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+      <p className="mt-1 text-sm text-muted-foreground">
         Choose a password to finish joining your team.
       </p>
       <SetPasswordForm />

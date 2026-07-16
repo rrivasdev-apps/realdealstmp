@@ -45,7 +45,7 @@ export function InviteForm() {
             required
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            className="rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
+            className="rounded border border-input-border bg-input-background px-3 py-2"
           />
         </label>
         <button
@@ -56,8 +56,8 @@ export function InviteForm() {
           {submitting ? 'Sending…' : 'Send invite'}
         </button>
       </div>
-      {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
-      {success && <p className="text-sm text-green-600 dark:text-green-400">Invite sent.</p>}
+      {error && <p className="text-sm text-danger">{error}</p>}
+      {success && <p className="text-sm text-success">Invite sent.</p>}
     </form>
   )
 }

@@ -11,6 +11,18 @@
   --foreground: #14151a;
   --surface: #f6f6f8;
   --border: #e4e4e9;
+  --muted-foreground: #52525b;
+
+  /* Form controls -- every text input/select/textarea in the app. */
+  --input-border: #d4d4d8;
+  --input-background: #ffffff;
+
+  /* Inline status text (error/success copy, not deal-status badges). */
+  --danger: #dc2626;
+  --success: #16a34a;
+
+  /* Neutral pill backgrounds (role badges, etc). */
+  --muted: #f4f4f5;
 
   /* Brand -- primary actions, active nav state, links */
   --brand-50: #f4f2ff;
@@ -45,6 +57,15 @@
   --color-foreground: var(--foreground);
   --color-surface: var(--surface);
   --color-border: var(--border);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-input-border: var(--input-border);
+  --color-input-background: var(--input-background);
+
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+
+  --color-muted: var(--muted);
 
   --color-brand-50: var(--brand-50);
   --color-brand-100: var(--brand-100);
@@ -79,6 +100,15 @@
     --foreground: #ededf1;
     --surface: #16171d;
     --border: #26272f;
+    --muted-foreground: #a1a1aa;
+
+    --input-border: #3f3f46;
+    --input-background: #18181b;
+
+    --danger: #f87171;
+    --success: #4ade80;
+
+    --muted: #27272a;
   }
 }
 

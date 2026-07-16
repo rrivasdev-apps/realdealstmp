@@ -13,7 +13,7 @@ const STATUS_COLORS: Record<string, { text: string; bg: string; dot: string }> =
   Cancelled: { text: 'text-status-cancelled', bg: 'bg-status-cancelled/10', dot: 'bg-status-cancelled' },
 }
 
-const FALLBACK = { text: 'text-zinc-600', bg: 'bg-zinc-100', dot: 'bg-zinc-400' }
+const FALLBACK = { text: 'text-muted-foreground', bg: 'bg-muted', dot: 'bg-muted-foreground' }
 
 export function statusColors(statusName: string | null | undefined) {
   return (statusName && STATUS_COLORS[statusName]) || FALLBACK

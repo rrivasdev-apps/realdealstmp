@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 
 export function SetPasswordForm() {
   const router = useRouter()
+  const [name, setName] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
@@ -17,12 +18,24 @@ export function SetPasswordForm() {
     setSubmitting(true)
 
     const supabase = createClient()
-    const { error } = await supabase.auth.updateUser({ password })
+    const { error: passwordError } = await supabase.auth.updateUser({ password })
+    if (passwordError) {
+      setSubmitting(false)
+      setError(passwordError.message)
+      return
+    }
+
+    const response = await fetch('/api/profile', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name }),
+    })
 
     setSubmitting(false)
 
-    if (error) {
-      setError(error.message)
+    if (!response.ok) {
+      const result = await response.json()
+      setError(result.error ?? 'Could not save your name.')
       return
     }
 
@@ -33,6 +46,17 @@ export function SetPasswordForm() {
   return (
     <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
       <label className="flex flex-col gap-1 text-sm">
+        Your name
+        <input
+          type="text"
+          required
+          value={name}
+          onChange={(event) => setName(event.target.value)}
+          className="rounded border border-input-border bg-input-background px-3 py-2"
+        />
+      </label>
+
+      <label className="flex flex-col gap-1 text-sm">
         New password
         <input
           type="password"
@@ -40,11 +64,11 @@ export function SetPasswordForm() {
           minLength={8}
           value={password}
           onChange={(event) => setPassword(event.target.value)}
-          className="rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
+          className="rounded border border-input-border bg-input-background px-3 py-2"
         />
       </label>
 
-      {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
+      {error && <p className="text-sm text-danger">{error}</p>}
 
       <button
         type="submit"
