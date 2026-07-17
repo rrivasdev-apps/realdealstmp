@@ -49,7 +49,28 @@ export async function POST(request: Request) {
       original_due_diligence_date: body.due_diligence_expiration || null,
       projected_sales_price: body.projected_sales_price ?? null,
       original_projected_sales_price: body.projected_sales_price ?? null,
+      apn: body.apn || null,
+      legal_description: body.legal_description || null,
+      lot_size_acres: body.lot_size_acres ?? null,
+      ab_purchase_type_id: body.ab_purchase_type_id || null,
+      title_opened: Boolean(body.title_opened),
+      title_ordered: Boolean(body.title_ordered),
+      title_ready: Boolean(body.title_ready),
+      poa_needed: Boolean(body.poa_needed),
+      title_company_contact_id: body.title_company_contact_id || null,
+      mortgage_company_contact_id: body.mortgage_company_contact_id || null,
+      payoff_ordered: Boolean(body.payoff_ordered),
+      mortgage_principal_balance: body.mortgage_principal_balance ?? null,
+      mortgage_rate: body.mortgage_rate ?? null,
+      mortgage_term: body.mortgage_term ?? null,
+      in_foreclosure: Boolean(body.in_foreclosure),
+      foreclosure_date: body.foreclosure_date || null,
+      total_payoff_amount: body.total_payoff_amount ?? null,
+      seller_contact_id: body.seller_contact_id || null,
+      is_listed: Boolean(body.is_listed),
     })
+    // BC contract fields aren't set here -- there's no buyer yet at intake.
+    // They're added later via PATCH once a buyer is found.
     .select('id')
     .single()
 

@@ -255,8 +255,17 @@ export type Database = {
       }
       deals: {
         Row: {
+          ab_purchase_type_id: string | null
           actual_closing_date: string | null
           address: string
+          apn: string | null
+          bc_contract_closing_date: string | null
+          buyer_contract_date: string | null
+          buyer_contract_price: number | null
+          buyer_deposit_amount: number | null
+          buyer_deposit_received: boolean
+          buyer_found: boolean
+          buyer_inspection_deadline: string | null
           closing_date: string | null
           company_id: string
           contract_date: string | null
@@ -265,20 +274,47 @@ export type Database = {
           custom_fields: Json
           deal_type_id: string | null
           due_diligence_expiration: string | null
+          foreclosure_date: string | null
           id: string
+          in_foreclosure: boolean
+          is_listed: boolean
           lead_source_id: string | null
+          legal_description: string | null
+          lot_size_acres: number | null
           market_id: string | null
+          mortgage_company_contact_id: string | null
+          mortgage_principal_balance: number | null
+          mortgage_rate: number | null
+          mortgage_term: number | null
           original_closing_date: string | null
           original_contract_price: number | null
           original_due_diligence_date: string | null
           original_projected_sales_price: number | null
+          payoff_ordered: boolean
+          poa_needed: boolean
           projected_sales_price: number | null
           property_type_id: string | null
+          renegotiated_bc_price: number | null
+          seller_contact_id: string | null
           status_id: string
+          title_company_contact_id: string | null
+          title_opened: boolean
+          title_ordered: boolean
+          title_ready: boolean
+          total_payoff_amount: number | null
         }
         Insert: {
+          ab_purchase_type_id?: string | null
           actual_closing_date?: string | null
           address: string
+          apn?: string | null
+          bc_contract_closing_date?: string | null
+          buyer_contract_date?: string | null
+          buyer_contract_price?: number | null
+          buyer_deposit_amount?: number | null
+          buyer_deposit_received?: boolean
+          buyer_found?: boolean
+          buyer_inspection_deadline?: string | null
           closing_date?: string | null
           company_id: string
           contract_date?: string | null
@@ -287,20 +323,47 @@ export type Database = {
           custom_fields?: Json
           deal_type_id?: string | null
           due_diligence_expiration?: string | null
+          foreclosure_date?: string | null
           id?: string
+          in_foreclosure?: boolean
+          is_listed?: boolean
           lead_source_id?: string | null
+          legal_description?: string | null
+          lot_size_acres?: number | null
           market_id?: string | null
+          mortgage_company_contact_id?: string | null
+          mortgage_principal_balance?: number | null
+          mortgage_rate?: number | null
+          mortgage_term?: number | null
           original_closing_date?: string | null
           original_contract_price?: number | null
           original_due_diligence_date?: string | null
           original_projected_sales_price?: number | null
+          payoff_ordered?: boolean
+          poa_needed?: boolean
           projected_sales_price?: number | null
           property_type_id?: string | null
+          renegotiated_bc_price?: number | null
+          seller_contact_id?: string | null
           status_id: string
+          title_company_contact_id?: string | null
+          title_opened?: boolean
+          title_ordered?: boolean
+          title_ready?: boolean
+          total_payoff_amount?: number | null
         }
         Update: {
+          ab_purchase_type_id?: string | null
           actual_closing_date?: string | null
           address?: string
+          apn?: string | null
+          bc_contract_closing_date?: string | null
+          buyer_contract_date?: string | null
+          buyer_contract_price?: number | null
+          buyer_deposit_amount?: number | null
+          buyer_deposit_received?: boolean
+          buyer_found?: boolean
+          buyer_inspection_deadline?: string | null
           closing_date?: string | null
           company_id?: string
           contract_date?: string | null
@@ -309,18 +372,43 @@ export type Database = {
           custom_fields?: Json
           deal_type_id?: string | null
           due_diligence_expiration?: string | null
+          foreclosure_date?: string | null
           id?: string
+          in_foreclosure?: boolean
+          is_listed?: boolean
           lead_source_id?: string | null
+          legal_description?: string | null
+          lot_size_acres?: number | null
           market_id?: string | null
+          mortgage_company_contact_id?: string | null
+          mortgage_principal_balance?: number | null
+          mortgage_rate?: number | null
+          mortgage_term?: number | null
           original_closing_date?: string | null
           original_contract_price?: number | null
           original_due_diligence_date?: string | null
           original_projected_sales_price?: number | null
+          payoff_ordered?: boolean
+          poa_needed?: boolean
           projected_sales_price?: number | null
           property_type_id?: string | null
+          renegotiated_bc_price?: number | null
+          seller_contact_id?: string | null
           status_id?: string
+          title_company_contact_id?: string | null
+          title_opened?: boolean
+          title_ordered?: boolean
+          title_ready?: boolean
+          total_payoff_amount?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "deals_ab_purchase_type_id_fkey"
+            columns: ["ab_purchase_type_id"]
+            isOneToOne: false
+            referencedRelation: "purchase_types"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "deals_company_id_fkey"
             columns: ["company_id"]
@@ -350,6 +438,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "deals_mortgage_company_contact_id_fkey"
+            columns: ["mortgage_company_contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "deals_property_type_id_fkey"
             columns: ["property_type_id"]
             isOneToOne: false
@@ -357,10 +452,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "deals_seller_contact_id_fkey"
+            columns: ["seller_contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "deals_status_id_fkey"
             columns: ["status_id"]
             isOneToOne: false
             referencedRelation: "deal_statuses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deals_title_company_contact_id_fkey"
+            columns: ["title_company_contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
             referencedColumns: ["id"]
           },
         ]
@@ -432,6 +541,108 @@ export type Database = {
           },
         ]
       }
+      offer_statuses: {
+        Row: {
+          id: string
+          name: string
+          sort_order: number
+        }
+        Insert: {
+          id?: string
+          name: string
+          sort_order: number
+        }
+        Update: {
+          id?: string
+          name?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      offers: {
+        Row: {
+          closing_deadline: string | null
+          created_at: string
+          deal_id: string
+          emd_deadline: string | null
+          id: string
+          inspection_deadline: string | null
+          investor_contact_id: string | null
+          notes: string | null
+          offer_date: string | null
+          offer_price: number | null
+          purchase_type_id: string | null
+          realtor_contact_id: string | null
+          status_id: string
+        }
+        Insert: {
+          closing_deadline?: string | null
+          created_at?: string
+          deal_id: string
+          emd_deadline?: string | null
+          id?: string
+          inspection_deadline?: string | null
+          investor_contact_id?: string | null
+          notes?: string | null
+          offer_date?: string | null
+          offer_price?: number | null
+          purchase_type_id?: string | null
+          realtor_contact_id?: string | null
+          status_id: string
+        }
+        Update: {
+          closing_deadline?: string | null
+          created_at?: string
+          deal_id?: string
+          emd_deadline?: string | null
+          id?: string
+          inspection_deadline?: string | null
+          investor_contact_id?: string | null
+          notes?: string | null
+          offer_date?: string | null
+          offer_price?: number | null
+          purchase_type_id?: string | null
+          realtor_contact_id?: string | null
+          status_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offers_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "deals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offers_investor_contact_id_fkey"
+            columns: ["investor_contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offers_purchase_type_id_fkey"
+            columns: ["purchase_type_id"]
+            isOneToOne: false
+            referencedRelation: "purchase_types"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offers_realtor_contact_id_fkey"
+            columns: ["realtor_contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offers_status_id_fkey"
+            columns: ["status_id"]
+            isOneToOne: false
+            referencedRelation: "offer_statuses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       phone_types: {
         Row: {
           id: string
@@ -483,6 +694,21 @@ export type Database = {
         ]
       }
       property_types: {
+        Row: {
+          id: string
+          name: string
+        }
+        Insert: {
+          id?: string
+          name: string
+        }
+        Update: {
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      purchase_types: {
         Row: {
           id: string
           name: string
