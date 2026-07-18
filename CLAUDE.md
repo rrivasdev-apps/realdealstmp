@@ -10,6 +10,7 @@ RealDeals: a real estate deal & transaction management platform. Fresh, independ
 - [docs/architecture-decision.md](docs/architecture-decision.md) — why this stack was chosen over a no-code hybrid
 - [docs/market-opportunity.md](docs/market-opportunity.md) — business context behind the rebuild
 - [docs/data-model.md](docs/data-model.md) — full reverse-engineered data model (all phases), reconstructed from the original app's screens; the schema in this file is the Phase 0 subset drawn from it
+- [docs/reference/](docs/reference/) — per-section UI/UX walkthroughs of the original app (voice-transcribed by Rafael, one doc per section as they're supplied). These describe *functional* structure and data flows only — the original app's screenshots referenced inside are not the target look; RealDeals' UI should be modern and well-designed, built fresh
 
 **Stack.** Next.js (App Router), TypeScript throughout — one codebase serves both the UI and server-side logic, no separate backend service. Postgres + Auth via Supabase. Deployed on Vercel via auto-deploy from `main`. Later phases call the Anthropic API directly from backend routes (no third-party plugin layer).
 

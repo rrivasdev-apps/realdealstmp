@@ -11,6 +11,8 @@ type Deal = {
   address: string
   contract_price: number | null
   projected_sales_price: number | null
+  buyer_contract_price: number | null
+  renegotiated_bc_price: number | null
   closing_date: string | null
   actual_closing_date: string | null
   deal_statuses: { name: string } | null
@@ -102,7 +104,7 @@ export default async function DashboardPage({
   const { data } = await supabase
     .from('deals')
     .select(
-      'id, address, contract_price, projected_sales_price, closing_date, actual_closing_date, deal_statuses(name)'
+      'id, address, contract_price, projected_sales_price, buyer_contract_price, renegotiated_bc_price, closing_date, actual_closing_date, deal_statuses(name)'
     )
     .order('closing_date', { ascending: true })
   const deals = (data as unknown as Deal[]) ?? []

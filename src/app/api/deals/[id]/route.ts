@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 
+import { syncCommissionPaymentsForDeal } from '@/lib/deals/commissions'
 import { requireProfile } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
@@ -72,12 +73,90 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       total_payoff_amount: body.total_payoff_amount ?? null,
       seller_contact_id: body.seller_contact_id || null,
       is_listed: Boolean(body.is_listed),
+      is_jv_deal: Boolean(body.is_jv_deal),
+      jv_partner_company_id: body.jv_partner_company_id || null,
+      jv_split_type_id: body.jv_split_type_id || null,
+      jv_split_percent: body.jv_split_percent ?? null,
+      split_amount: body.split_amount ?? null,
+      total_expenses: body.total_expenses ?? null,
+      total_commissions: body.total_commissions ?? null,
+      checklist_post_occupancy: Boolean(body.checklist_post_occupancy),
+      post_occupancy_hold_back_amount: body.post_occupancy_hold_back_amount ?? null,
+      post_occupancy_move_out_date: body.post_occupancy_move_out_date || null,
+      checklist_survey_needed: Boolean(body.checklist_survey_needed),
+      survey_ordered_date: body.survey_ordered_date || null,
+      checklist_initial_photos_needed: Boolean(body.checklist_initial_photos_needed),
+      initial_photos_ordered_date: body.initial_photos_ordered_date || null,
+      initial_photos_received_date: body.initial_photos_received_date || null,
+      checklist_seller_info_sheet_needed: Boolean(body.checklist_seller_info_sheet_needed),
+      seller_info_sheet_sent: Boolean(body.seller_info_sheet_sent),
+      seller_info_sheet_signed: Boolean(body.seller_info_sheet_signed),
+      checklist_memo: Boolean(body.checklist_memo),
+      checklist_on_hold: Boolean(body.checklist_on_hold),
+      on_hold_date: body.on_hold_date || null,
+      checklist_closing_extension: Boolean(body.checklist_closing_extension),
+      closing_extension_date: body.closing_extension_date || null,
+      checklist_due_diligence_extension: Boolean(body.checklist_due_diligence_extension),
+      due_diligence_extension_date: body.due_diligence_extension_date || null,
+      ab_emd_deposit_received: Boolean(body.ab_emd_deposit_received),
+      ab_emd_amount: body.ab_emd_amount ?? null,
+      ab_emd_refund: Boolean(body.ab_emd_refund),
+      bc_emd_refund: Boolean(body.bc_emd_refund),
+      cancelled_ab: Boolean(body.cancelled_ab),
+      cancelled_ab_date: body.cancelled_ab_date || null,
+      cancelled_ab_party: body.cancelled_ab_party || null,
+      cancelled_bc_ac: Boolean(body.cancelled_bc_ac),
+      cancelled_bc_ac_date: body.cancelled_bc_ac_date || null,
+      cancelled_bc_ac_party: body.cancelled_bc_ac_party || null,
     })
     .eq('id', id)
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 400 })
   }
+
+  const onHoldReasonIds: string[] = Array.isArray(body.onHoldReasonIds) ? body.onHoldReasonIds : []
+  const cancelledAbReasonIds: string[] = Array.isArray(body.cancelledAbReasonIds) ? body.cancelledAbReasonIds : []
+  const cancelledBcAcReasonIds: string[] = Array.isArray(body.cancelledBcAcReasonIds)
+    ? body.cancelledBcAcReasonIds
+    : []
+
+  // Same "delete all, insert selected" sync as /api/contacts/[id] for its
+  // multi-select join tables.
+  await Promise.all([
+    supabase.from('deal_on_hold_reasons').delete().eq('deal_id', id),
+    supabase.from('deal_cancelled_ab_reasons').delete().eq('deal_id', id),
+    supabase.from('deal_cancelled_bc_ac_reasons').delete().eq('deal_id', id),
+  ])
+
+  await Promise.all([
+    onHoldReasonIds.length
+      ? supabase
+          .from('deal_on_hold_reasons')
+          .insert(onHoldReasonIds.map((on_hold_reason_id) => ({ deal_id: id, on_hold_reason_id })))
+      : Promise.resolve(),
+    cancelledAbReasonIds.length
+      ? supabase
+          .from('deal_cancelled_ab_reasons')
+          .insert(cancelledAbReasonIds.map((cancelled_ab_reason_id) => ({ deal_id: id, cancelled_ab_reason_id })))
+      : Promise.resolve(),
+    cancelledBcAcReasonIds.length
+      ? supabase
+          .from('deal_cancelled_bc_ac_reasons')
+          .insert(
+            cancelledBcAcReasonIds.map((cancelled_bc_ac_reason_id) => ({
+              deal_id: id,
+              cancelled_bc_ac_reason_id,
+            }))
+          )
+      : Promise.resolve(),
+  ])
+
+  // Refreshes every open commission payment on this deal against whatever
+  // the numbers are now -- covers both a price renegotiation (pending
+  // payments get a fresh amount) and the deal becoming Closed & funded
+  // (created payments flip to pending). See lib/deals/commissions.ts.
+  await syncCommissionPaymentsForDeal(supabase, id)
 
   return NextResponse.json({ id })
 }
