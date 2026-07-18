@@ -49,19 +49,42 @@ This project is on **Next.js 16**, which has breaking changes from the Next.js m
 
 **Deployment.** Vercel project `realdealstmp` (scope `rerss-projects`), live at https://realdealstmp.vercel.app, auto-deploys on push to `main`. No CI config exists yet beyond Vercel's own build step (`npm run build`).
 
-## Current phase: Phase 0 (MVP)
+## Current phase: Phase 2 (Operations)
 
-Scope — nothing beyond this list until Phase 0 is validated with real deal data:
+**Phase 0 (MVP) and Phase 1 (Financial Engine) are both complete and live.**
+Phase 0 shipped the Deal Whiteboard (now at `/deals`), the KPI Dashboard
+(`/dashboard`), Contact Hub, multi-tenant signup/invite, and the simple
+`projected_sales_price - contract_price` profit calc. Phase 1 added on top of
+that: the BC contract and Offers, JV expense allocation, the full gross/net
+profit cascade (`calculateProfitCascade` in `src/lib/deals/profit.ts`), the
+role-based commission engine (`commission_types`/`employee_roles`/
+`deal_employees`/`payments`, `src/lib/deals/commissions.ts`), the Deal
+Checklist system, and monthly/quarterly/yearly KPI reporting
+(`src/lib/deals/kpi.ts`). See `supabase/migrations/` for the full schema as
+it stands now — the "Data model" section below is the original Phase 0
+starting point, not the current full schema.
 
-- Deal Whiteboard: create/edit a deal with core fields and the full closing-date lifecycle (see data model below).
-- Basic Dashboard: lists for open (for-sale / pending) and closed (funded / not-yet-funded) deals.
-- Contact Hub: basic contact records (vendor / realtor / client / investor).
-- Multi-tenant signup: this is a SaaS from day one, not a single hardcoded company. A public `/signup` page creates a new `companies` row plus its first user as `admin`; teammates join only via an admin-generated invite (Supabase's built-in `inviteUserByEmail`), landing as `role = 'member'`. Two roles for Phase 0 — `admin` (can invite/remove teammates) and `member` — nothing more granular; that's Phase 2's Employee Sentinel. What's still deferred to Phase 3 is multi-tenant *licensing/API/marketplace* — not the tenant boundary itself, which exists now.
-- Simple profit calculation: `projected_sales_price - contract_price` (see the `deals` schema below — this is the real field name from `docs/data-model.md`, not a placeholder). No commission engine yet — that's Phase 1, deliberately deferred because it's the piece that's historically been hardest to get right (see "Business rules" below).
+Scope now — nothing beyond this list until Phase 2 is validated:
 
-Do not build Phase 1+ features early, even if they seem easy to add "while we're in there." The point of Phase 0 is to validate the pipeline and data model cheaply before the hard parts.
+- **Employee Sentinel**: fuller roles/permissions than today's `admin`/
+  `member` split, plus payroll. `employee_roles` already exists (pulled
+  forward early to support commissions) — this phase extends it, doesn't
+  start it from scratch.
+- **Transaction Guardian**: the event-triggered automation engine (named step
+  ownership on deal-lifecycle events).
+- **Per-company custom fields**: the `custom_fields` JSONB column on `deals`
+  already exists (added in Phase 0 for exactly this) — this phase adds the
+  Settings UI to define and edit them.
+- **Full Settings module**: today's Settings page only covers commission
+  types/employee roles/checklist items/reason lists; this phase makes it the
+  place every company-scoped lookup (`markets`, `deal_types`,
+  `lead_sources`, etc.) gets a real UI instead of the Supabase table editor.
 
-## Data model — Phase 0 starting point
+Do not build Phase 3 features early, even if they seem easy to add "while
+we're in there." The point of each phase is to validate its slice before the
+next one starts.
+
+## Data model — Phase 0 starting point (see `supabase/migrations/` for the current full schema)
 
 Refined from real screenshots of the original app — see [docs/data-model.md](docs/data-model.md) for the full reverse-engineered model (all phases) and the reasoning behind these field names. Deals are structured around an **AB contract** (wholesaler buying from the seller) in Phase 0; the **BC contract** (wholesaler selling/assigning to the end buyer/investor) is added in Phase 1 along with Offers.
 
@@ -127,10 +150,10 @@ Custom fields per company (Settings module) are Phase 2 — the `custom_fields` 
 - The "original vs. current" value pattern recurs across the whole model (original contract price vs. actual, original closing date vs. actual, etc. — see [docs/data-model.md](docs/data-model.md)). The rule for Phase 0: `closing_date` reflects the current expected/actual closing date and is recalculated server-side whenever the deal is renegotiated; `original_closing_date` and `original_contract_price` are set once at intake and never touched again. Never let the client compute and send the "current" values directly.
 - Profit calculation logic lives in one shared server-side function, not duplicated across routes. This matters more once Phase 1 adds commissions and JV expenses — get the pattern right now with the simple formula so it's easy to extend.
 
-## Roadmap after Phase 0
+## Roadmap
 
-1. **Phase 1 — Financial engine**: role-based commission rules, JV expense allocation, cascading gross/net profit, monthly/quarterly/yearly KPI reporting.
-2. **Phase 2 — Operations**: Employee Sentinel (roles, permissions, payroll), Transaction Guardian automation engine (event-triggered, named step ownership), per-company custom fields, full Settings module.
+1. ~~**Phase 1 — Financial engine**: role-based commission rules, JV expense allocation, cascading gross/net profit, monthly/quarterly/yearly KPI reporting.~~ **Done.**
+2. **Phase 2 — Operations** *(current)*: Employee Sentinel (roles, permissions, payroll), Transaction Guardian automation engine (event-triggered, named step ownership), per-company custom fields, full Settings module.
 3. **Phase 3 — Platform**: multi-tenant licensing, API layer, automation marketplace between companies.
 
 ## Conventions
