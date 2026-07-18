@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 import { CurrencyInput } from '@/components/currency-input'
+import { DealSection } from '@/components/deal-section'
 import { calculateProfitCascade } from '@/lib/deals/profit'
 
 import { CustomChecklistItems } from './custom-checklist-items'
@@ -261,6 +262,7 @@ export function DealForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex max-w-xl flex-col gap-6">
+      <DealSection id="deal-info" title="Deal Info">
       <label className="flex flex-col gap-1 text-sm">
         Address
         <input
@@ -645,8 +647,10 @@ export function DealForm({
           </label>
         </div>
       </fieldset>
+      </DealSection>
 
       {mode === 'edit' && (
+        <DealSection id="buyer-bc">
         <fieldset className="flex flex-col gap-4 rounded border border-border p-4">
           <legend className="px-1 text-sm font-medium">Buyer / BC Contract</legend>
 
@@ -750,9 +754,11 @@ export function DealForm({
             </label>
           )}
         </fieldset>
+        </DealSection>
       )}
 
       {mode === 'edit' && (
+        <DealSection id="jv-dispo" title="JV & Dispo">
         <fieldset className="flex flex-col gap-4 rounded border border-border p-4">
           <legend className="px-1 text-sm font-medium">JV Deal</legend>
 
@@ -821,9 +827,11 @@ export function DealForm({
             </div>
           )}
         </fieldset>
+        </DealSection>
       )}
 
       {mode === 'edit' && (
+        <DealSection id="financial">
         <fieldset className="flex flex-col gap-4 rounded border border-border p-4">
           <legend className="px-1 text-sm font-medium">Financial</legend>
 
@@ -876,9 +884,11 @@ export function DealForm({
             })()}
           </div>
         </fieldset>
+        </DealSection>
       )}
 
       {mode === 'edit' && (
+        <DealSection id="checklist">
         <fieldset className="flex flex-col gap-4 rounded border border-border p-4">
           <legend className="px-1 text-sm font-medium">Checklist</legend>
 
@@ -1314,6 +1324,7 @@ export function DealForm({
             )}
           </div>
         </fieldset>
+        </DealSection>
       )}
 
       {error && <p className="text-sm text-danger">{error}</p>}

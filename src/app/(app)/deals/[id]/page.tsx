@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
+import { DealSection } from '@/components/deal-section'
 import { filterContactsByType } from '@/lib/contacts/by-type'
 import { createClient } from '@/lib/supabase/server'
 
@@ -203,6 +204,7 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
         />
       </div>
 
+      <DealSection id="jv-dispo">
       <div className="mt-10">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-medium text-muted-foreground">Offers</h2>
@@ -266,7 +268,9 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
           )}
         </ul>
       </div>
+      </DealSection>
 
+      <DealSection id="employees">
       <div className="mt-10">
         <h2 className="text-sm font-medium text-muted-foreground">Employees</h2>
         <div className="mt-2">
@@ -301,6 +305,7 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
           )}
         </ul>
       </div>
+      </DealSection>
     </div>
   )
 }
