@@ -39,6 +39,9 @@ export default async function SettingsPage() {
     { data: onHoldReasons },
     { data: cancelledAbReasons },
     { data: cancelledBcAcReasons },
+    { data: markets },
+    { data: dealTypes },
+    { data: leadSources },
   ] = await Promise.all([
     supabase.from('employee_roles').select('id, name').order('name'),
     supabase
@@ -49,6 +52,9 @@ export default async function SettingsPage() {
     supabase.from('on_hold_reasons').select('id, name').order('name'),
     supabase.from('cancelled_ab_reasons').select('id, name').order('name'),
     supabase.from('cancelled_bc_ac_reasons').select('id, name').order('name'),
+    supabase.from('markets').select('id, name').order('name'),
+    supabase.from('deal_types').select('id, name').order('name'),
+    supabase.from('lead_sources').select('id, name').order('name'),
   ])
 
   return (
@@ -191,6 +197,62 @@ export default async function SettingsPage() {
           ))}
           {cancelledBcAcReasons?.length === 0 && (
             <li className="py-2 text-sm text-muted-foreground">No cancelled BC/AC reasons yet.</li>
+          )}
+        </ul>
+      </section>
+
+      <section>
+        <h2 className="text-sm font-medium text-muted-foreground">Markets</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          The markets deals can be assigned to. Seeded with a default market at signup.
+        </p>
+        <div className="mt-4 max-w-md">
+          <SimpleListForm endpoint="/api/markets" placeholder="e.g. Dallas-Fort Worth" />
+        </div>
+        <ul className="mt-4 max-w-md divide-y divide-border">
+          {markets?.map((market) => (
+            <li key={market.id} className="py-2 text-sm">
+              {market.name}
+            </li>
+          ))}
+          {markets?.length === 0 && <li className="py-2 text-sm text-muted-foreground">No markets yet.</li>}
+        </ul>
+      </section>
+
+      <section>
+        <h2 className="text-sm font-medium text-muted-foreground">Deal Types</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          The deal type options shown on the Deal Info section (Wholesale, Flip, etc.).
+        </p>
+        <div className="mt-4 max-w-md">
+          <SimpleListForm endpoint="/api/deal-types" placeholder="e.g. Novation" />
+        </div>
+        <ul className="mt-4 max-w-md divide-y divide-border">
+          {dealTypes?.map((dealType) => (
+            <li key={dealType.id} className="py-2 text-sm">
+              {dealType.name}
+            </li>
+          ))}
+          {dealTypes?.length === 0 && <li className="py-2 text-sm text-muted-foreground">No deal types yet.</li>}
+        </ul>
+      </section>
+
+      <section>
+        <h2 className="text-sm font-medium text-muted-foreground">Lead Sources</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Where deals are attributed as coming from.
+        </p>
+        <div className="mt-4 max-w-md">
+          <SimpleListForm endpoint="/api/lead-sources" placeholder="e.g. Facebook Ads" />
+        </div>
+        <ul className="mt-4 max-w-md divide-y divide-border">
+          {leadSources?.map((leadSource) => (
+            <li key={leadSource.id} className="py-2 text-sm">
+              {leadSource.name}
+            </li>
+          ))}
+          {leadSources?.length === 0 && (
+            <li className="py-2 text-sm text-muted-foreground">No lead sources yet.</li>
           )}
         </ul>
       </section>
