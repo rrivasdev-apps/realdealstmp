@@ -255,7 +255,7 @@ export function DealForm({
       return
     }
 
-    router.push('/dashboard')
+    router.push('/deals')
     router.refresh()
   }
 
@@ -1326,7 +1326,7 @@ export function DealForm({
         >
           {submitting ? 'Saving…' : mode === 'create' ? 'Create deal' : 'Save changes'}
         </button>
-        <Link href="/dashboard" className="text-sm text-muted-foreground hover:underline">
+        <Link href="/deals" className="text-sm text-muted-foreground hover:underline">
           Cancel
         </Link>
       </div>

@@ -11,7 +11,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   }
 
   const navItems = [
-    { href: '/dashboard', label: 'Whiteboard' },
+    { href: '/dashboard', label: 'Dashboard' },
+    { href: '/deals', label: 'Whiteboard' },
     { href: '/contacts', label: 'Contact Hub' },
     { href: '/investor-llcs', label: 'Investor LLCs' },
     ...(profile.role === 'admin'
