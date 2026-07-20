@@ -130,3 +130,16 @@ body {
     font-size: 16px;
   }
 }
+
+/* The mobile sidebar drawer (src/app/(app)/sidebar.tsx) is a fixed element
+   with an active `translate` used for its slide-in/out animation. Nested
+   overflow-y-auto content inside a translated/fixed ancestor is a known
+   case where iOS Safari drops touch-driven scrolling unless momentum
+   scrolling is explicitly requested -- mouse/trackpad scroll isn't
+   affected, which is why this doesn't show up outside real touch devices.
+   overscroll-behavior additionally stops an over-scroll at the top/bottom
+   of the nav from chaining into the (non-scrollable) page behind it. */
+.momentum-scroll {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}

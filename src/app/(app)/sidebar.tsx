@@ -68,7 +68,11 @@ export function Sidebar({
 }) {
   const pathname = usePathname()
   const isDealDetail = /^\/deals\/(?!new$)[^/]+$/.test(pathname)
-  const isSettings = pathname === '/settings'
+  // Broader than just the exact /settings page -- sub-pages like an
+  // employee role's detail page (/settings/employee-roles/[id]) still need
+  // the same nested Settings sub-nav visible, just without hash-driven
+  // section switching (that page isn't hash-sectioned).
+  const isSettings = pathname === '/settings' || pathname.startsWith('/settings/')
   const [activeSection, setActiveSection] = useState(DEFAULT_DEAL_SECTION)
   const [activeSettingsSection, setActiveSettingsSection] = useState(DEFAULT_SETTINGS_SECTION)
   // Which group's sub-tabs are expanded -- normally follows activeSettingsSection
@@ -114,7 +118,7 @@ export function Sidebar({
   }, [isDealDetail])
 
   useEffect(() => {
-    if (!isSettings) return
+    if (!isSettings || pathname !== '/settings') return
     const sync = () => {
       const section = window.location.hash.slice(1) || DEFAULT_SETTINGS_SECTION
       setActiveSettingsSection(section)
@@ -123,7 +127,22 @@ export function Sidebar({
     sync()
     window.addEventListener('hashchange', sync)
     return () => window.removeEventListener('hashchange', sync)
-  }, [isSettings])
+  }, [isSettings, pathname])
+
+  // Sub-pages (e.g. an employee role's detail page) aren't hash-sectioned --
+  // derive the active section straight from the pathname at render time
+  // instead of syncing it into state, so the sub-nav still highlights/
+  // expands the right group there instead of just vanishing.
+  const settingsSubpageSection =
+    isSettings && pathname !== '/settings'
+      ? pathname.startsWith('/settings/employee-roles')
+        ? 'employee-roles'
+        : DEFAULT_SETTINGS_SECTION
+      : null
+  const effectiveSettingsSection = settingsSubpageSection ?? activeSettingsSection
+  const effectiveExpandedSettingsGroup = settingsSubpageSection
+    ? settingsGroupForSection(settingsSubpageSection)
+    : expandedSettingsGroup
 
   return (
     <>
@@ -172,7 +191,7 @@ export function Sidebar({
         </button>
       </div>
 
-      <nav className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto px-3">
+      <nav className="momentum-scroll flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto px-3">
         {navItems.map((item) => {
           const active = pathname === item.href || pathname.startsWith(`${item.href}/`)
           return (
@@ -212,7 +231,7 @@ export function Sidebar({
               {item.href === '/settings' && isSettings && (
                 <div className="ml-3 mt-1 flex flex-col gap-0.5 border-l border-white/10 pl-3">
                   {SETTINGS_GROUPS.map((group) => {
-                    const groupExpanded = expandedSettingsGroup === group.label
+                    const groupExpanded = effectiveExpandedSettingsGroup === group.label
                     return (
                       <div key={group.label}>
                         <button
@@ -231,9 +250,9 @@ export function Sidebar({
                             {group.sections.map((section) => (
                               <a
                                 key={section.id}
-                                href={`#${section.id}`}
+                                href={pathname === '/settings' ? `#${section.id}` : `/settings#${section.id}`}
                                 className={`rounded-md px-3 py-1.5 text-sm transition-colors ${
-                                  activeSettingsSection === section.id
+                                  effectiveSettingsSection === section.id
                                     ? 'bg-sidebar-active text-white'
                                     : 'text-sidebar-muted hover:bg-sidebar-hover hover:text-sidebar-foreground'
                                 }`}
