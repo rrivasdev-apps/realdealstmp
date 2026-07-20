@@ -211,7 +211,7 @@ function DealSection({ title, deals }: { title: string; deals: Deal[] }) {
               </div>
               <div className="text-right text-sm">
                 <div className="text-foreground">
-                  {deal.contract_price != null ? currency.format(deal.contract_price) : '—'}
+                  {deal.contract_price != null ? `Contract: ${currency.format(deal.contract_price)}` : 'Contract: —'}
                 </div>
                 <div className="text-muted-foreground">
                   {profit != null ? `Profit: ${currency.format(profit)}` : 'Profit: —'}
