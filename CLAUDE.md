@@ -43,7 +43,7 @@ This project is on **Next.js 16**, which has breaking changes from the Next.js m
 - [src/lib/supabase/server.ts](src/lib/supabase/server.ts) — `createClient()` for use in Server Components, Route Handlers, and Server Actions. Reads cookies via `next/headers`; must be called fresh per request (not hoisted to module scope).
 - [src/lib/supabase/client.ts](src/lib/supabase/client.ts) — `createClient()` for Client Components (`'use client'`).
 
-**Authorization.** [src/lib/supabase/auth.ts](src/lib/supabase/auth.ts) exports `requireUser()`, which every mutating Route Handler / Server Action must call and check before touching data — see [src/app/api/profile/route.ts](src/app/api/profile/route.ts) for the pattern. `requireProfile()` additionally loads the caller's `company_id`/`role` (most routes need it to scope queries/writes); `requireAdmin()` layers a `role === 'admin'` check on top, for routes like `/api/team/invite`. This is non-negotiable per project requirements: permission checks happen server-side on every mutation, never inferred from what the UI shows or hides. The proxy's optimistic cookie check is not a substitute for this. RLS policies (scoped via the `is_company_member()` Postgres function) are defense in depth underneath these checks, not a replacement for them — see `supabase/migrations/`.
+**Authorization.** [src/lib/supabase/auth.ts](src/lib/supabase/auth.ts) exports `requireUser()`, which every mutating Route Handler / Server Action must call and check before touching data — see [src/app/api/profile/route.ts](src/app/api/profile/route.ts) for the pattern. `requireProfile()` additionally loads the caller's `company_id`/`role`/`employee_role` capabilities (most routes need it to scope queries/writes). Two ways to gate a route on top of that: `requirePermission('can_manage_team' | 'can_manage_settings' | 'can_view_financials')` checks the caller's `employee_role` capability flags (`role === 'admin'` always passes regardless) — this is the one to use for Team/Settings/Dashboard-financials routes. `requireAdmin()` is a hard `role === 'admin'` check, reserved specifically for `employee_roles`' own routes (creating/editing a role's capability flags) — a `can_manage_settings` caller must never be able to edit `employee_roles`, or they could grant themselves every capability, an escalation straight to admin-equivalent power. This is non-negotiable per project requirements: permission checks happen server-side on every mutation, never inferred from what the UI shows or hides. The proxy's optimistic cookie check is not a substitute for this. RLS policies (scoped via the `is_company_member()` Postgres function, plus `can_manage_team()`/`can_manage_settings()`/`can_view_financials()`/`is_company_admin()` for the tables that need tighter-than-membership checks) are defense in depth underneath these checks, not a replacement for them — see `supabase/migrations/`.
 
 **Environment variables.** See [.env.local.example](.env.local.example) for the full list. `NEXT_PUBLIC_*` vars are exposed to the browser; `SUPABASE_SERVICE_ROLE_KEY` and `ANTHROPIC_API_KEY` are server-only and must never be prefixed `NEXT_PUBLIC_` or referenced from a Client Component.
 
@@ -66,19 +66,29 @@ starting point, not the current full schema.
 
 Scope now — nothing beyond this list until Phase 2 is validated:
 
-- **Employee Center**: fuller roles/permissions than today's `admin`/
-  `member` split, plus payroll. `employee_roles` already exists (pulled
-  forward early to support commissions) — this phase extends it, doesn't
-  start it from scratch.
+- ~~**Employee Center**: fuller roles/permissions than today's `admin`/
+  `member` split, plus payroll.~~ **Done.** `employee_roles` gained three
+  capability flags (`can_manage_team`, `can_manage_settings`,
+  `can_view_financials`); `requirePermission()` in
+  `src/lib/supabase/auth.ts` is the new authorization primitive alongside
+  `requireAdmin()` (kept, deliberately, only for `employee_roles`' own
+  routes — see that file's comments for the escalation risk this guards
+  against). Payroll: `profiles.pay_type`/`pay_rate` + manual payroll entries
+  (`/payroll`, reusing `payments` with `type = 'payroll'`) ship for every
+  company; full payroll runs (`payroll_runs`/`payroll_run_entries`,
+  `src/lib/payroll/finalize-run.ts`) are gated behind a manually-set
+  `companies.subscription_tier = 'employee_center'` (no billing integration
+  yet, just the gate).
+- ~~**Per-company custom fields**~~ **Done.** `custom_field_definitions`
+  (text/number/date/checkbox/select) + a Settings UI, values stored in
+  `deals.custom_fields` keyed by definition id.
+- ~~**Full Settings module**~~ **Done.** `markets`/`deal_types`/
+  `lead_sources`/custom fields all have a Settings UI now, alongside the
+  commission types/employee roles/checklist items/reason lists that were
+  already there.
 - **Transaction Guardian**: the event-triggered automation engine (named step
-  ownership on deal-lifecycle events).
-- **Per-company custom fields**: the `custom_fields` JSONB column on `deals`
-  already exists (added in Phase 0 for exactly this) — this phase adds the
-  Settings UI to define and edit them.
-- **Full Settings module**: today's Settings page only covers commission
-  types/employee roles/checklist items/reason lists; this phase makes it the
-  place every company-scoped lookup (`markets`, `deal_types`,
-  `lead_sources`, etc.) gets a real UI instead of the Supabase table editor.
+  ownership on deal-lifecycle events) — the only piece of Phase 2 still
+  open.
 
 Do not build Phase 3 features early, even if they seem easy to add "while
 we're in there." The point of each phase is to validate its slice before the
@@ -153,7 +163,7 @@ Custom fields per company (Settings module) are Phase 2 — the `custom_fields` 
 ## Roadmap
 
 1. ~~**Phase 1 — Financial engine**: role-based commission rules, JV expense allocation, cascading gross/net profit, monthly/quarterly/yearly KPI reporting.~~ **Done.**
-2. **Phase 2 — Operations** *(current)*: Employee Center (roles, permissions, payroll), Transaction Guardian automation engine (event-triggered, named step ownership), per-company custom fields, full Settings module.
+2. **Phase 2 — Operations** *(current)*: ~~Employee Center (roles, permissions, payroll)~~, ~~per-company custom fields~~, ~~full Settings module~~ — all done. Transaction Guardian automation engine (event-triggered, named step ownership) is the only piece left before Phase 2 is validated.
 3. **Phase 3 — Platform**: multi-tenant licensing, API layer, automation marketplace between companies.
 
 ## Conventions
