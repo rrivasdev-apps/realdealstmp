@@ -78,6 +78,32 @@ export function Sidebar({
   const [expandedSettingsGroup, setExpandedSettingsGroup] = useState(() =>
     settingsGroupForSection(DEFAULT_SETTINGS_SECTION),
   )
+  // Drawer open state, mobile only (the <aside> is a permanent rail at lg
+  // regardless of this value -- see the lg: classes below). Starts false on
+  // both server and client render, same as activeSection/activeSettingsSection
+  // above, so there's no hydration mismatch.
+  const [open, setOpen] = useState(false)
+  // Closing on route change is a render-time state adjustment (React's
+  // recommended pattern for "reset state when a prop changes"), not an
+  // effect, so it doesn't cascade an extra render.
+  const [prevPathname, setPrevPathname] = useState(pathname)
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname)
+    setOpen(false)
+  }
+
+  useEffect(() => {
+    const close = () => setOpen(false)
+    window.addEventListener('hashchange', close)
+    return () => window.removeEventListener('hashchange', close)
+  }, [])
+
+  useEffect(() => {
+    document.body.style.overflow = open ? 'hidden' : ''
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [open])
 
   useEffect(() => {
     if (!isDealDetail) return
@@ -100,11 +126,50 @@ export function Sidebar({
   }, [isSettings])
 
   return (
-    <aside className="flex w-56 shrink-0 flex-col bg-sidebar text-sidebar-foreground">
-      <div className="px-5 py-6">
+    <>
+      <div className="flex items-center justify-between border-b border-border bg-sidebar px-4 py-3 text-sidebar-foreground lg:hidden">
         <span className="text-lg font-semibold tracking-tight">
           Real<span className="text-brand-400">Deals</span>
         </span>
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-label="Open menu"
+          className="rounded-md p-2 text-sidebar-foreground hover:bg-sidebar-hover"
+        >
+          <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2">
+            <path strokeLinecap="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+
+      {open && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+          onClick={() => setOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 flex w-72 shrink-0 flex-col bg-sidebar text-sidebar-foreground transition-transform duration-200 ease-in-out lg:static lg:z-auto lg:w-56 lg:translate-x-0 ${
+          open ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+      <div className="flex items-center justify-between px-5 py-6">
+        <span className="text-lg font-semibold tracking-tight">
+          Real<span className="text-brand-400">Deals</span>
+        </span>
+        <button
+          type="button"
+          onClick={() => setOpen(false)}
+          aria-label="Close menu"
+          className="rounded-md p-1 text-sidebar-muted hover:bg-sidebar-hover hover:text-sidebar-foreground lg:hidden"
+        >
+          <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
+            <path strokeLinecap="round" d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
       </div>
 
       <nav className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto px-3">
@@ -198,6 +263,7 @@ export function Sidebar({
         </div>
         <LogoutButton />
       </div>
-    </aside>
+      </aside>
+    </>
   )
 }
