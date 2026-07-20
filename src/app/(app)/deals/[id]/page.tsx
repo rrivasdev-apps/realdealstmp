@@ -224,7 +224,7 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
         </div>
         <ul className="mt-2 divide-y divide-border rounded-lg border border-border bg-background">
           {(offers ?? []).map((offer) => (
-            <li key={offer.id} className="flex items-center justify-between px-4 py-3">
+            <li key={offer.id} className="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <Link
                   href={`/deals/${id}/offers/${offer.id}`}
@@ -256,7 +256,7 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
         </div>
         <ul className="mt-2 divide-y divide-border rounded-lg border border-border bg-background">
           {(showings ?? []).map((showing) => (
-            <li key={showing.id} className="flex items-center justify-between px-4 py-3">
+            <li key={showing.id} className="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <Link
                   href={`/deals/${id}/showings/${showing.id}`}

@@ -78,7 +78,7 @@ export default async function DashboardPage() {
 
       <section className="mt-6">
         <h2 className="text-sm font-medium text-muted-foreground">Pipeline</h2>
-        <div className="mt-2 grid grid-cols-4 gap-4">
+        <div className="mt-2 grid grid-cols-2 gap-4 sm:grid-cols-4">
           <PipelineCard label="Open Deals" value={String(openDeals.length)} />
           <PipelineCard label="Projected Profit" value={currency.format(projectedProfit)} />
           <PipelineCard label="JV Expenses" value={currency.format(jvExpenses)} />

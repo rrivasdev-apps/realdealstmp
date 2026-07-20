@@ -35,7 +35,7 @@ export default async function TeamPage() {
 
       <ul className="mt-8 divide-y divide-border">
         {members?.map((member) => (
-          <li key={member.id} className="flex items-center justify-between py-3 text-sm">
+          <li key={member.id} className="flex flex-col gap-1 py-3 text-sm sm:flex-row sm:items-center sm:justify-between">
             <div>
               <Link href={`/team/${member.id}`} className="font-medium hover:underline">
                 {member.name}

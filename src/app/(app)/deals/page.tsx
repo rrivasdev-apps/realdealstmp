@@ -123,7 +123,7 @@ export default async function DealsPage({
         </Link>
       </div>
 
-      <div className="mt-6 grid grid-cols-6 gap-4">
+      <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
         <FilterBadge filter="all" active={activeFilter} deals={deals} />
         <FilterBadge filter="for-sale" active={activeFilter} deals={deals} />
         <FilterBadge filter="pending-sale" active={activeFilter} deals={deals} />
@@ -168,7 +168,7 @@ function ClosedGroup({ active, deals }: { active: FilterKey; deals: Deal[] }) {
   const cells: FilterKey[] = ['closed', 'closed-not-funded', 'closed-funded']
 
   return (
-    <div className="col-span-3 grid grid-cols-3 divide-x divide-status-closed/30 overflow-hidden rounded-lg border border-status-closed/30 bg-status-closed/5">
+    <div className="col-span-2 grid grid-cols-3 divide-x divide-status-closed/30 overflow-hidden rounded-lg border border-status-closed/30 bg-status-closed/5 sm:col-span-3">
       {cells.map((filter) => {
         const { count, profit } = summarize(deals, filter)
         const isActive = active === filter
