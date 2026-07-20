@@ -10,18 +10,24 @@ export function EmployeeForm({
   profileId,
   initialEmployeeRoleId,
   initialCommissionTypeIds,
+  initialPayType,
+  initialPayRate,
   employeeRoles,
   commissionTypes,
 }: {
   profileId: string
   initialEmployeeRoleId: string
   initialCommissionTypeIds: string[]
+  initialPayType: string
+  initialPayRate: string
   employeeRoles: LookupOption[]
   commissionTypes: LookupOption[]
 }) {
   const router = useRouter()
   const [employeeRoleId, setEmployeeRoleId] = useState(initialEmployeeRoleId)
   const [commissionTypeIds, setCommissionTypeIds] = useState<string[]>(initialCommissionTypeIds)
+  const [payType, setPayType] = useState(initialPayType)
+  const [payRate, setPayRate] = useState(initialPayRate)
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
@@ -37,7 +43,12 @@ export function EmployeeForm({
     const response = await fetch(`/api/team/${profileId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ employee_role_id: employeeRoleId || null, commission_type_ids: commissionTypeIds }),
+      body: JSON.stringify({
+        employee_role_id: employeeRoleId || null,
+        commission_type_ids: commissionTypeIds,
+        pay_type: payType || null,
+        pay_rate: payRate ? Number(payRate) : null,
+      }),
     })
     const result = await response.json()
 
@@ -72,6 +83,32 @@ export function EmployeeForm({
           Any commission types assigned to this role in Settings apply to this employee too.
         </span>
       </label>
+
+      <fieldset className="grid grid-cols-1 gap-4 rounded border border-border p-4 sm:grid-cols-2">
+        <legend className="px-1 text-sm font-medium">Pay rate</legend>
+        <label className="flex flex-col gap-1 text-sm">
+          Pay type
+          <select
+            value={payType}
+            onChange={(event) => setPayType(event.target.value)}
+            className="rounded border border-input-border bg-input-background px-3 py-2"
+          >
+            <option value="">—</option>
+            <option value="hourly">Hourly</option>
+            <option value="salary">Salary</option>
+          </select>
+        </label>
+        <label className="flex flex-col gap-1 text-sm">
+          {payType === 'salary' ? 'Salary per pay period' : 'Hourly rate'}
+          <input
+            type="number"
+            step="0.01"
+            value={payRate}
+            onChange={(event) => setPayRate(event.target.value)}
+            className="rounded border border-input-border bg-input-background px-3 py-2"
+          />
+        </label>
+      </fieldset>
 
       <fieldset className="flex flex-col gap-2 rounded border border-border p-4">
         <legend className="px-1 text-sm font-medium">Direct commission types</legend>
