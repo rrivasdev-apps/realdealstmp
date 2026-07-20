@@ -66,7 +66,7 @@ starting point, not the current full schema.
 
 Scope now — nothing beyond this list until Phase 2 is validated:
 
-- **Employee Sentinel**: fuller roles/permissions than today's `admin`/
+- **Employee Center**: fuller roles/permissions than today's `admin`/
   `member` split, plus payroll. `employee_roles` already exists (pulled
   forward early to support commissions) — this phase extends it, doesn't
   start it from scratch.
@@ -153,7 +153,7 @@ Custom fields per company (Settings module) are Phase 2 — the `custom_fields` 
 ## Roadmap
 
 1. ~~**Phase 1 — Financial engine**: role-based commission rules, JV expense allocation, cascading gross/net profit, monthly/quarterly/yearly KPI reporting.~~ **Done.**
-2. **Phase 2 — Operations** *(current)*: Employee Sentinel (roles, permissions, payroll), Transaction Guardian automation engine (event-triggered, named step ownership), per-company custom fields, full Settings module.
+2. **Phase 2 — Operations** *(current)*: Employee Center (roles, permissions, payroll), Transaction Guardian automation engine (event-triggered, named step ownership), per-company custom fields, full Settings module.
 3. **Phase 3 — Platform**: multi-tenant licensing, API layer, automation marketplace between companies.
 
 ## Conventions

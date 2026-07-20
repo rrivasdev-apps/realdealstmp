@@ -119,7 +119,7 @@ contacts), vendor_contact_id (→ contacts), details
 ### `employees`
 Per-company workforce. Referenced heavily — also has its own dashboard
 ("My Pay And Time"), implying payroll/time-tracking fields belong here (Phase
-2, Employee Sentinel).
+2, Employee Center).
 
 ### `deal_employees` (join table)
 deal_id, employee_id, role_id (→ deal_employee_roles — e.g. "TC" for
@@ -206,7 +206,7 @@ by `contact_type` in the picker.
 - **Time tracking exists**: a "Not Tracking 00:00:00" play/stop control in the
   top bar, plus a "My Pay And Time" nav item — an employee-facing time-tracking
   feature tied to payroll, not previously captured in the feature list. Belongs
-  in Phase 2 (Employee Sentinel).
+  in Phase 2 (Employee Center).
 - **A "TPT Process" status bar** on the deal (badges: NAT, OTTO, FW, MSB, STC,
   each with a colored status dot) appears to summarize several parallel
   automation tracks at a glance. Worth clarifying the actual meaning of these

@@ -34,7 +34,7 @@ phase is currently active; this file is the reference for the full picture.
 - Vendors (roofers, electricians, etc.), realtors, clients, and investors, with
   the relationships each has to specific deals
 
-### 5. Employee Sentinel (workforce & permissions)
+### 5. Employee Center (workforce & permissions)
 - Per-license workforce with roles and section-level permissions
 - Payroll information tracking per employee
 
@@ -65,7 +65,7 @@ phase is currently active; this file is the reference for the full picture.
 |---|---|---|
 | **Phase 0 — MVP** | Deal Whiteboard (core fields + closing-date lifecycle), basic Dashboard (open/for-sale/pending/closed lists), Contact Hub (basic), single-company login, simple profit calc (no commission engine yet) | Validate the deal pipeline and data model cheaply, with real deals, before building the hard parts |
 | **Phase 1 — Financial Engine** | Role-based commission rules, JV expense tracking, cascading gross/net profit, monthly/quarterly/yearly KPI reporting | Rebuild the piece that broke down last time, this time in owned code |
-| **Phase 2 — Operations** | Employee Sentinel (roles, permissions, payroll), Transaction Guardian automation engine, per-company custom fields, full Settings module | Support a real operating team, not just a single user |
+| **Phase 2 — Operations** | Employee Center (roles, permissions, payroll), Transaction Guardian automation engine, per-company custom fields, full Settings module | Support a real operating team, not just a single user |
 | **Phase 3 — Platform** | Multi-tenant licensing, API layer, automation marketplace | Turn it into something licensable to other companies |
 
 See `market-opportunity.md` for why this feature set (specifically the financial/
