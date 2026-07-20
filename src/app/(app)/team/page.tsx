@@ -1,19 +1,19 @@
 import Link from 'next/link'
 
-import { requireProfile } from '@/lib/supabase/auth'
+import { requirePermission } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
 import { InviteForm } from './invite-form'
 
 export default async function TeamPage() {
-  const profile = await requireProfile()
+  const profile = await requirePermission('can_manage_team')
 
-  if (!profile || profile.role !== 'admin') {
+  if (!profile) {
     return (
       <div>
         <h1 className="text-xl font-semibold">Team</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Only admins can manage the team.
+          You don&apos;t have permission to manage the team.
         </p>
       </div>
     )

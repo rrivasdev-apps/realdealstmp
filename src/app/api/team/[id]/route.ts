@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server'
 
 import { createAdminClient } from '@/lib/supabase/admin'
-import { requireAdmin } from '@/lib/supabase/auth'
+import { requirePermission } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const admin = await requireAdmin()
+  const admin = await requirePermission('can_manage_team')
   if (!admin || !admin.company_id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
@@ -21,13 +21,15 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   const body = await request.json()
   const employeeRoleId: string | null = body.employee_role_id || null
   const commissionTypeIds: string[] = Array.isArray(body.commission_type_ids) ? body.commission_type_ids : []
+  const payType = body.pay_type === 'hourly' || body.pay_type === 'salary' ? body.pay_type : null
+  const payRate = typeof body.pay_rate === 'number' && Number.isFinite(body.pay_rate) ? body.pay_rate : null
 
   // profiles' UPDATE policy only allows self-updates -- an admin setting
-  // another member's employee_role_id has to go through the admin client.
+  // another member's employee_role_id/pay rate has to go through the admin client.
   const adminClient = createAdminClient()
   const { error: profileError } = await adminClient
     .from('profiles')
-    .update({ employee_role_id: employeeRoleId })
+    .update({ employee_role_id: employeeRoleId, pay_type: payType, pay_rate: payRate })
     .eq('id', id)
 
   if (profileError) {

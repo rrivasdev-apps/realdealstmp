@@ -38,10 +38,11 @@ export default async function DashboardPage() {
   let deals = (dealsData as unknown as Deal[]) ?? []
   let offers = (offersData as unknown as Offer[]) ?? []
 
-  // Members see only their own slice of the company's deals; admins see
-  // everything. deal_employees is company-wide readable, so this filter is
-  // applied in JS the same way status filtering already is on /deals.
-  if (profile.role !== 'admin') {
+  // Members see only their own slice of the company's deals; admins and
+  // anyone with the can_view_financials capability see everything.
+  // deal_employees is company-wide readable, so this filter is applied in
+  // JS the same way status filtering already is on /deals.
+  if (profile.role !== 'admin' && !profile.employee_role?.can_view_financials) {
     const { data: assignments } = await supabase
       .from('deal_employees')
       .select('deal_id')

@@ -172,16 +172,19 @@ export type Database = {
           created_at: string
           id: string
           name: string
+          subscription_tier: string
         }
         Insert: {
           created_at?: string
           id?: string
           name: string
+          subscription_tier?: string
         }
         Update: {
           created_at?: string
           id?: string
           name?: string
+          subscription_tier?: string
         }
         Relationships: []
       }
@@ -965,18 +968,27 @@ export type Database = {
       }
       employee_roles: {
         Row: {
+          can_manage_settings: boolean
+          can_manage_team: boolean
+          can_view_financials: boolean
           company_id: string
           created_at: string
           id: string
           name: string
         }
         Insert: {
+          can_manage_settings?: boolean
+          can_manage_team?: boolean
+          can_view_financials?: boolean
           company_id: string
           created_at?: string
           id?: string
           name: string
         }
         Update: {
+          can_manage_settings?: boolean
+          can_manage_team?: boolean
+          can_view_financials?: boolean
           company_id?: string
           created_at?: string
           id?: string
@@ -1212,6 +1224,9 @@ export type Database = {
           created_at: string
           deal_id: string | null
           id: string
+          pay_period_end: string | null
+          pay_period_start: string | null
+          payroll_run_id: string | null
           profile_id: string | null
           status: string
           type: string
@@ -1223,6 +1238,9 @@ export type Database = {
           created_at?: string
           deal_id?: string | null
           id?: string
+          pay_period_end?: string | null
+          pay_period_start?: string | null
+          payroll_run_id?: string | null
           profile_id?: string | null
           status: string
           type?: string
@@ -1234,6 +1252,9 @@ export type Database = {
           created_at?: string
           deal_id?: string | null
           id?: string
+          pay_period_end?: string | null
+          pay_period_start?: string | null
+          payroll_run_id?: string | null
           profile_id?: string | null
           status?: string
           type?: string
@@ -1261,10 +1282,94 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "payments_payroll_run_id_fkey"
+            columns: ["payroll_run_id"]
+            isOneToOne: false
+            referencedRelation: "payroll_runs"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "payments_profile_id_fkey"
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payroll_run_entries: {
+        Row: {
+          computed_amount: number | null
+          hours_worked: number | null
+          id: string
+          payroll_run_id: string
+          profile_id: string
+        }
+        Insert: {
+          computed_amount?: number | null
+          hours_worked?: number | null
+          id?: string
+          payroll_run_id: string
+          profile_id: string
+        }
+        Update: {
+          computed_amount?: number | null
+          hours_worked?: number | null
+          id?: string
+          payroll_run_id?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payroll_run_entries_payroll_run_id_fkey"
+            columns: ["payroll_run_id"]
+            isOneToOne: false
+            referencedRelation: "payroll_runs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payroll_run_entries_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payroll_runs: {
+        Row: {
+          company_id: string
+          created_at: string
+          finalized_at: string | null
+          id: string
+          pay_period_end: string
+          pay_period_start: string
+          status: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          finalized_at?: string | null
+          id?: string
+          pay_period_end: string
+          pay_period_start: string
+          status?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          finalized_at?: string | null
+          id?: string
+          pay_period_end?: string
+          pay_period_start?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payroll_runs_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
             referencedColumns: ["id"]
           },
         ]
@@ -1322,6 +1427,8 @@ export type Database = {
           employee_role_id: string | null
           id: string
           name: string
+          pay_rate: number | null
+          pay_type: string | null
           role: string
         }
         Insert: {
@@ -1331,6 +1438,8 @@ export type Database = {
           employee_role_id?: string | null
           id: string
           name: string
+          pay_rate?: number | null
+          pay_type?: string | null
           role: string
         }
         Update: {
@@ -1340,6 +1449,8 @@ export type Database = {
           employee_role_id?: string | null
           id?: string
           name?: string
+          pay_rate?: number | null
+          pay_type?: string | null
           role?: string
         }
         Relationships: [
@@ -1489,6 +1600,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_manage_settings: {
+        Args: { target_company_id: string }
+        Returns: boolean
+      }
+      can_manage_team: { Args: { target_company_id: string }; Returns: boolean }
+      can_view_financials: {
+        Args: { target_company_id: string }
+        Returns: boolean
+      }
       is_company_admin: {
         Args: { target_company_id: string }
         Returns: boolean

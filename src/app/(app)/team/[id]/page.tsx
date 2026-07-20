@@ -1,19 +1,19 @@
 import { notFound } from 'next/navigation'
 
-import { requireProfile } from '@/lib/supabase/auth'
+import { requirePermission } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
 import { EmployeeForm } from '../employee-form'
 
 export default async function TeamMemberPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const profile = await requireProfile()
+  const profile = await requirePermission('can_manage_team')
 
-  if (!profile || profile.role !== 'admin') {
+  if (!profile) {
     return (
       <div>
         <h1 className="text-xl font-semibold">Team member</h1>
-        <p className="mt-2 text-sm text-muted-foreground">Only admins can manage team members.</p>
+        <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to manage team members.</p>
       </div>
     )
   }
@@ -21,7 +21,7 @@ export default async function TeamMemberPage({ params }: { params: Promise<{ id:
   const supabase = await createClient()
   const [{ data: member }, { data: employeeRoles }, { data: commissionTypes }, { data: assignments }] =
     await Promise.all([
-      supabase.from('profiles').select('id, name, email, employee_role_id').eq('id', id).single(),
+      supabase.from('profiles').select('id, name, email, employee_role_id, pay_type, pay_rate').eq('id', id).single(),
       supabase.from('employee_roles').select('id, name').order('name'),
       supabase.from('commission_types').select('id, name').order('name'),
       supabase.from('profile_commission_types').select('commission_type_id').eq('profile_id', id),
@@ -41,6 +41,8 @@ export default async function TeamMemberPage({ params }: { params: Promise<{ id:
           profileId={member.id}
           initialEmployeeRoleId={member.employee_role_id ?? ''}
           initialCommissionTypeIds={(assignments ?? []).map((row) => row.commission_type_id)}
+          initialPayType={member.pay_type ?? ''}
+          initialPayRate={member.pay_rate?.toString() ?? ''}
           employeeRoles={employeeRoles ?? []}
           commissionTypes={commissionTypes ?? []}
         />

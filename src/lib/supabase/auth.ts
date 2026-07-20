@@ -8,6 +8,11 @@ export type Profile = {
   name: string
   email: string
   role: 'admin' | 'member'
+  employee_role: {
+    can_manage_team: boolean
+    can_manage_settings: boolean
+    can_view_financials: boolean
+  } | null
 }
 
 // Call this at the top of every mutating Route Handler / Server Action.
@@ -37,7 +42,9 @@ export async function requireProfile(): Promise<Profile | null> {
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('profiles')
-    .select('id, company_id, name, email, role')
+    .select(
+      'id, company_id, name, email, role, employee_role:employee_roles(can_manage_team, can_manage_settings, can_view_financials)'
+    )
     .eq('id', user.id)
     .single()
 
@@ -45,10 +52,13 @@ export async function requireProfile(): Promise<Profile | null> {
     return null
   }
 
-  return data as Profile
+  return data as unknown as Profile
 }
 
-// For admin-only routes (e.g. inviting teammates).
+// For admin-only routes -- reserved for the handful of actions that must
+// stay admin-exclusive even for a manager with every capability flag set
+// (editing employee_roles' own capabilities -- see requirePermission below
+// for why that can't be delegated).
 export async function requireAdmin(): Promise<Profile | null> {
   const profile = await requireProfile()
   if (!profile || profile.role !== 'admin') {
@@ -56,4 +66,23 @@ export async function requireAdmin(): Promise<Profile | null> {
   }
 
   return profile
+}
+
+// For routes/pages gated by a specific capability instead of full admin --
+// an admin always passes regardless of employee_role. Never use this for
+// employee_roles' own capability-editing routes: a can_manage_settings
+// manager granting themselves can_manage_team/can_manage_settings/
+// can_view_financials via their own role would be a straight escalation to
+// admin-equivalent power. Those stay on requireAdmin().
+export async function requirePermission(
+  permission: 'can_manage_team' | 'can_manage_settings' | 'can_view_financials'
+): Promise<Profile | null> {
+  const profile = await requireProfile()
+  if (!profile) {
+    return null
+  }
+  if (profile.role === 'admin' || profile.employee_role?.[permission]) {
+    return profile
+  }
+  return null
 }

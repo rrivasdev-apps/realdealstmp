@@ -10,17 +10,16 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     redirect('/login')
   }
 
+  const canManageTeam = profile.role === 'admin' || profile.employee_role?.can_manage_team
+  const canManageSettings = profile.role === 'admin' || profile.employee_role?.can_manage_settings
+
   const navItems = [
     { href: '/dashboard', label: 'Dashboard' },
     { href: '/deals', label: 'Whiteboard' },
     { href: '/contacts', label: 'Contact Hub' },
     { href: '/investor-llcs', label: 'Investor LLCs' },
-    ...(profile.role === 'admin'
-      ? [
-          { href: '/team', label: 'Team' },
-          { href: '/settings', label: 'Settings' },
-        ]
-      : []),
+    ...(canManageTeam ? [{ href: '/team', label: 'Team' }, { href: '/payroll', label: 'Payroll' }] : []),
+    ...(canManageSettings ? [{ href: '/settings', label: 'Settings' }] : []),
   ]
 
   return (

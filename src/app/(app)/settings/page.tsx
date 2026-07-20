@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 import { SettingsSection } from '@/components/settings-section'
 import { SimpleListForm } from '@/components/simple-list-form'
-import { requireProfile } from '@/lib/supabase/auth'
+import { requirePermission } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
 import { ChecklistItemForm } from './checklist-item-form'
@@ -30,13 +30,13 @@ const BASIS_LABELS: Record<string, string> = {
 }
 
 export default async function SettingsPage() {
-  const profile = await requireProfile()
+  const profile = await requirePermission('can_manage_settings')
 
-  if (!profile || profile.role !== 'admin') {
+  if (!profile) {
     return (
       <div>
         <h1 className="text-xl font-semibold">Settings</h1>
-        <p className="mt-2 text-sm text-muted-foreground">Only admins can manage settings.</p>
+        <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to manage settings.</p>
       </div>
     )
   }
