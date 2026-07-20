@@ -117,3 +117,16 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* iOS Safari auto-zooms the viewport when a focused form field computes to
+   <16px font-size. Inputs inherit text-sm (14px) from their wrapping label
+   almost everywhere in this app -- override at the width where iOS actually
+   applies, rather than bumping every input's className individually. Labels
+   themselves are untouched, so they stay 14px. */
+@media (max-width: 640px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
