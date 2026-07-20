@@ -292,7 +292,7 @@ export function DealForm({
       <fieldset className="flex flex-col gap-4 rounded border border-border p-4">
         <legend className="px-1 text-sm font-medium">Property Facts</legend>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <label className="flex flex-col gap-1 text-sm">
             APN
             <input
@@ -314,7 +314,7 @@ export function DealForm({
             />
           </label>
 
-          <label className="col-span-2 flex flex-col gap-1 text-sm">
+          <label className="flex flex-col gap-1 text-sm sm:col-span-2">
             Legal description
             <textarea
               value={values.legal_description}
@@ -412,7 +412,7 @@ export function DealForm({
         </div>
       </fieldset>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <label className="flex flex-col gap-1 text-sm">
           Market
           <select
@@ -495,7 +495,7 @@ export function DealForm({
         )}
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <label className="flex flex-col gap-1 text-sm">
           Contract price
           <CurrencyInput
@@ -612,7 +612,7 @@ export function DealForm({
           </label>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <label className="flex flex-col gap-1 text-sm">
             Title company
             <select
@@ -679,7 +679,7 @@ export function DealForm({
           </label>
 
           {values.buyer_found && (
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <label className="flex flex-col gap-1 text-sm">
                 Buyer contract price
                 {initialValues.buyer_contract_price ? (
@@ -787,7 +787,7 @@ export function DealForm({
           </label>
 
           {values.is_jv_deal && (
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <label className="flex flex-col gap-1 text-sm">
                 JV partner company
                 <select
@@ -850,7 +850,7 @@ export function DealForm({
         <fieldset className="flex flex-col gap-4 rounded border border-border p-4">
           <legend className="px-1 text-sm font-medium">Financial</legend>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <label className="flex flex-col gap-1 text-sm">
               Total expenses
               <CurrencyInput
@@ -918,7 +918,7 @@ export function DealForm({
                 Post occupancy
               </label>
               {values.checklist_post_occupancy && (
-                <div className="mt-2 grid max-w-md grid-cols-2 gap-3">
+                <div className="mt-2 grid grid-cols-1 gap-3 sm:max-w-md sm:grid-cols-2">
                   <label className="flex flex-col gap-1 text-sm">
                     Hold back dollar amount
                     <CurrencyInput
@@ -972,7 +972,7 @@ export function DealForm({
                 Initial photos needed
               </label>
               {values.checklist_initial_photos_needed && (
-                <div className="mt-2 grid max-w-md grid-cols-2 gap-3">
+                <div className="mt-2 grid grid-cols-1 gap-3 sm:max-w-md sm:grid-cols-2">
                   <label className="flex flex-col gap-1 text-sm">
                     Initial photos ordered
                     <input
@@ -1229,7 +1229,7 @@ export function DealForm({
               </label>
               {values.cancelled_ab && (
                 <div className="mt-2 flex flex-col gap-3">
-                  <div className="grid max-w-md grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 gap-3 sm:max-w-md sm:grid-cols-2">
                     <label className="flex flex-col gap-1 text-sm">
                       Cancelled date
                       <input
@@ -1285,7 +1285,7 @@ export function DealForm({
               </label>
               {values.cancelled_bc_ac && (
                 <div className="mt-2 flex flex-col gap-3">
-                  <div className="grid max-w-md grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 gap-3 sm:max-w-md sm:grid-cols-2">
                     <label className="flex flex-col gap-1 text-sm">
                       Cancelled date
                       <input
@@ -1351,7 +1351,7 @@ export function DealForm({
             No custom fields defined yet. Add some in Settings under Deal → Custom Fields.
           </p>
         ) : (
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {customFieldDefinitions.map((definition) => {
               const rawValue = values.customFields[definition.id]
               if (definition.field_type === 'checkbox') {

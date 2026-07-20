@@ -89,7 +89,7 @@ export function OfferForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex max-w-xl flex-col gap-6">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <label className="flex flex-col gap-1 text-sm">
           Offer price
           <CurrencyInput
