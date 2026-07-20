@@ -337,6 +337,41 @@ export type Database = {
           },
         ]
       }
+      custom_field_definitions: {
+        Row: {
+          company_id: string
+          created_at: string
+          field_type: string
+          id: string
+          name: string
+          options: string[] | null
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          field_type: string
+          id?: string
+          name: string
+          options?: string[] | null
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          field_type?: string
+          id?: string
+          name?: string
+          options?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "custom_field_definitions_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       deal_cancelled_ab_reasons: {
         Row: {
           cancelled_ab_reason_id: string

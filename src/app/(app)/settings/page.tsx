@@ -7,7 +7,16 @@ import { createClient } from '@/lib/supabase/server'
 
 import { ChecklistItemForm } from './checklist-item-form'
 import { CommissionTypeForm } from './commission-type-form'
+import { CustomFieldDefinitionForm } from './custom-field-definition-form'
 import { EmployeeRoleForm } from './employee-role-form'
+
+const FIELD_TYPE_LABELS: Record<string, string> = {
+  text: 'Text',
+  number: 'Number',
+  date: 'Date',
+  checkbox: 'Checkbox',
+  select: 'Dropdown',
+}
 
 const CATEGORY_LABELS: Record<string, string> = {
   flat: 'Flat fee',
@@ -43,6 +52,7 @@ export default async function SettingsPage() {
     { data: markets },
     { data: dealTypes },
     { data: leadSources },
+    { data: customFieldDefinitions },
   ] = await Promise.all([
     supabase.from('employee_roles').select('id, name').order('name'),
     supabase
@@ -56,6 +66,7 @@ export default async function SettingsPage() {
     supabase.from('markets').select('id, name').order('name'),
     supabase.from('deal_types').select('id, name').order('name'),
     supabase.from('lead_sources').select('id, name').order('name'),
+    supabase.from('custom_field_definitions').select('id, name, field_type, options').order('name'),
   ])
 
   return (
@@ -110,6 +121,31 @@ export default async function SettingsPage() {
             ))}
             {leadSources?.length === 0 && (
               <li className="py-2 text-sm text-muted-foreground">No lead sources yet.</li>
+            )}
+          </ul>
+        </SettingsSection>
+
+        <SettingsSection id="custom-fields" title="Custom Fields">
+          <p className="text-sm text-muted-foreground">
+            Extra fields shown on every deal&apos;s Custom Fields tab, in addition to the built-in ones.
+          </p>
+          <div className="max-w-md">
+            <CustomFieldDefinitionForm />
+          </div>
+          <ul className="max-w-md divide-y divide-border">
+            {customFieldDefinitions?.map((field) => (
+              <li key={field.id} className="py-2 text-sm">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium">{field.name}</span>
+                  <span className="text-muted-foreground">{FIELD_TYPE_LABELS[field.field_type] ?? field.field_type}</span>
+                </div>
+                {field.field_type === 'select' && field.options && (
+                  <div className="mt-1 text-xs text-muted-foreground">{field.options.join(', ')}</div>
+                )}
+              </li>
+            ))}
+            {customFieldDefinitions?.length === 0 && (
+              <li className="py-2 text-sm text-muted-foreground">No custom fields yet.</li>
             )}
           </ul>
         </SettingsSection>

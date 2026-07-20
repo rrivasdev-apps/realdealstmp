@@ -14,6 +14,13 @@ const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: '
 
 type LookupOption = { id: string; name: string }
 
+export type CustomFieldDefinition = {
+  id: string
+  name: string
+  field_type: string
+  options: string[] | null
+}
+
 export type DealFormValues = {
   id?: string
   address: string
@@ -95,6 +102,7 @@ export type DealFormValues = {
   cancelled_bc_ac_date: string
   cancelled_bc_ac_party: string
   cancelledBcAcReasonIds: string[]
+  customFields: Record<string, string | boolean>
 }
 
 export function DealForm({
@@ -116,6 +124,7 @@ export function DealForm({
   onHoldReasons,
   cancelledAbReasons,
   cancelledBcAcReasons,
+  customFieldDefinitions,
 }: {
   mode: 'create' | 'edit'
   initialValues: DealFormValues
@@ -135,6 +144,7 @@ export function DealForm({
   onHoldReasons: LookupOption[]
   cancelledAbReasons: LookupOption[]
   cancelledBcAcReasons: LookupOption[]
+  customFieldDefinitions: CustomFieldDefinition[]
 }) {
   const router = useRouter()
   const [values, setValues] = useState(initialValues)
@@ -143,6 +153,10 @@ export function DealForm({
 
   function set<K extends keyof DealFormValues>(key: K, value: DealFormValues[K]) {
     setValues((prev) => ({ ...prev, [key]: value }))
+  }
+
+  function setCustomField(definitionId: string, value: string | boolean) {
+    setValues((prev) => ({ ...prev, customFields: { ...prev.customFields, [definitionId]: value } }))
   }
 
   function toggleId(key: 'onHoldReasonIds' | 'cancelledAbReasonIds' | 'cancelledBcAcReasonIds', id: string) {
@@ -240,6 +254,7 @@ export function DealForm({
       cancelled_bc_ac_date: values.cancelled_bc_ac_date || null,
       cancelled_bc_ac_party: values.cancelled_bc_ac_party || null,
       cancelledBcAcReasonIds: values.cancelledBcAcReasonIds,
+      custom_fields: values.customFields,
     }
 
     const response = await fetch(url, {
@@ -1326,6 +1341,70 @@ export function DealForm({
         </fieldset>
         </DealSection>
       )}
+
+      <DealSection id="custom-fields" title="Custom Fields">
+      <fieldset className="flex flex-col gap-4 rounded border border-border p-4">
+        <legend className="px-1 text-sm font-medium">Custom Fields</legend>
+
+        {customFieldDefinitions.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            No custom fields defined yet. Add some in Settings under Deal → Custom Fields.
+          </p>
+        ) : (
+          <div className="grid grid-cols-2 gap-4">
+            {customFieldDefinitions.map((definition) => {
+              const rawValue = values.customFields[definition.id]
+              if (definition.field_type === 'checkbox') {
+                return (
+                  <label key={definition.id} className="flex items-center gap-1.5 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={Boolean(rawValue)}
+                      onChange={(event) => setCustomField(definition.id, event.target.checked)}
+                    />
+                    {definition.name}
+                  </label>
+                )
+              }
+
+              const stringValue = typeof rawValue === 'string' ? rawValue : ''
+
+              if (definition.field_type === 'select') {
+                return (
+                  <label key={definition.id} className="flex flex-col gap-1 text-sm">
+                    {definition.name}
+                    <select
+                      value={stringValue}
+                      onChange={(event) => setCustomField(definition.id, event.target.value)}
+                      className="rounded border border-input-border bg-input-background px-3 py-2"
+                    >
+                      <option value="">—</option>
+                      {(definition.options ?? []).map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                )
+              }
+
+              return (
+                <label key={definition.id} className="flex flex-col gap-1 text-sm">
+                  {definition.name}
+                  <input
+                    type={definition.field_type === 'number' ? 'number' : definition.field_type === 'date' ? 'date' : 'text'}
+                    value={stringValue}
+                    onChange={(event) => setCustomField(definition.id, event.target.value)}
+                    className="rounded border border-input-border bg-input-background px-3 py-2"
+                  />
+                </label>
+              )
+            })}
+          </div>
+        )}
+      </fieldset>
+      </DealSection>
 
       {error && <p className="text-sm text-danger">{error}</p>}
 

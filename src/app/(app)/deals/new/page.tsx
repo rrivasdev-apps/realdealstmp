@@ -14,6 +14,7 @@ export default async function NewDealPage() {
     { data: contacts },
     { data: investorLlcs },
     { data: splitTypes },
+    { data: customFieldDefinitions },
   ] = await Promise.all([
     supabase.from('markets').select('id, name').order('name'),
     supabase.from('property_types').select('id, name').order('name'),
@@ -23,6 +24,7 @@ export default async function NewDealPage() {
     supabase.from('contacts').select('id, name, contact_contact_types(contact_types(name))').order('name'),
     supabase.from('investor_llcs').select('id, name').order('name'),
     supabase.from('split_types').select('id, name').order('name'),
+    supabase.from('custom_field_definitions').select('id, name, field_type, options').order('name'),
   ])
 
   const titleCompanyContacts = filterContactsByType(contacts ?? [], 'Title Company')
@@ -115,6 +117,7 @@ export default async function NewDealPage() {
             cancelled_bc_ac_date: '',
             cancelled_bc_ac_party: '',
             cancelledBcAcReasonIds: [],
+            customFields: {},
           }}
           markets={markets ?? []}
           propertyTypes={propertyTypes ?? []}
@@ -132,6 +135,7 @@ export default async function NewDealPage() {
           onHoldReasons={[]}
           cancelledAbReasons={[]}
           cancelledBcAcReasons={[]}
+          customFieldDefinitions={customFieldDefinitions ?? []}
         />
       </div>
     </div>

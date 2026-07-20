@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 
+import { buildCustomFieldsForSave } from '@/lib/deals/custom-fields'
 import { requireProfile } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
@@ -26,6 +27,8 @@ export async function POST(request: Request) {
   if (!forSaleStatus) {
     return NextResponse.json({ error: 'Deal statuses are not set up.' }, { status: 500 })
   }
+
+  const customFields = await buildCustomFieldsForSave(supabase, profile.company_id, body.custom_fields)
 
   // original_* is set once here, from the same values the client submitted
   // for the current fields -- never touched again after this insert (see
@@ -68,6 +71,7 @@ export async function POST(request: Request) {
       total_payoff_amount: body.total_payoff_amount ?? null,
       seller_contact_id: body.seller_contact_id || null,
       is_listed: Boolean(body.is_listed),
+      custom_fields: customFields,
     })
     // BC contract fields aren't set here -- there's no buyer yet at intake.
     // They're added later via PATCH once a buyer is found.

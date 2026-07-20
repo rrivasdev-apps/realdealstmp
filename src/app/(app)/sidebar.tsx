@@ -20,6 +20,7 @@ const DEAL_SECTIONS = [
   { id: 'jv-dispo', label: 'JV & Dispo' },
   { id: 'financial', label: 'Financial' },
   { id: 'checklist', label: 'Checklist' },
+  { id: 'custom-fields', label: 'Custom Fields' },
   { id: 'employees', label: 'Employees' },
 ]
 
@@ -33,6 +34,7 @@ const SETTINGS_GROUPS: { label: string; sections: { id: string; label: string }[
       { id: 'markets', label: 'Markets' },
       { id: 'deal-types', label: 'Deal Types' },
       { id: 'lead-sources', label: 'Lead Sources' },
+      { id: 'custom-fields', label: 'Custom Fields' },
       { id: 'on-hold-reasons', label: 'On Hold Reasons' },
       { id: 'cancelled-ab-reasons', label: 'Cancelled — AB Reasons' },
       { id: 'cancelled-bc-ac-reasons', label: 'Cancelled — BC/AC Reasons' },

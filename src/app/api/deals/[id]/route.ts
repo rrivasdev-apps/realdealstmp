@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 
 import { syncCommissionPaymentsForDeal } from '@/lib/deals/commissions'
+import { buildCustomFieldsForSave } from '@/lib/deals/custom-fields'
 import { requireProfile } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
@@ -30,6 +31,8 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   if (!address) {
     return NextResponse.json({ error: 'Address is required.' }, { status: 400 })
   }
+
+  const customFields = await buildCustomFieldsForSave(supabase, profile.company_id, body.custom_fields)
 
   const { error } = await supabase
     .from('deals')
@@ -108,6 +111,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       cancelled_bc_ac: Boolean(body.cancelled_bc_ac),
       cancelled_bc_ac_date: body.cancelled_bc_ac_date || null,
       cancelled_bc_ac_party: body.cancelled_bc_ac_party || null,
+      custom_fields: customFields,
     })
     .eq('id', id)
 

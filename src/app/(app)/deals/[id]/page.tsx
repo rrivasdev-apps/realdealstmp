@@ -38,6 +38,7 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
     { data: checkedOnHoldReasons },
     { data: checkedCancelledAbReasons },
     { data: checkedCancelledBcAcReasons },
+    { data: customFieldDefinitions },
   ] = await Promise.all([
     supabase.from('deals').select('*').eq('id', id).single(),
     supabase.from('markets').select('id, name').order('name'),
@@ -74,10 +75,17 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
     supabase.from('deal_on_hold_reasons').select('on_hold_reason_id').eq('deal_id', id),
     supabase.from('deal_cancelled_ab_reasons').select('cancelled_ab_reason_id').eq('deal_id', id),
     supabase.from('deal_cancelled_bc_ac_reasons').select('cancelled_bc_ac_reason_id').eq('deal_id', id),
+    supabase.from('custom_field_definitions').select('id, name, field_type, options').order('name'),
   ])
 
   if (!deal) {
     notFound()
+  }
+
+  const customFieldsRaw = (deal.custom_fields ?? {}) as Record<string, unknown>
+  const customFields: Record<string, string | boolean> = {}
+  for (const [key, value] of Object.entries(customFieldsRaw)) {
+    customFields[key] = typeof value === 'boolean' ? value : String(value)
   }
 
   const titleCompanyContacts = filterContactsByType(contacts ?? [], 'Title Company')
@@ -184,6 +192,7 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
             cancelledBcAcReasonIds: (checkedCancelledBcAcReasons ?? []).map(
               (row) => row.cancelled_bc_ac_reason_id
             ),
+            customFields,
           }}
           markets={markets ?? []}
           propertyTypes={propertyTypes ?? []}
@@ -201,6 +210,7 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
           onHoldReasons={onHoldReasons ?? []}
           cancelledAbReasons={cancelledAbReasons ?? []}
           cancelledBcAcReasons={cancelledBcAcReasons ?? []}
+          customFieldDefinitions={customFieldDefinitions ?? []}
         />
       </div>
 
