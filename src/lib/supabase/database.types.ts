@@ -1266,22 +1266,43 @@ export type Database = {
       }
       pay_periods: {
         Row: {
+          comments: string | null
+          commission_pay_frequency: string | null
           company_id: string
           created_at: string
+          first_payday: string | null
           id: string
           name: string
+          next_payday: string | null
+          payment_type: string | null
+          salary_pay_frequency: string | null
+          salary_type: string | null
         }
         Insert: {
+          comments?: string | null
+          commission_pay_frequency?: string | null
           company_id: string
           created_at?: string
+          first_payday?: string | null
           id?: string
           name: string
+          next_payday?: string | null
+          payment_type?: string | null
+          salary_pay_frequency?: string | null
+          salary_type?: string | null
         }
         Update: {
+          comments?: string | null
+          commission_pay_frequency?: string | null
           company_id?: string
           created_at?: string
+          first_payday?: string | null
           id?: string
           name?: string
+          next_payday?: string | null
+          payment_type?: string | null
+          salary_pay_frequency?: string | null
+          salary_type?: string | null
         }
         Relationships: [
           {

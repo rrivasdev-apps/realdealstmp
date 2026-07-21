@@ -2,6 +2,7 @@ import Link from 'next/link'
 
 import { SettingsSection } from '@/components/settings-section'
 import { SimpleListForm } from '@/components/simple-list-form'
+import { COMMISSION_PAY_FREQUENCY_LABELS, SALARY_PAY_FREQUENCY_LABELS } from '@/lib/pay-periods/labels'
 import { requirePermission } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
@@ -9,6 +10,7 @@ import { ChecklistItemForm } from './checklist-item-form'
 import { CommissionTypeForm } from './commission-type-form'
 import { CustomFieldDefinitionForm } from './custom-field-definition-form'
 import { EmployeeRoleForm } from './employee-role-form'
+import { PayPeriodForm, type PayPeriodFormValues } from './pay-period-form'
 
 const FIELD_TYPE_LABELS: Record<string, string> = {
   text: 'Text',
@@ -27,6 +29,17 @@ const BASIS_LABELS: Record<string, string> = {
   contract_price: 'contract price',
   gross_profit: 'gross profit',
   current_selling_price: 'current selling price',
+}
+
+const EMPTY_PAY_PERIOD: PayPeriodFormValues = {
+  name: '',
+  paymentType: '',
+  salaryPayFrequency: '',
+  salaryType: '',
+  commissionPayFrequency: '',
+  firstPayday: '',
+  nextPayday: '',
+  comments: '',
 }
 
 export default async function SettingsPage() {
@@ -68,7 +81,10 @@ export default async function SettingsPage() {
     supabase.from('deal_types').select('id, name').order('name'),
     supabase.from('lead_sources').select('id, name').order('name'),
     supabase.from('custom_field_definitions').select('id, name, field_type, options').order('name'),
-    supabase.from('pay_periods').select('id, name').order('name'),
+    supabase
+      .from('pay_periods')
+      .select('id, name, payment_type, salary_pay_frequency, commission_pay_frequency, next_payday')
+      .order('name'),
   ])
 
   return (
@@ -289,20 +305,49 @@ export default async function SettingsPage() {
 
         <SettingsSection id="pay-periods" title="Pay Periods">
           <p className="text-sm text-muted-foreground">
-            Pay schedule labels (e.g. Weekly Salary, Monthly Commissions) an employee can be tagged with — more
-            than one can apply to the same employee.
+            Payroll schedules (e.g. Weekly Salary, Monthly Commissions) an employee can be tagged with — more than
+            one can apply to the same employee.
           </p>
-          <div className="max-w-md">
-            <SimpleListForm endpoint="/api/pay-periods" placeholder="e.g. Weekly Salary" />
+          <PayPeriodForm mode="create" initialValues={EMPTY_PAY_PERIOD} />
+          <div className="max-w-2xl overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead>
+                <tr className="border-b border-border text-xs text-muted-foreground">
+                  <th className="py-2 pr-4 font-medium">Pay Period Name</th>
+                  <th className="py-2 pr-4 font-medium">Salary Pay Frequency</th>
+                  <th className="py-2 pr-4 font-medium">Commission Pay Frequency</th>
+                  <th className="py-2 font-medium">Next Pay Day</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {payPeriods?.map((payPeriod) => (
+                  <tr key={payPeriod.id}>
+                    <td className="py-2 pr-4">
+                      <Link href={`/settings/pay-periods/${payPeriod.id}`} className="hover:underline">
+                        {payPeriod.name}
+                      </Link>
+                    </td>
+                    <td className="py-2 pr-4 text-muted-foreground">
+                      {payPeriod.salary_pay_frequency ? SALARY_PAY_FREQUENCY_LABELS[payPeriod.salary_pay_frequency] : ''}
+                    </td>
+                    <td className="py-2 pr-4 text-muted-foreground">
+                      {payPeriod.commission_pay_frequency
+                        ? COMMISSION_PAY_FREQUENCY_LABELS[payPeriod.commission_pay_frequency]
+                        : ''}
+                    </td>
+                    <td className="py-2 text-muted-foreground">{payPeriod.next_payday ?? ''}</td>
+                  </tr>
+                ))}
+                {payPeriods?.length === 0 && (
+                  <tr>
+                    <td colSpan={4} className="py-2 text-sm text-muted-foreground">
+                      No pay periods yet.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
-          <ul className="max-w-md divide-y divide-border">
-            {payPeriods?.map((payPeriod) => (
-              <li key={payPeriod.id} className="py-2 text-sm">
-                {payPeriod.name}
-              </li>
-            ))}
-            {payPeriods?.length === 0 && <li className="py-2 text-sm text-muted-foreground">No pay periods yet.</li>}
-          </ul>
         </SettingsSection>
       </div>
     </div>

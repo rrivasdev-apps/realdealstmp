@@ -166,7 +166,9 @@ export function Sidebar({
     : isSettings && pathname !== '/settings'
       ? pathname.startsWith('/settings/employee-roles')
         ? 'employee-roles'
-        : DEFAULT_SETTINGS_SECTION
+        : pathname.startsWith('/settings/pay-periods')
+          ? 'pay-periods'
+          : DEFAULT_SETTINGS_SECTION
       : null
   const effectiveSettingsSection = settingsSubpageSection ?? activeSettingsSection
   const effectiveExpandedSettingsGroup = settingsSubpageSection
