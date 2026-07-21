@@ -1,11 +1,23 @@
 import { notFound } from 'next/navigation'
 
+import { requirePermission } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
 import { ContactForm } from '../contact-form'
 
 export default async function EditContactPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
+
+  const profile = await requirePermission('view_contacts')
+  if (!profile) {
+    return (
+      <div>
+        <h1 className="text-xl font-semibold">Contact</h1>
+        <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to view this contact.</p>
+      </div>
+    )
+  }
+
   const supabase = await createClient()
 
   const [{ data: contact }, { data: contactTypes }, { data: phoneTypes }, { data: emailTypes }] =

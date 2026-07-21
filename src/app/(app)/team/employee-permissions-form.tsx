@@ -5,15 +5,15 @@ import { useState } from 'react'
 
 import { CAPABILITY_GROUPS, CAPABILITY_LABELS, type Capabilities } from '@/lib/employee-permissions/labels'
 
-// Admin-only, same as the route this posts to -- CLAUDE.md/requirePermission
-// deliberately keeps employee_roles' own capability flags off the
-// can_manage_settings delegation path, since a manager could otherwise grant
-// themselves every capability through their own role.
-export function EmployeeRoleCapabilitiesForm({
-  employeeRoleId,
+// Direct override of one employee's own permission snapshot -- independent
+// of whatever role(s) they hold (assigning/removing a role, or a role
+// template edit that cascades, will recompute over this). See
+// src/app/api/team/[id]/permissions/route.ts.
+export function EmployeePermissionsForm({
+  profileId,
   initialCapabilities,
 }: {
-  employeeRoleId: string
+  profileId: string
   initialCapabilities: Capabilities
 }) {
   const router = useRouter()
@@ -25,46 +25,34 @@ export function EmployeeRoleCapabilitiesForm({
     setCapabilities((prev) => ({ ...prev, [key]: !prev[key] }))
   }
 
-  async function submit(confirmed: boolean) {
-    const response = await fetch(`/api/employee-roles/${employeeRoleId}`, {
+  async function handleSubmit(event: React.FormEvent) {
+    event.preventDefault()
+    setError(null)
+    setSubmitting(true)
+
+    const response = await fetch(`/api/team/${profileId}/permissions`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ capabilities, confirmed }),
+      body: JSON.stringify({ capabilities }),
     })
     const result = await response.json()
+
+    setSubmitting(false)
 
     if (!response.ok) {
       setError(result.error ?? 'Something went wrong.')
       return
     }
 
-    // The server declines to apply the change until it's confirmed, since
-    // this role's capabilities act as a template that cascades down to every
-    // employee currently assigned it -- overwriting their individually-tuned
-    // permissions is a real, hard-to-notice side effect otherwise.
-    if (result.needsConfirmation) {
-      const proceed = window.confirm(
-        `This role is assigned to ${result.affectedCount} employee${result.affectedCount === 1 ? '' : 's'}. Saving will overwrite their individual permissions with these new settings. Continue?`
-      )
-      if (proceed) {
-        await submit(true)
-      }
-      return
-    }
-
     router.refresh()
-  }
-
-  async function handleSubmit(event: React.FormEvent) {
-    event.preventDefault()
-    setError(null)
-    setSubmitting(true)
-    await submit(false)
-    setSubmitting(false)
   }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4 rounded border border-border p-4">
+      <p className="text-xs text-muted-foreground">
+        This employee&apos;s own permissions. Assigning a role above resets these to that role&apos;s (combined)
+        settings -- editing them here overrides that until their roles change again.
+      </p>
       {CAPABILITY_GROUPS.map((group) => (
         <fieldset key={group.label} className="flex flex-col gap-2">
           <legend className="px-1 text-sm font-medium">{group.label}</legend>
@@ -84,7 +72,7 @@ export function EmployeeRoleCapabilitiesForm({
         disabled={submitting}
         className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
       >
-        {submitting ? 'Saving…' : 'Save capabilities'}
+        {submitting ? 'Saving…' : 'Save permissions'}
       </button>
     </form>
   )

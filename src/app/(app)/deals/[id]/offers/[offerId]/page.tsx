@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 
 import { filterContactsByType } from '@/lib/contacts/by-type'
+import { requirePermission } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
 import { OfferForm } from '../../../offer-form'
@@ -11,6 +12,17 @@ export default async function EditOfferPage({
   params: Promise<{ id: string; offerId: string }>
 }) {
   const { id: dealId, offerId } = await params
+
+  const profile = await requirePermission('edit_deal_detail')
+  if (!profile) {
+    return (
+      <div>
+        <h1 className="text-xl font-semibold">Offer</h1>
+        <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to edit this deal.</p>
+      </div>
+    )
+  }
+
   const supabase = await createClient()
 
   const [{ data: offer }, { data: offerStatuses }, { data: purchaseTypes }, { data: contacts }] =

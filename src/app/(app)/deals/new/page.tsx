@@ -1,9 +1,20 @@
 import { filterContactsByType } from '@/lib/contacts/by-type'
+import { requirePermission } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
 import { DealForm } from '../deal-form'
 
 export default async function NewDealPage() {
+  const profile = await requirePermission('edit_deal_detail')
+  if (!profile) {
+    return (
+      <div>
+        <h1 className="text-xl font-semibold">New deal</h1>
+        <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to create deals.</p>
+      </div>
+    )
+  }
+
   const supabase = await createClient()
   const [
     { data: markets },

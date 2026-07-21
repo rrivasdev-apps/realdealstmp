@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 
 import { syncCommissionPaymentsForDeal } from '@/lib/deals/commissions'
 import { buildCustomFieldsForSave } from '@/lib/deals/custom-fields'
-import { requireProfile } from '@/lib/supabase/auth'
+import { requirePermission } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
 // Explicit whitelist -- deliberately excludes original_contract_price,
@@ -14,7 +14,7 @@ import { createClient } from '@/lib/supabase/server'
 // so it's safe to pass through here unconditionally too.
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const profile = await requireProfile()
+  const profile = await requirePermission('edit_deal_detail')
   if (!profile || !profile.company_id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }

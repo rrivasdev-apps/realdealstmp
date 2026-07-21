@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 
-import { requireProfile } from '@/lib/supabase/auth'
+import { requirePermission } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
 type PhoneInput = { type_id: string; phone: string }
@@ -8,7 +8,7 @@ type EmailInput = { type_id: string; email: string }
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const profile = await requireProfile()
+  const profile = await requirePermission('edit_contacts')
   if (!profile || !profile.company_id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }

@@ -9,7 +9,7 @@ import { PayrollPaymentForm } from './payroll-payment-form'
 const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
 
 export default async function PayrollPage() {
-  const profile = await requirePermission('can_manage_team')
+  const profile = await requirePermission('can_manage_payroll')
 
   if (!profile || !profile.company_id) {
     return (

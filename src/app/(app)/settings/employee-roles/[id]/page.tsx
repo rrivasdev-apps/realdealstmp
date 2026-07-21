@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server'
 
 import { EmployeeRoleCapabilitiesForm } from '../employee-role-capabilities-form'
 import { EmployeeRoleCommissionForm } from '../employee-role-commission-form'
+import { EmployeeRoleContactTypesForm } from '../employee-role-contact-types-form'
 
 export default async function EmployeeRolePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -20,14 +21,24 @@ export default async function EmployeeRolePage({ params }: { params: Promise<{ i
   }
 
   const supabase = await createClient()
-  const [{ data: employeeRole }, { data: commissionTypes }, { data: assignments }] = await Promise.all([
+  const [
+    { data: employeeRole },
+    { data: commissionTypes },
+    { data: assignments },
+    { data: contactTypes },
+    { data: contactTypeAssignments },
+  ] = await Promise.all([
     supabase
       .from('employee_roles')
-      .select('id, name, can_manage_team, can_manage_settings, can_view_financials')
+      .select(
+        'id, name, can_manage_team, can_manage_settings, can_view_financials, can_manage_payroll, view_whiteboard, view_deal_detail, edit_deal_detail, view_contacts, edit_contacts'
+      )
       .eq('id', id)
       .single(),
     supabase.from('commission_types').select('id, name').order('name'),
     supabase.from('employee_role_commission_types').select('commission_type_id').eq('employee_role_id', id),
+    supabase.from('contact_types').select('id, name').order('name'),
+    supabase.from('employee_role_contact_types').select('contact_type_id').eq('employee_role_id', id),
   ])
 
   if (!employeeRole) {
@@ -48,6 +59,12 @@ export default async function EmployeeRolePage({ params }: { params: Promise<{ i
             can_manage_team: employeeRole.can_manage_team,
             can_manage_settings: employeeRole.can_manage_settings,
             can_view_financials: employeeRole.can_view_financials,
+            can_manage_payroll: employeeRole.can_manage_payroll,
+            view_whiteboard: employeeRole.view_whiteboard,
+            view_deal_detail: employeeRole.view_deal_detail,
+            edit_deal_detail: employeeRole.edit_deal_detail,
+            view_contacts: employeeRole.view_contacts,
+            edit_contacts: employeeRole.edit_contacts,
           }}
         />
       </div>
@@ -57,6 +74,14 @@ export default async function EmployeeRolePage({ params }: { params: Promise<{ i
           employeeRoleId={employeeRole.id}
           initialCommissionTypeIds={(assignments ?? []).map((row) => row.commission_type_id)}
           commissionTypes={commissionTypes ?? []}
+        />
+      </div>
+
+      <div className="mt-6">
+        <EmployeeRoleContactTypesForm
+          employeeRoleId={employeeRole.id}
+          initialContactTypeIds={(contactTypeAssignments ?? []).map((row) => row.contact_type_id)}
+          contactTypes={contactTypes ?? []}
         />
       </div>
     </div>

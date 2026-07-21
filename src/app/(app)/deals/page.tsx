@@ -2,6 +2,7 @@ import Link from 'next/link'
 
 import { calculateProfit } from '@/lib/deals/profit'
 import { statusColors } from '@/lib/deals/status-colors'
+import { requirePermission } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
 const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
@@ -99,6 +100,16 @@ export default async function DealsPage({
 }) {
   const { status } = await searchParams
   const activeFilter: FilterKey = status && status in SECTION_LABELS ? (status as FilterKey) : 'all'
+
+  const profile = await requirePermission('view_whiteboard')
+  if (!profile) {
+    return (
+      <div>
+        <h1 className="text-xl font-semibold">Whiteboard</h1>
+        <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to view the whiteboard.</p>
+      </div>
+    )
+  }
 
   const supabase = await createClient()
   const { data } = await supabase

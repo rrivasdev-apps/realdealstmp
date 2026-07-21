@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 
 import { applyAcceptedOfferToDeal } from '@/lib/deals/offers'
-import { requireProfile } from '@/lib/supabase/auth'
+import { requirePermission } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
 export async function PATCH(
@@ -9,7 +9,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string; offerId: string }> }
 ) {
   const { id: dealId, offerId } = await params
-  const profile = await requireProfile()
+  const profile = await requirePermission('edit_deal_detail')
   if (!profile || !profile.company_id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }

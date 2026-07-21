@@ -44,7 +44,10 @@ const SETTINGS_GROUPS: { label: string; sections: { id: string; label: string }[
   },
   {
     label: 'Employees',
-    sections: [{ id: 'employee-roles', label: 'Employee Roles' }],
+    sections: [
+      { id: 'employee-roles', label: 'Employee Roles' },
+      { id: 'pay-periods', label: 'Pay Periods' },
+    ],
   },
   {
     label: 'Contact Hub',

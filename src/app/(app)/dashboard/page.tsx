@@ -42,7 +42,7 @@ export default async function DashboardPage() {
   // anyone with the can_view_financials capability see everything.
   // deal_employees is company-wide readable, so this filter is applied in
   // JS the same way status filtering already is on /deals.
-  if (profile.role !== 'admin' && !profile.employee_role?.can_view_financials) {
+  if (profile.role !== 'admin' && !profile.permissions?.can_view_financials) {
     const { data: assignments } = await supabase
       .from('deal_employees')
       .select('deal_id')

@@ -1,8 +1,19 @@
 import Link from 'next/link'
 
+import { requirePermission } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
 export default async function ContactsPage() {
+  const profile = await requirePermission('view_contacts')
+  if (!profile) {
+    return (
+      <div>
+        <h1 className="text-xl font-semibold">Contacts</h1>
+        <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to view contacts.</p>
+      </div>
+    )
+  }
+
   const supabase = await createClient()
   const { data: contacts } = await supabase
     .from('contacts')

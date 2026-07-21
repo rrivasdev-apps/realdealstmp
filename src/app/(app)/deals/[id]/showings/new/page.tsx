@@ -1,10 +1,22 @@
 import { filterContactsByType } from '@/lib/contacts/by-type'
+import { requirePermission } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
 import { ShowingForm } from '../../../showing-form'
 
 export default async function NewShowingPage({ params }: { params: Promise<{ id: string }> }) {
   const { id: dealId } = await params
+
+  const profile = await requirePermission('edit_deal_detail')
+  if (!profile) {
+    return (
+      <div>
+        <h1 className="text-xl font-semibold">New showing</h1>
+        <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to edit this deal.</p>
+      </div>
+    )
+  }
+
   const supabase = await createClient()
 
   const [{ data: showingStatuses }, { data: contacts }] = await Promise.all([

@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server'
 
-import { requireProfile } from '@/lib/supabase/auth'
+import { requirePermission } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id: dealId } = await params
-  const profile = await requireProfile()
+  const profile = await requirePermission('edit_deal_detail')
   if (!profile || !profile.company_id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }

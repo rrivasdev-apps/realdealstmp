@@ -53,6 +53,7 @@ export default async function SettingsPage() {
     { data: dealTypes },
     { data: leadSources },
     { data: customFieldDefinitions },
+    { data: payPeriods },
   ] = await Promise.all([
     supabase.from('employee_roles').select('id, name').order('name'),
     supabase
@@ -67,6 +68,7 @@ export default async function SettingsPage() {
     supabase.from('deal_types').select('id, name').order('name'),
     supabase.from('lead_sources').select('id, name').order('name'),
     supabase.from('custom_field_definitions').select('id, name, field_type, options').order('name'),
+    supabase.from('pay_periods').select('id, name').order('name'),
   ])
 
   return (
@@ -282,6 +284,24 @@ export default async function SettingsPage() {
             {employeeRoles?.length === 0 && (
               <li className="py-2 text-sm text-muted-foreground">No employee roles yet.</li>
             )}
+          </ul>
+        </SettingsSection>
+
+        <SettingsSection id="pay-periods" title="Pay Periods">
+          <p className="text-sm text-muted-foreground">
+            Pay schedule labels (e.g. Weekly Salary, Monthly Commissions) an employee can be tagged with — more
+            than one can apply to the same employee.
+          </p>
+          <div className="max-w-md">
+            <SimpleListForm endpoint="/api/pay-periods" placeholder="e.g. Weekly Salary" />
+          </div>
+          <ul className="max-w-md divide-y divide-border">
+            {payPeriods?.map((payPeriod) => (
+              <li key={payPeriod.id} className="py-2 text-sm">
+                {payPeriod.name}
+              </li>
+            ))}
+            {payPeriods?.length === 0 && <li className="py-2 text-sm text-muted-foreground">No pay periods yet.</li>}
           </ul>
         </SettingsSection>
       </div>

@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/server'
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const admin = await requirePermission('can_manage_team')
+  const admin = await requirePermission('can_manage_payroll')
   if (!admin || !admin.company_id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }

@@ -9,7 +9,7 @@ import { createClient } from '@/lib/supabase/server'
 // won't update, no extra guard needed here.
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const admin = await requirePermission('can_manage_team')
+  const admin = await requirePermission('can_manage_payroll')
   if (!admin || !admin.company_id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }

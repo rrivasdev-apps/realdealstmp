@@ -10,15 +10,19 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     redirect('/login')
   }
 
-  const canManageTeam = profile.role === 'admin' || profile.employee_role?.can_manage_team
-  const canManageSettings = profile.role === 'admin' || profile.employee_role?.can_manage_settings
+  const canManageTeam = profile.role === 'admin' || profile.permissions?.can_manage_team
+  const canManageSettings = profile.role === 'admin' || profile.permissions?.can_manage_settings
+  const canManagePayroll = profile.role === 'admin' || profile.permissions?.can_manage_payroll
+  const canViewWhiteboard = profile.role === 'admin' || profile.permissions?.view_whiteboard
+  const canViewContacts = profile.role === 'admin' || profile.permissions?.view_contacts
 
   const navItems = [
     { href: '/dashboard', label: 'Dashboard' },
-    { href: '/deals', label: 'Whiteboard' },
-    { href: '/contacts', label: 'Contact Hub' },
+    ...(canViewWhiteboard ? [{ href: '/deals', label: 'Whiteboard' }] : []),
+    ...(canViewContacts ? [{ href: '/contacts', label: 'Contact Hub' }] : []),
     { href: '/investor-llcs', label: 'Investor LLCs' },
-    ...(canManageTeam ? [{ href: '/team', label: 'Team' }, { href: '/payroll', label: 'Payroll' }] : []),
+    ...(canManageTeam ? [{ href: '/team', label: 'Team' }] : []),
+    ...(canManagePayroll ? [{ href: '/payroll', label: 'Payroll' }] : []),
     ...(canManageSettings ? [{ href: '/settings', label: 'Settings' }] : []),
   ]
 

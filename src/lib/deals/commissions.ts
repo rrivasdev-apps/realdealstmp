@@ -65,15 +65,15 @@ export function calculateCommissionAmount(commissionType: CommissionValues, deal
 }
 
 // Called when an employee is added to a deal: creates one payment row per
-// commission type that applies to them (direct assignment + their
-// employee_role's assignment -- both apply and stack, per Rafael).
+// commission type that applies to them (direct assignment + every
+// employee_role they hold's assignment -- all apply and stack, per Rafael).
 export async function createCommissionPaymentsForDealEmployee(
   supabase: SupabaseClient<Database>,
   params: { companyId: string; dealId: string; profileId: string }
 ) {
   const { companyId, dealId, profileId } = params
 
-  const [{ data: deal }, { data: profile }] = await Promise.all([
+  const [{ data: deal }, { data: roleAssignments }] = await Promise.all([
     supabase
       .from('deals')
       .select(
@@ -81,20 +81,19 @@ export async function createCommissionPaymentsForDealEmployee(
       )
       .eq('id', dealId)
       .single(),
-    supabase.from('profiles').select('employee_role_id').eq('id', profileId).single(),
+    supabase.from('profile_employee_roles').select('employee_role_id').eq('profile_id', profileId),
   ])
 
   if (!deal) {
     return
   }
 
+  const roleIds = (roleAssignments ?? []).map((row) => row.employee_role_id)
+
   const [{ data: direct }, { data: viaRole }] = await Promise.all([
     supabase.from('profile_commission_types').select('commission_types(*)').eq('profile_id', profileId),
-    profile?.employee_role_id
-      ? supabase
-          .from('employee_role_commission_types')
-          .select('commission_types(*)')
-          .eq('employee_role_id', profile.employee_role_id)
+    roleIds.length
+      ? supabase.from('employee_role_commission_types').select('commission_types(*)').in('employee_role_id', roleIds)
       : Promise.resolve({ data: [] }),
   ])
 

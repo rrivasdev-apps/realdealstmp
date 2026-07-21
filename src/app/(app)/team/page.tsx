@@ -8,7 +8,7 @@ import { InviteForm } from './invite-form'
 export default async function TeamPage() {
   const profile = await requirePermission('can_manage_team')
 
-  if (!profile) {
+  if (!profile || !profile.company_id) {
     return (
       <div>
         <h1 className="text-xl font-semibold">Team</h1>
@@ -20,14 +20,24 @@ export default async function TeamPage() {
   }
 
   const supabase = await createClient()
-  const { data: members } = await supabase
-    .from('profiles')
-    .select('id, name, email, role, employee_roles(name)')
-    .order('name')
+  const [{ data: members }, { data: company }] = await Promise.all([
+    supabase
+      .from('profiles')
+      .select('id, name, email, role, profile_employee_roles(employee_roles(name))')
+      .order('name'),
+    supabase.from('companies').select('subscription_tier').eq('id', profile.company_id).single(),
+  ])
+
+  const hasEmployeeCenter = company?.subscription_tier === 'employee_center'
 
   return (
     <div>
-      <h1 className="text-xl font-semibold">Team</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-semibold">Team</h1>
+        <span className="text-sm text-muted-foreground">
+          Employee Center plan: {hasEmployeeCenter ? 'Yes' : 'No'}
+        </span>
+      </div>
 
       <div className="mt-6">
         <InviteForm />
@@ -41,11 +51,16 @@ export default async function TeamPage() {
                 {member.name}
               </Link>
               <div className="text-muted-foreground">
-                {[member.email, member.employee_roles?.name].filter(Boolean).join(' · ')}
+                {[
+                  member.email,
+                  member.profile_employee_roles.map((assignment) => assignment.employee_roles?.name).filter(Boolean).join(', '),
+                ]
+                  .filter(Boolean)
+                  .join(' · ')}
               </div>
             </div>
             <span className="rounded-full bg-muted px-2 py-1 text-xs font-medium">
-              {member.role}
+              {member.role === 'admin' ? 'Company Admin' : 'Standard'}
             </span>
           </li>
         ))}

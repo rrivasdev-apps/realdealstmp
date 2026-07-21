@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 
 import { DealSection } from '@/components/deal-section'
 import { filterContactsByType } from '@/lib/contacts/by-type'
+import { requirePermission } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
 import { DealEmployeeForm } from '../deal-employee-form'
@@ -12,6 +13,17 @@ const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: '
 
 export default async function EditDealPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
+
+  const profile = await requirePermission('view_deal_detail')
+  if (!profile) {
+    return (
+      <div>
+        <h1 className="text-xl font-semibold">Deal</h1>
+        <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to view this deal.</p>
+      </div>
+    )
+  }
+
   const supabase = await createClient()
 
   const [

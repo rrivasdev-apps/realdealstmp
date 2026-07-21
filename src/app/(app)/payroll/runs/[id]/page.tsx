@@ -7,7 +7,7 @@ import { RunEntriesForm } from '../run-entries-form'
 
 export default async function PayrollRunPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const profile = await requirePermission('can_manage_team')
+  const profile = await requirePermission('can_manage_payroll')
 
   if (!profile) {
     return (

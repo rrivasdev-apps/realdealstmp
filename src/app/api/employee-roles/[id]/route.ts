@@ -1,7 +1,11 @@
 import { NextResponse } from 'next/server'
 
+import { CAPABILITY_GROUPS, type Capabilities } from '@/lib/employee-permissions/labels'
+import { recomputeProfilePermissions } from '@/lib/employee-permissions/recompute'
 import { requireAdmin } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
+
+const CAPABILITY_KEYS = CAPABILITY_GROUPS.flatMap((group) => group.keys)
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -23,18 +27,32 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   // and the commission-types form each submit only their own field, so
   // either can be updated without touching the other.
   if (body.capabilities && typeof body.capabilities === 'object') {
-    const { can_manage_team, can_manage_settings, can_view_financials } = body.capabilities
-    const { error: capabilitiesError } = await supabase
-      .from('employee_roles')
-      .update({
-        can_manage_team: Boolean(can_manage_team),
-        can_manage_settings: Boolean(can_manage_settings),
-        can_view_financials: Boolean(can_view_financials),
-      })
-      .eq('id', id)
+    const { data: memberRows } = await supabase
+      .from('profile_employee_roles')
+      .select('profile_id')
+      .eq('employee_role_id', id)
+    const memberIds = (memberRows ?? []).map((row) => row.profile_id)
+
+    // A role's capabilities are a template: changing them cascades down to
+    // every employee currently assigned this role, overwriting their
+    // individual permission snapshot (see profile_permissions/
+    // recomputeProfilePermissions). Require the client to explicitly
+    // confirm that before it happens, rather than silently overwriting
+    // employees' individually-tuned permissions.
+    if (memberIds.length > 0 && body.confirmed !== true) {
+      return NextResponse.json({ needsConfirmation: true, affectedCount: memberIds.length })
+    }
+
+    const capabilitiesUpdate = {} as Capabilities
+    for (const key of CAPABILITY_KEYS) {
+      capabilitiesUpdate[key] = Boolean(body.capabilities[key])
+    }
+    const { error: capabilitiesError } = await supabase.from('employee_roles').update(capabilitiesUpdate).eq('id', id)
     if (capabilitiesError) {
       return NextResponse.json({ error: capabilitiesError.message }, { status: 400 })
     }
+
+    await Promise.all(memberIds.map((profileId) => recomputeProfilePermissions(profileId)))
   }
 
   if (Array.isArray(body.commission_type_ids)) {
@@ -63,6 +81,36 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       const { error: insertError } = await supabase
         .from('employee_role_commission_types')
         .insert(validIds.map((commission_type_id) => ({ employee_role_id: id, commission_type_id })))
+      if (insertError) {
+        return NextResponse.json({ error: insertError.message }, { status: 400 })
+      }
+    }
+  }
+
+  if (Array.isArray(body.contact_type_ids)) {
+    const contactTypeIds: string[] = body.contact_type_ids
+
+    // contact_types is a global lookup, not company-scoped -- just confirm
+    // the submitted ids are real rows, no company filter needed.
+    const { data: validTypes } = await supabase
+      .from('contact_types')
+      .select('id')
+      .in('id', contactTypeIds.length ? contactTypeIds : ['00000000-0000-0000-0000-000000000000'])
+
+    const validIds = (validTypes ?? []).map((row) => row.id)
+
+    const { error: deleteError } = await supabase
+      .from('employee_role_contact_types')
+      .delete()
+      .eq('employee_role_id', id)
+    if (deleteError) {
+      return NextResponse.json({ error: deleteError.message }, { status: 400 })
+    }
+
+    if (validIds.length) {
+      const { error: insertError } = await supabase
+        .from('employee_role_contact_types')
+        .insert(validIds.map((contact_type_id) => ({ employee_role_id: id, contact_type_id })))
       if (insertError) {
         return NextResponse.json({ error: insertError.message }, { status: 400 })
       }
