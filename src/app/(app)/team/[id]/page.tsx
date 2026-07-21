@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 
 import type { Capabilities } from '@/lib/employee-permissions/labels'
-import { requirePermission } from '@/lib/supabase/auth'
+import { requireTeamAccess } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
 import { EmployeeForm } from '../employee-form'
@@ -21,7 +21,7 @@ const DEFAULT_CAPABILITIES: Capabilities = {
 
 export default async function TeamMemberPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const profile = await requirePermission('can_manage_team')
+  const profile = await requireTeamAccess()
 
   if (!profile) {
     return (

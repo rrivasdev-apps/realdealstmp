@@ -5,8 +5,8 @@ import { useState } from 'react'
 
 type LookupOption = { id: string; name: string }
 
-// Which ContactHub contact types this role's members can see. Schema/UI
-// only for now -- doesn't yet filter Contact Hub itself (see the migration
+// Which Contact Center contact types this role's members can see. Schema/UI
+// only for now -- doesn't yet filter Contact Center itself (see the migration
 // comment on employee_role_contact_types).
 export function EmployeeRoleContactTypesForm({
   employeeRoleId,
@@ -51,7 +51,7 @@ export function EmployeeRoleContactTypesForm({
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3 rounded border border-border p-4">
       <fieldset className="flex flex-col gap-2">
-        <legend className="px-1 text-sm font-medium">Contact Hub visibility</legend>
+        <legend className="px-1 text-sm font-medium">Contact Center visibility</legend>
         {contactTypes.map((option) => (
           <label key={option.id} className="flex items-center gap-1.5 text-sm">
             <input type="checkbox" checked={contactTypeIds.includes(option.id)} onChange={() => toggle(option.id)} />

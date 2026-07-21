@@ -8,7 +8,7 @@ export default async function InvestorLlcsPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-semibold">Investor LLCs</h1>
+      <h1 className="text-xl font-semibold">Company LLCs</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         JV partner companies available to pick from a deal&apos;s JV Deal section.
       </p>
@@ -24,7 +24,7 @@ export default async function InvestorLlcsPage() {
           </li>
         ))}
         {investorLlcs?.length === 0 && (
-          <li className="py-3 text-sm text-muted-foreground">No investor LLCs yet.</li>
+          <li className="py-3 text-sm text-muted-foreground">No company LLCs yet.</li>
         )}
       </ul>
     </div>

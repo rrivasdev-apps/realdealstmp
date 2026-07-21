@@ -97,3 +97,27 @@ export async function requirePermission(permission: Permission): Promise<Profile
   }
   return null
 }
+
+// Requires ALL listed permissions (admin always bypasses) -- prefer a named
+// wrapper like requireTeamAccess below at call sites, so the reason for
+// requiring more than one flag is documented once, not re-explained at
+// every call site.
+export async function requirePermissions(permissions: Permission[]): Promise<Profile | null> {
+  const profile = await requireProfile()
+  if (!profile) {
+    return null
+  }
+  if (profile.role === 'admin' || permissions.every((permission) => profile.permissions?.[permission])) {
+    return profile
+  }
+  return null
+}
+
+// Team management now lives inside the Settings nav (Settings > Employee
+// Center > Team) instead of being its own top-level item, per Rafael --
+// specifically so reaching it requires the same access as Settings itself.
+// Requires both can_manage_team (the underlying action) and
+// can_manage_settings (matches where it now lives in the nav).
+export async function requireTeamAccess(): Promise<Profile | null> {
+  return requirePermissions(['can_manage_team', 'can_manage_settings'])
+}

@@ -29,7 +29,7 @@ export const CAPABILITY_LABELS: Record<keyof Capabilities, string> = {
   view_whiteboard: 'View the deal whiteboard',
   view_deal_detail: 'View a deal’s detail page',
   edit_deal_detail: 'Edit a deal (including offers, showings, checklist, employees)',
-  view_contacts: 'View Contact Hub',
+  view_contacts: 'View Contact Center',
   edit_contacts: 'Create/edit contacts',
   can_manage_settings: 'Manage settings (lookups, commission types)',
   can_manage_team: 'Manage team (invite, edit roles, pay rates)',

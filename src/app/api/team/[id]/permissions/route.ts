@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 
 import { CAPABILITY_GROUPS, type Capabilities } from '@/lib/employee-permissions/labels'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { requirePermission } from '@/lib/supabase/auth'
+import { requireTeamAccess } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
 const CAPABILITY_KEYS = CAPABILITY_GROUPS.flatMap((group) => group.keys)
@@ -16,7 +16,7 @@ const CAPABILITY_KEYS = CAPABILITY_GROUPS.flatMap((group) => group.keys)
 // re-cascades a role template onto them.
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const admin = await requirePermission('can_manage_team')
+  const admin = await requireTeamAccess()
   if (!admin || !admin.company_id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }

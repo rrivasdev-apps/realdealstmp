@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server'
 
 import { createAdminClient } from '@/lib/supabase/admin'
-import { requirePermission } from '@/lib/supabase/auth'
+import { requireTeamAccess } from '@/lib/supabase/auth'
 
 export async function POST(request: Request) {
-  const admin = await requirePermission('can_manage_team')
+  const admin = await requireTeamAccess()
   if (!admin || !admin.company_id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }

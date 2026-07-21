@@ -24,10 +24,22 @@ const DEAL_SECTIONS = [
   { id: 'employees', label: 'Employees' },
 ]
 
+// Contact Center's sub-menu -- unlike DEAL_SECTIONS/SETTINGS_GROUPS these are
+// real routes (two separate pages), not hash-anchored sections of one page,
+// so they render as plain <Link>s highlighted by pathname instead of by hash.
+const CONTACT_HUB_LINKS = [
+  { href: '/contacts', label: 'Contacts' },
+  { href: '/investor-llcs', label: 'Company LLCs' },
+]
+
 // Ids/order must match the SettingsSection ids used in settings/page.tsx --
 // same hash-driven show/hide mechanism as DEAL_SECTIONS above, one level
-// deeper (Settings -> group -> section).
-const SETTINGS_GROUPS: { label: string; sections: { id: string; label: string }[] }[] = [
+// deeper (Settings -> group -> section). A section with an `href` is a real
+// route (rendered as a <Link>, matched by pathname) instead of a hash-anchor
+// within /settings -- Team is the one example, since /team is its own page,
+// not a SettingsSection. Its `id` still has to exist here so
+// settingsGroupForSection('team') resolves to the right group.
+const SETTINGS_GROUPS: { label: string; sections: { id: string; label: string; href?: string }[] }[] = [
   {
     label: 'Deal',
     sections: [
@@ -43,14 +55,15 @@ const SETTINGS_GROUPS: { label: string; sections: { id: string; label: string }[
     ],
   },
   {
-    label: 'Employees',
+    label: 'Employee Center',
     sections: [
+      { id: 'team', label: 'Team', href: '/team' },
       { id: 'employee-roles', label: 'Employee Roles' },
       { id: 'pay-periods', label: 'Pay Periods' },
     ],
   },
   {
-    label: 'Contact Hub',
+    label: 'Contact Center',
     sections: [],
   },
 ]
@@ -62,25 +75,37 @@ function settingsGroupForSection(sectionId: string): string {
 
 export function Sidebar({
   navItems,
+  canManageTeam,
   userName,
   userRole,
 }: {
   navItems: NavItem[]
+  canManageTeam: boolean
   userName: string
   userRole: string
 }) {
   const pathname = usePathname()
   const isDealDetail = /^\/deals\/(?!new$)[^/]+$/.test(pathname)
+  const isContactHub = pathname === '/contacts' || pathname.startsWith('/contacts/') || pathname === '/investor-llcs' || pathname.startsWith('/investor-llcs/')
   // Broader than just the exact /settings page -- sub-pages like an
   // employee role's detail page (/settings/employee-roles/[id]) still need
   // the same nested Settings sub-nav visible, just without hash-driven
   // section switching (that page isn't hash-sectioned).
   const isSettings = pathname === '/settings' || pathname.startsWith('/settings/')
+  // Team lives inside the Settings sub-nav now (Employee Center group) even
+  // though /team isn't itself under /settings -- treated as a Settings
+  // sub-page for sidebar purposes, same as employee-roles/[id] above.
+  const isTeam = pathname === '/team' || pathname.startsWith('/team/')
+  const visibleSettingsGroups = SETTINGS_GROUPS.map((group) =>
+    group.label === 'Employee Center'
+      ? { ...group, sections: group.sections.filter((section) => section.id !== 'team' || canManageTeam) }
+      : group
+  )
   const [activeSection, setActiveSection] = useState(DEFAULT_DEAL_SECTION)
   const [activeSettingsSection, setActiveSettingsSection] = useState(DEFAULT_SETTINGS_SECTION)
   // Which group's sub-tabs are expanded -- normally follows activeSettingsSection
   // (whichever group owns it), but clicking a group label directly (e.g. an
-  // empty group like Contact Hub with nothing to navigate to) overrides it
+  // empty group like Contact Center with nothing to navigate to) overrides it
   // without touching the hash.
   const [expandedSettingsGroup, setExpandedSettingsGroup] = useState(() =>
     settingsGroupForSection(DEFAULT_SETTINGS_SECTION),
@@ -132,12 +157,13 @@ export function Sidebar({
     return () => window.removeEventListener('hashchange', sync)
   }, [isSettings, pathname])
 
-  // Sub-pages (e.g. an employee role's detail page) aren't hash-sectioned --
-  // derive the active section straight from the pathname at render time
-  // instead of syncing it into state, so the sub-nav still highlights/
-  // expands the right group there instead of just vanishing.
-  const settingsSubpageSection =
-    isSettings && pathname !== '/settings'
+  // Sub-pages (e.g. an employee role's detail page, or /team) aren't
+  // hash-sectioned -- derive the active section straight from the pathname
+  // at render time instead of syncing it into state, so the sub-nav still
+  // highlights/expands the right group there instead of just vanishing.
+  const settingsSubpageSection = isTeam
+    ? 'team'
+    : isSettings && pathname !== '/settings'
       ? pathname.startsWith('/settings/employee-roles')
         ? 'employee-roles'
         : DEFAULT_SETTINGS_SECTION
@@ -231,9 +257,30 @@ export function Sidebar({
                 </div>
               )}
 
-              {item.href === '/settings' && isSettings && (
+              {item.href === '/contacts' && isContactHub && (
                 <div className="ml-3 mt-1 flex flex-col gap-0.5 border-l border-white/10 pl-3">
-                  {SETTINGS_GROUPS.map((group) => {
+                  {CONTACT_HUB_LINKS.map((link) => {
+                    const linkActive = pathname === link.href || pathname.startsWith(`${link.href}/`)
+                    return (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        className={`rounded-md px-3 py-1.5 text-sm transition-colors ${
+                          linkActive
+                            ? 'bg-sidebar-active text-white'
+                            : 'text-sidebar-muted hover:bg-sidebar-hover hover:text-sidebar-foreground'
+                        }`}
+                      >
+                        {link.label}
+                      </Link>
+                    )
+                  })}
+                </div>
+              )}
+
+              {item.href === '/settings' && (isSettings || isTeam) && (
+                <div className="ml-3 mt-1 flex flex-col gap-0.5 border-l border-white/10 pl-3">
+                  {visibleSettingsGroups.map((group) => {
                     const groupExpanded = effectiveExpandedSettingsGroup === group.label
                     return (
                       <div key={group.label}>
@@ -250,19 +297,27 @@ export function Sidebar({
                         </button>
                         {groupExpanded && (
                           <div className="ml-3 flex flex-col gap-0.5 border-l border-white/10 pl-3">
-                            {group.sections.map((section) => (
-                              <a
-                                key={section.id}
-                                href={pathname === '/settings' ? `#${section.id}` : `/settings#${section.id}`}
-                                className={`rounded-md px-3 py-1.5 text-sm transition-colors ${
-                                  effectiveSettingsSection === section.id
-                                    ? 'bg-sidebar-active text-white'
-                                    : 'text-sidebar-muted hover:bg-sidebar-hover hover:text-sidebar-foreground'
-                                }`}
-                              >
-                                {section.label}
-                              </a>
-                            ))}
+                            {group.sections.map((section) => {
+                              const sectionActive = effectiveSettingsSection === section.id
+                              const linkClassName = `rounded-md px-3 py-1.5 text-sm transition-colors ${
+                                sectionActive
+                                  ? 'bg-sidebar-active text-white'
+                                  : 'text-sidebar-muted hover:bg-sidebar-hover hover:text-sidebar-foreground'
+                              }`
+                              return section.href ? (
+                                <Link key={section.id} href={section.href} className={linkClassName}>
+                                  {section.label}
+                                </Link>
+                              ) : (
+                                <a
+                                  key={section.id}
+                                  href={pathname === '/settings' ? `#${section.id}` : `/settings#${section.id}`}
+                                  className={linkClassName}
+                                >
+                                  {section.label}
+                                </a>
+                              )
+                            })}
                             {group.sections.length === 0 && (
                               <div className="px-3 py-1.5 text-sm text-sidebar-muted/70">No options yet</div>
                             )}

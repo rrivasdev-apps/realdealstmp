@@ -1,12 +1,12 @@
 import Link from 'next/link'
 
-import { requirePermission } from '@/lib/supabase/auth'
+import { requireTeamAccess } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
 import { InviteForm } from './invite-form'
 
 export default async function TeamPage() {
-  const profile = await requirePermission('can_manage_team')
+  const profile = await requireTeamAccess()
 
   if (!profile || !profile.company_id) {
     return (
