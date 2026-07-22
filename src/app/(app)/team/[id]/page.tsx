@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/server'
 
 import { EmployeeForm } from '../employee-form'
 import { EmployeePermissionsForm } from '../employee-permissions-form'
+import { EmployeeRoleForm } from '../employee-role-form'
 
 const DEFAULT_CAPABILITIES: Capabilities = {
   view_whiteboard: false,
@@ -46,7 +47,7 @@ export default async function TeamMemberPage({ params }: { params: Promise<{ id:
     supabase
       .from('profiles')
       .select(
-        'id, name, email, pay_type, pay_rate, employee_type, hire_date, birth_date, address, paid_via, automatic_emails'
+        'id, name, email, role, pay_type, pay_rate, employee_type, hire_date, birth_date, address, paid_via, automatic_emails'
       )
       .eq('id', id)
       .single(),
@@ -73,6 +74,12 @@ export default async function TeamMemberPage({ params }: { params: Promise<{ id:
     <div>
       <h1 className="text-xl font-semibold">{member.name}</h1>
       <p className="mt-1 text-sm text-muted-foreground">{member.email}</p>
+
+      {profile.role === 'admin' && (
+        <div className="mt-6">
+          <EmployeeRoleForm profileId={member.id} initialRole={member.role as 'admin' | 'member'} />
+        </div>
+      )}
 
       <div className="mt-6">
         <EmployeeForm
