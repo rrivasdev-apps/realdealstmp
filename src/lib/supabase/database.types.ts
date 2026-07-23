@@ -188,6 +188,21 @@ export type Database = {
         }
         Relationships: []
       }
+      company_types: {
+        Row: {
+          id: string
+          name: string
+        }
+        Insert: {
+          id?: string
+          name: string
+        }
+        Update: {
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       contact_contact_types: {
         Row: {
           contact_id: string
@@ -860,7 +875,7 @@ export type Database = {
             foreignKeyName: "deals_jv_partner_company_id_fkey"
             columns: ["jv_partner_company_id"]
             isOneToOne: false
-            referencedRelation: "investor_llcs"
+            referencedRelation: "partner_companies"
             referencedColumns: ["id"]
           },
           {
@@ -1052,35 +1067,6 @@ export type Database = {
           },
         ]
       }
-      investor_llcs: {
-        Row: {
-          company_id: string
-          created_at: string
-          id: string
-          name: string
-        }
-        Insert: {
-          company_id: string
-          created_at?: string
-          id?: string
-          name: string
-        }
-        Update: {
-          company_id?: string
-          created_at?: string
-          id?: string
-          name?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "investor_llcs_company_id_fkey"
-            columns: ["company_id"]
-            isOneToOne: false
-            referencedRelation: "companies"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       lead_sources: {
         Row: {
           company_id: string
@@ -1260,6 +1246,74 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      partner_companies: {
+        Row: {
+          address: string | null
+          company_id: string
+          created_at: string
+          email: string | null
+          id: string
+          name: string
+          phone: string | null
+        }
+        Insert: {
+          address?: string | null
+          company_id: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          name: string
+          phone?: string | null
+        }
+        Update: {
+          address?: string | null
+          company_id?: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string
+          phone?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "partner_companies_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      partner_company_types: {
+        Row: {
+          company_type_id: string
+          partner_company_id: string
+        }
+        Insert: {
+          company_type_id: string
+          partner_company_id: string
+        }
+        Update: {
+          company_type_id?: string
+          partner_company_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "partner_company_types_company_type_id_fkey"
+            columns: ["company_type_id"]
+            isOneToOne: false
+            referencedRelation: "company_types"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "partner_company_types_partner_company_id_fkey"
+            columns: ["partner_company_id"]
+            isOneToOne: false
+            referencedRelation: "partner_companies"
             referencedColumns: ["id"]
           },
         ]

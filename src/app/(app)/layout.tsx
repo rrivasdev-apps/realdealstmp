@@ -23,7 +23,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const navItems = [
     { href: '/dashboard', label: 'Dashboard' },
     ...(canViewWhiteboard ? [{ href: '/deals', label: 'Whiteboard' }] : []),
-    // Contacts and Company LLCs (formerly its own top-level "Investor LLCs"
+    // Contacts and Companies (formerly its own top-level "Investor LLCs"
     // item) are now rendered as a Contact Center sub-menu -- see
     // CONTACT_HUB_LINKS in sidebar.tsx.
     ...(canViewContacts ? [{ href: '/contacts', label: 'Contact Center' }] : []),

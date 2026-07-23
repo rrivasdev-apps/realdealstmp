@@ -23,7 +23,7 @@ export default async function NewDealPage() {
     { data: leadSources },
     { data: purchaseTypes },
     { data: contacts },
-    { data: investorLlcs },
+    { data: partnerCompanies },
     { data: splitTypes },
     { data: customFieldDefinitions },
   ] = await Promise.all([
@@ -33,7 +33,7 @@ export default async function NewDealPage() {
     supabase.from('lead_sources').select('id, name').order('name'),
     supabase.from('purchase_types').select('id, name').order('name'),
     supabase.from('contacts').select('id, name, contact_contact_types(contact_types(name))').order('name'),
-    supabase.from('investor_llcs').select('id, name').order('name'),
+    supabase.from('partner_companies').select('id, name').order('name'),
     supabase.from('split_types').select('id, name').order('name'),
     supabase.from('custom_field_definitions').select('id, name, field_type, options').order('name'),
   ])
@@ -139,7 +139,7 @@ export default async function NewDealPage() {
           titleCompanyContacts={titleCompanyContacts}
           mortgageCompanyContacts={mortgageCompanyContacts}
           sellerContacts={sellerContacts}
-          investorLlcs={investorLlcs ?? []}
+          partnerCompanies={partnerCompanies ?? []}
           splitTypes={splitTypes ?? []}
           checklistItems={[]}
           checkedChecklistItemIds={[]}

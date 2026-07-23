@@ -36,7 +36,7 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
     { data: offers },
     { data: purchaseTypes },
     { data: contacts },
-    { data: investorLlcs },
+    { data: partnerCompanies },
     { data: splitTypes },
     { data: showings },
     { data: dealEmployees },
@@ -65,7 +65,7 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
       .order('created_at', { ascending: false }),
     supabase.from('purchase_types').select('id, name').order('name'),
     supabase.from('contacts').select('id, name, contact_contact_types(contact_types(name))').order('name'),
-    supabase.from('investor_llcs').select('id, name').order('name'),
+    supabase.from('partner_companies').select('id, name').order('name'),
     supabase.from('split_types').select('id, name').order('name'),
     supabase
       .from('showings')
@@ -215,7 +215,7 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
           titleCompanyContacts={titleCompanyContacts}
           mortgageCompanyContacts={mortgageCompanyContacts}
           sellerContacts={sellerContacts}
-          investorLlcs={investorLlcs ?? []}
+          partnerCompanies={partnerCompanies ?? []}
           splitTypes={splitTypes ?? []}
           checklistItems={checklistItems ?? []}
           checkedChecklistItemIds={(checkedChecklistItems ?? []).map((row) => row.checklist_item_id)}

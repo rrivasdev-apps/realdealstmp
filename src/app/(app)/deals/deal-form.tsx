@@ -117,7 +117,7 @@ export function DealForm({
   titleCompanyContacts,
   mortgageCompanyContacts,
   sellerContacts,
-  investorLlcs,
+  partnerCompanies,
   splitTypes,
   checklistItems,
   checkedChecklistItemIds,
@@ -137,7 +137,7 @@ export function DealForm({
   titleCompanyContacts: LookupOption[]
   mortgageCompanyContacts: LookupOption[]
   sellerContacts: LookupOption[]
-  investorLlcs: LookupOption[]
+  partnerCompanies: LookupOption[]
   splitTypes: LookupOption[]
   checklistItems: LookupOption[]
   checkedChecklistItemIds: string[]
@@ -796,7 +796,7 @@ export function DealForm({
                   className="rounded border border-input-border bg-input-background px-3 py-2"
                 >
                   <option value="">—</option>
-                  {investorLlcs.map((option) => (
+                  {partnerCompanies.map((option) => (
                     <option key={option.id} value={option.id}>
                       {option.name}
                     </option>

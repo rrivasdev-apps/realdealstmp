@@ -29,7 +29,7 @@ const DEAL_SECTIONS = [
 // so they render as plain <Link>s highlighted by pathname instead of by hash.
 const CONTACT_HUB_LINKS = [
   { href: '/contacts', label: 'Contacts' },
-  { href: '/investor-llcs', label: 'Company LLCs' },
+  { href: '/partner-companies', label: 'Companies' },
 ]
 
 // Ids/order must match the SettingsSection ids used in settings/page.tsx --
@@ -86,7 +86,7 @@ export function Sidebar({
 }) {
   const pathname = usePathname()
   const isDealDetail = /^\/deals\/(?!new$)[^/]+$/.test(pathname)
-  const isContactHub = pathname === '/contacts' || pathname.startsWith('/contacts/') || pathname === '/investor-llcs' || pathname.startsWith('/investor-llcs/')
+  const isContactHub = pathname === '/contacts' || pathname.startsWith('/contacts/') || pathname === '/partner-companies' || pathname.startsWith('/partner-companies/')
   // Broader than just the exact /settings page -- sub-pages like an
   // employee role's detail page (/settings/employee-roles/[id]) still need
   // the same nested Settings sub-nav visible, just without hash-driven
