@@ -28,6 +28,7 @@ export type DealFormValues = {
   property_type_id: string
   deal_type_id: string
   lead_source_id: string
+  sellingReasonIds: string[]
   status_id: string
   contract_price: string
   contract_price_renegotiated_date: string
@@ -112,6 +113,7 @@ export function DealForm({
   propertyTypes,
   dealTypes,
   leadSources,
+  sellingReasons,
   dealStatuses,
   purchaseTypes,
   titleCompanyContacts,
@@ -132,6 +134,7 @@ export function DealForm({
   propertyTypes: LookupOption[]
   dealTypes: LookupOption[]
   leadSources: LookupOption[]
+  sellingReasons: LookupOption[]
   dealStatuses: LookupOption[]
   purchaseTypes: LookupOption[]
   titleCompanyContacts: LookupOption[]
@@ -159,7 +162,10 @@ export function DealForm({
     setValues((prev) => ({ ...prev, customFields: { ...prev.customFields, [definitionId]: value } }))
   }
 
-  function toggleId(key: 'onHoldReasonIds' | 'cancelledAbReasonIds' | 'cancelledBcAcReasonIds', id: string) {
+  function toggleId(
+    key: 'sellingReasonIds' | 'onHoldReasonIds' | 'cancelledAbReasonIds' | 'cancelledBcAcReasonIds',
+    id: string
+  ) {
     setValues((prev) => ({
       ...prev,
       [key]: prev[key].includes(id) ? prev[key].filter((existing) => existing !== id) : [...prev[key], id],
@@ -180,6 +186,7 @@ export function DealForm({
       property_type_id: values.property_type_id || null,
       deal_type_id: values.deal_type_id || null,
       lead_source_id: values.lead_source_id || null,
+      sellingReasonIds: values.sellingReasonIds,
       status_id: values.status_id || undefined,
       contract_price: values.contract_price ? Number(values.contract_price) : null,
       contract_date: values.contract_date || null,
@@ -476,6 +483,24 @@ export function DealForm({
             ))}
           </select>
         </label>
+
+        {sellingReasons.length > 0 && (
+          <div className="flex flex-col gap-1 text-sm sm:col-span-2">
+            <span>Reasons for selling</span>
+            <div className="flex flex-wrap gap-x-4 gap-y-1">
+              {sellingReasons.map((reason) => (
+                <label key={reason.id} className="flex items-center gap-1.5 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={values.sellingReasonIds.includes(reason.id)}
+                    onChange={() => toggleId('sellingReasonIds', reason.id)}
+                  />
+                  {reason.name}
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
 
         {mode === 'edit' && (
           <label className="flex flex-col gap-1 text-sm">

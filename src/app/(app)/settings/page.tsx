@@ -62,6 +62,7 @@ export default async function SettingsPage() {
     { data: onHoldReasons },
     { data: cancelledAbReasons },
     { data: cancelledBcAcReasons },
+    { data: sellingReasons },
     { data: markets },
     { data: dealTypes },
     { data: leadSources },
@@ -77,6 +78,7 @@ export default async function SettingsPage() {
     supabase.from('on_hold_reasons').select('id, name').order('name'),
     supabase.from('cancelled_ab_reasons').select('id, name').order('name'),
     supabase.from('cancelled_bc_ac_reasons').select('id, name').order('name'),
+    supabase.from('selling_reasons').select('id, name').order('name'),
     supabase.from('markets').select('id, name').order('name'),
     supabase.from('deal_types').select('id, name').order('name'),
     supabase.from('lead_sources').select('id, name').order('name'),
@@ -183,6 +185,23 @@ export default async function SettingsPage() {
             ))}
             {onHoldReasons?.length === 0 && (
               <li className="py-2 text-sm text-muted-foreground">No on hold reasons yet.</li>
+            )}
+          </ul>
+        </SettingsSection>
+
+        <SettingsSection id="selling-reasons" title="Selling Reasons">
+          <p className="text-sm text-muted-foreground">Options shown for &ldquo;Reasons for selling&rdquo; on Deal Info.</p>
+          <div className="max-w-md">
+            <SimpleListForm endpoint="/api/selling-reasons" placeholder="e.g. Relocating" />
+          </div>
+          <ul className="max-w-md divide-y divide-border">
+            {sellingReasons?.map((reason) => (
+              <li key={reason.id} className="py-2 text-sm">
+                {reason.name}
+              </li>
+            ))}
+            {sellingReasons?.length === 0 && (
+              <li className="py-2 text-sm text-muted-foreground">No selling reasons yet.</li>
             )}
           </ul>
         </SettingsSection>

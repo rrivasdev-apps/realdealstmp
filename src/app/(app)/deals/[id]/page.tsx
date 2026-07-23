@@ -32,6 +32,8 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
     { data: propertyTypes },
     { data: dealTypes },
     { data: leadSources },
+    { data: sellingReasons },
+    { data: checkedSellingReasons },
     { data: dealStatuses },
     { data: offers },
     { data: purchaseTypes },
@@ -57,6 +59,8 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
     supabase.from('property_types').select('id, name').order('name'),
     supabase.from('deal_types').select('id, name').order('name'),
     supabase.from('lead_sources').select('id, name').order('name'),
+    supabase.from('selling_reasons').select('id, name').order('name'),
+    supabase.from('deal_selling_reasons').select('selling_reason_id').eq('deal_id', id),
     supabase.from('deal_statuses').select('id, name').order('sort_order'),
     supabase
       .from('offers')
@@ -128,6 +132,7 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
             property_type_id: deal.property_type_id ?? '',
             deal_type_id: deal.deal_type_id ?? '',
             lead_source_id: deal.lead_source_id ?? '',
+            sellingReasonIds: (checkedSellingReasons ?? []).map((row) => row.selling_reason_id),
             status_id: deal.status_id ?? '',
             contract_price: deal.contract_price?.toString() ?? '',
             contract_price_renegotiated_date: deal.contract_price_renegotiated_date ?? '',
@@ -210,6 +215,7 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
           propertyTypes={propertyTypes ?? []}
           dealTypes={dealTypes ?? []}
           leadSources={leadSources ?? []}
+          sellingReasons={sellingReasons ?? []}
           dealStatuses={dealStatuses ?? []}
           purchaseTypes={purchaseTypes ?? []}
           titleCompanyContacts={titleCompanyContacts}

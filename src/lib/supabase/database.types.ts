@@ -546,6 +546,36 @@ export type Database = {
           },
         ]
       }
+      deal_selling_reasons: {
+        Row: {
+          deal_id: string
+          selling_reason_id: string
+        }
+        Insert: {
+          deal_id: string
+          selling_reason_id: string
+        }
+        Update: {
+          deal_id?: string
+          selling_reason_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deal_selling_reasons_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "deals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deal_selling_reasons_selling_reason_id_fkey"
+            columns: ["selling_reason_id"]
+            isOneToOne: false
+            referencedRelation: "selling_reasons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       deal_statuses: {
         Row: {
           id: string
@@ -1368,36 +1398,6 @@ export type Database = {
           },
         ]
       }
-      profile_pay_periods: {
-        Row: {
-          pay_period_id: string
-          profile_id: string
-        }
-        Insert: {
-          pay_period_id: string
-          profile_id: string
-        }
-        Update: {
-          pay_period_id?: string
-          profile_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "profile_pay_periods_pay_period_id_fkey"
-            columns: ["pay_period_id"]
-            isOneToOne: false
-            referencedRelation: "pay_periods"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "profile_pay_periods_profile_id_fkey"
-            columns: ["profile_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       payments: {
         Row: {
           amount: number | null
@@ -1601,6 +1601,113 @@ export type Database = {
           },
         ]
       }
+      profile_employee_roles: {
+        Row: {
+          employee_role_id: string
+          profile_id: string
+        }
+        Insert: {
+          employee_role_id: string
+          profile_id: string
+        }
+        Update: {
+          employee_role_id?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_employee_roles_employee_role_id_fkey"
+            columns: ["employee_role_id"]
+            isOneToOne: false
+            referencedRelation: "employee_roles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profile_employee_roles_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profile_pay_periods: {
+        Row: {
+          pay_period_id: string
+          profile_id: string
+        }
+        Insert: {
+          pay_period_id: string
+          profile_id: string
+        }
+        Update: {
+          pay_period_id?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_pay_periods_pay_period_id_fkey"
+            columns: ["pay_period_id"]
+            isOneToOne: false
+            referencedRelation: "pay_periods"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profile_pay_periods_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profile_permissions: {
+        Row: {
+          can_manage_payroll: boolean
+          can_manage_settings: boolean
+          can_manage_team: boolean
+          can_view_financials: boolean
+          edit_contacts: boolean
+          edit_deal_detail: boolean
+          profile_id: string
+          view_contacts: boolean
+          view_deal_detail: boolean
+          view_whiteboard: boolean
+        }
+        Insert: {
+          can_manage_payroll?: boolean
+          can_manage_settings?: boolean
+          can_manage_team?: boolean
+          can_view_financials?: boolean
+          edit_contacts?: boolean
+          edit_deal_detail?: boolean
+          profile_id: string
+          view_contacts?: boolean
+          view_deal_detail?: boolean
+          view_whiteboard?: boolean
+        }
+        Update: {
+          can_manage_payroll?: boolean
+          can_manage_settings?: boolean
+          can_manage_team?: boolean
+          can_view_financials?: boolean
+          edit_contacts?: boolean
+          edit_deal_detail?: boolean
+          profile_id?: string
+          view_contacts?: boolean
+          view_deal_detail?: boolean
+          view_whiteboard?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_permissions_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           address: string | null
@@ -1660,83 +1767,6 @@ export type Database = {
           },
         ]
       }
-      profile_employee_roles: {
-        Row: {
-          employee_role_id: string
-          profile_id: string
-        }
-        Insert: {
-          employee_role_id: string
-          profile_id: string
-        }
-        Update: {
-          employee_role_id?: string
-          profile_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "profile_employee_roles_employee_role_id_fkey"
-            columns: ["employee_role_id"]
-            isOneToOne: false
-            referencedRelation: "employee_roles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "profile_employee_roles_profile_id_fkey"
-            columns: ["profile_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      profile_permissions: {
-        Row: {
-          can_manage_payroll: boolean
-          can_manage_team: boolean
-          can_manage_settings: boolean
-          can_view_financials: boolean
-          edit_contacts: boolean
-          edit_deal_detail: boolean
-          profile_id: string
-          view_contacts: boolean
-          view_deal_detail: boolean
-          view_whiteboard: boolean
-        }
-        Insert: {
-          can_manage_payroll?: boolean
-          can_manage_team?: boolean
-          can_manage_settings?: boolean
-          can_view_financials?: boolean
-          edit_contacts?: boolean
-          edit_deal_detail?: boolean
-          profile_id: string
-          view_contacts?: boolean
-          view_deal_detail?: boolean
-          view_whiteboard?: boolean
-        }
-        Update: {
-          can_manage_payroll?: boolean
-          can_manage_team?: boolean
-          can_manage_settings?: boolean
-          can_view_financials?: boolean
-          edit_contacts?: boolean
-          edit_deal_detail?: boolean
-          profile_id?: string
-          view_contacts?: boolean
-          view_deal_detail?: boolean
-          view_whiteboard?: boolean
-        }
-        Relationships: [
-          {
-            foreignKeyName: "profile_permissions_profile_id_fkey"
-            columns: ["profile_id"]
-            isOneToOne: true
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       property_types: {
         Row: {
           id: string
@@ -1766,6 +1796,35 @@ export type Database = {
           name?: string
         }
         Relationships: []
+      }
+      selling_reasons: {
+        Row: {
+          company_id: string
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "selling_reasons_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       showing_statuses: {
         Row: {
@@ -1867,12 +1926,21 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_manage_payroll: {
+        Args: { target_company_id: string }
+        Returns: boolean
+      }
       can_manage_settings: {
         Args: { target_company_id: string }
         Returns: boolean
       }
       can_manage_team: { Args: { target_company_id: string }; Returns: boolean }
       can_view_financials: {
+        Args: { target_company_id: string }
+        Returns: boolean
+      }
+      edit_contacts: { Args: { target_company_id: string }; Returns: boolean }
+      edit_deal_detail: {
         Args: { target_company_id: string }
         Returns: boolean
       }
@@ -1884,6 +1952,12 @@ export type Database = {
         Args: { target_company_id: string }
         Returns: boolean
       }
+      view_contacts: { Args: { target_company_id: string }; Returns: boolean }
+      view_deal_detail: {
+        Args: { target_company_id: string }
+        Returns: boolean
+      }
+      view_whiteboard: { Args: { target_company_id: string }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never

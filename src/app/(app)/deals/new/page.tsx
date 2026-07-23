@@ -54,6 +54,7 @@ export default async function NewDealPage() {
             property_type_id: '',
             deal_type_id: '',
             lead_source_id: '',
+            sellingReasonIds: [],
             status_id: '',
             contract_price: '',
             contract_price_renegotiated_date: '',
@@ -134,6 +135,7 @@ export default async function NewDealPage() {
           propertyTypes={propertyTypes ?? []}
           dealTypes={dealTypes ?? []}
           leadSources={leadSources ?? []}
+          sellingReasons={[]}
           dealStatuses={[]}
           purchaseTypes={purchaseTypes ?? []}
           titleCompanyContacts={titleCompanyContacts}

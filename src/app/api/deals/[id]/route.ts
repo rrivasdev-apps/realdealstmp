@@ -119,6 +119,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     return NextResponse.json({ error: error.message }, { status: 400 })
   }
 
+  const sellingReasonIds: string[] = Array.isArray(body.sellingReasonIds) ? body.sellingReasonIds : []
   const onHoldReasonIds: string[] = Array.isArray(body.onHoldReasonIds) ? body.onHoldReasonIds : []
   const cancelledAbReasonIds: string[] = Array.isArray(body.cancelledAbReasonIds) ? body.cancelledAbReasonIds : []
   const cancelledBcAcReasonIds: string[] = Array.isArray(body.cancelledBcAcReasonIds)
@@ -128,12 +129,18 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   // Same "delete all, insert selected" sync as /api/contacts/[id] for its
   // multi-select join tables.
   await Promise.all([
+    supabase.from('deal_selling_reasons').delete().eq('deal_id', id),
     supabase.from('deal_on_hold_reasons').delete().eq('deal_id', id),
     supabase.from('deal_cancelled_ab_reasons').delete().eq('deal_id', id),
     supabase.from('deal_cancelled_bc_ac_reasons').delete().eq('deal_id', id),
   ])
 
   await Promise.all([
+    sellingReasonIds.length
+      ? supabase
+          .from('deal_selling_reasons')
+          .insert(sellingReasonIds.map((selling_reason_id) => ({ deal_id: id, selling_reason_id })))
+      : Promise.resolve(),
     onHoldReasonIds.length
       ? supabase
           .from('deal_on_hold_reasons')
