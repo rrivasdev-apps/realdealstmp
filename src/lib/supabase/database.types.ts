@@ -39,6 +39,183 @@ export type Database = {
   }
   public: {
     Tables: {
+      automation_activity_log: {
+        Row: {
+          actor_profile_id: string | null
+          created_at: string
+          detail: Json | null
+          event_type: string
+          id: string
+          process_id: string
+        }
+        Insert: {
+          actor_profile_id?: string | null
+          created_at?: string
+          detail?: Json | null
+          event_type: string
+          id?: string
+          process_id: string
+        }
+        Update: {
+          actor_profile_id?: string | null
+          created_at?: string
+          detail?: Json | null
+          event_type?: string
+          id?: string
+          process_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "automation_activity_log_actor_profile_id_fkey"
+            columns: ["actor_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "automation_activity_log_process_id_fkey"
+            columns: ["process_id"]
+            isOneToOne: false
+            referencedRelation: "automation_processes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      automation_processes: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          deal_id: string
+          id: string
+          started_at: string | null
+          started_manually: boolean
+          status: string
+          template_id: string
+          triggered_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          deal_id: string
+          id?: string
+          started_at?: string | null
+          started_manually?: boolean
+          status?: string
+          template_id: string
+          triggered_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          deal_id?: string
+          id?: string
+          started_at?: string | null
+          started_manually?: boolean
+          status?: string
+          template_id?: string
+          triggered_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "automation_processes_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "deals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "automation_processes_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "automation_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      automation_step_options: {
+        Row: {
+          automation_step_id: string
+          option_key: string
+        }
+        Insert: {
+          automation_step_id: string
+          option_key: string
+        }
+        Update: {
+          automation_step_id?: string
+          option_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "automation_step_options_automation_step_id_fkey"
+            columns: ["automation_step_id"]
+            isOneToOne: false
+            referencedRelation: "automation_steps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      automation_steps: {
+        Row: {
+          completed_at: string | null
+          completed_by_profile_id: string | null
+          created_at: string
+          due_at: string
+          field_updates: Json | null
+          id: string
+          process_id: string
+          selected_option_key: string | null
+          status: string
+          template_step_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          completed_by_profile_id?: string | null
+          created_at?: string
+          due_at: string
+          field_updates?: Json | null
+          id?: string
+          process_id: string
+          selected_option_key?: string | null
+          status?: string
+          template_step_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          completed_by_profile_id?: string | null
+          created_at?: string
+          due_at?: string
+          field_updates?: Json | null
+          id?: string
+          process_id?: string
+          selected_option_key?: string | null
+          status?: string
+          template_step_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "automation_steps_completed_by_profile_id_fkey"
+            columns: ["completed_by_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "automation_steps_process_id_fkey"
+            columns: ["process_id"]
+            isOneToOne: false
+            referencedRelation: "automation_processes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "automation_steps_template_step_id_fkey"
+            columns: ["template_step_id"]
+            isOneToOne: false
+            referencedRelation: "automation_template_steps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       automation_template_step_triggers: {
         Row: {
           created_at: string

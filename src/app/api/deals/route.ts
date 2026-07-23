@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 
+import { evaluateTriggersForDealCreated } from '@/lib/automations/runtime'
 import { buildCustomFieldsForSave } from '@/lib/deals/custom-fields'
 import { requirePermission } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
@@ -75,12 +76,18 @@ export async function POST(request: Request) {
     })
     // BC contract fields aren't set here -- there's no buyer yet at intake.
     // They're added later via PATCH once a buyer is found.
-    .select('id')
+    .select('id, deal_type_id')
     .single()
 
   if (error || !deal) {
     return NextResponse.json({ error: error?.message ?? 'Could not create deal.' }, { status: 400 })
   }
+
+  await evaluateTriggersForDealCreated(supabase, {
+    id: deal.id,
+    company_id: profile.company_id,
+    deal_type_id: deal.deal_type_id,
+  })
 
   return NextResponse.json({ id: deal.id })
 }

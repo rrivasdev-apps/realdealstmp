@@ -213,7 +213,20 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
     .select('name')
     .eq('trigger_source_step_id', stepId)
 
-  const blockers = [...blockingStepNames, ...(blockingTemplates ?? []).map((row) => `${row.name} (trigger)`)]
+  // automation_steps.template_step_id is ON DELETE RESTRICT -- real run history
+  // (Milestone 2) referencing this step blocks deletion at the DB level too, but
+  // check here first so it comes back as a friendly 409 instead of a raw
+  // constraint error.
+  const { count: runHistoryCount } = await supabase
+    .from('automation_steps')
+    .select('id', { count: 'exact', head: true })
+    .eq('template_step_id', stepId)
+
+  const blockers = [
+    ...blockingStepNames,
+    ...(blockingTemplates ?? []).map((row) => `${row.name} (trigger)`),
+    ...(runHistoryCount && runHistoryCount > 0 ? [`${runHistoryCount} deal(s) that already ran this step`] : []),
+  ]
 
   if (blockers.length > 0) {
     return NextResponse.json(

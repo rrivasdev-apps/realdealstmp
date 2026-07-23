@@ -78,16 +78,22 @@ async function buildTriggerFields(
   if (triggerType === 'step_completed') {
     const sourceStepId = typeof body.trigger_source_step_id === 'string' ? body.trigger_source_step_id : ''
     if (!sourceStepId) return { ok: false, error: 'Choose which automation and step starts this one.' }
-    const { data } = await supabase
+    const { data: sourceStep } = await supabase
       .from('automation_template_steps')
-      .select('id, template_id, automation_templates!inner(company_id)')
+      .select('id, template_id')
       .eq('id', sourceStepId)
-      .eq('automation_templates.company_id', companyId)
       .single()
-    if (!data) return { ok: false, error: 'That step was not found.' }
-    if (data.template_id === templateId) {
+    if (!sourceStep) return { ok: false, error: 'That step was not found.' }
+    if (sourceStep.template_id === templateId) {
       return { ok: false, error: 'Choose a step from a different automation.' }
     }
+    const { data: sourceTemplate } = await supabase
+      .from('automation_templates')
+      .select('id')
+      .eq('id', sourceStep.template_id)
+      .eq('company_id', companyId)
+      .single()
+    if (!sourceTemplate) return { ok: false, error: 'That step was not found.' }
     return { ok: true, fields: { ...empty, trigger_source_step_id: sourceStepId } }
   }
 
