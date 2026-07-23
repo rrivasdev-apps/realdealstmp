@@ -39,6 +39,214 @@ export type Database = {
   }
   public: {
     Tables: {
+      automation_template_step_triggers: {
+        Row: {
+          created_at: string
+          id: string
+          option_key: string | null
+          step_id: string
+          target_template_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          option_key?: string | null
+          step_id: string
+          target_template_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          option_key?: string | null
+          step_id?: string
+          target_template_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "automation_template_step_triggers_step_id_fkey"
+            columns: ["step_id"]
+            isOneToOne: false
+            referencedRelation: "automation_template_steps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "automation_template_step_triggers_target_template_id_fkey"
+            columns: ["target_template_id"]
+            isOneToOne: false
+            referencedRelation: "automation_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      automation_template_steps: {
+        Row: {
+          assigned_profile_id: string | null
+          assigned_role_id: string | null
+          completes_automator: boolean
+          config: Json
+          created_at: string
+          description: string | null
+          id: string
+          is_operational: boolean
+          name: string | null
+          next_step_due_delay_days: number | null
+          next_step_id: string | null
+          step_number: number
+          step_type: string | null
+          template_id: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_profile_id?: string | null
+          assigned_role_id?: string | null
+          completes_automator?: boolean
+          config?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_operational?: boolean
+          name?: string | null
+          next_step_due_delay_days?: number | null
+          next_step_id?: string | null
+          step_number: number
+          step_type?: string | null
+          template_id: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_profile_id?: string | null
+          assigned_role_id?: string | null
+          completes_automator?: boolean
+          config?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_operational?: boolean
+          name?: string | null
+          next_step_due_delay_days?: number | null
+          next_step_id?: string | null
+          step_number?: number
+          step_type?: string | null
+          template_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "automation_template_steps_assigned_profile_id_fkey"
+            columns: ["assigned_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "automation_template_steps_assigned_role_id_fkey"
+            columns: ["assigned_role_id"]
+            isOneToOne: false
+            referencedRelation: "employee_roles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "automation_template_steps_next_step_id_fkey"
+            columns: ["next_step_id"]
+            isOneToOne: false
+            referencedRelation: "automation_template_steps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "automation_template_steps_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "automation_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      automation_templates: {
+        Row: {
+          company_id: string
+          created_at: string
+          first_step_due_delay_days: number
+          id: string
+          is_functional: boolean
+          name: string
+          start_delay_days: number
+          trigger_custom_field_id: string | null
+          trigger_date_direction: string | null
+          trigger_date_field: string | null
+          trigger_date_offset_days: number | null
+          trigger_deal_field: string | null
+          trigger_deal_type_id: string | null
+          trigger_source_step_id: string | null
+          trigger_type: string
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          first_step_due_delay_days?: number
+          id?: string
+          is_functional?: boolean
+          name: string
+          start_delay_days?: number
+          trigger_custom_field_id?: string | null
+          trigger_date_direction?: string | null
+          trigger_date_field?: string | null
+          trigger_date_offset_days?: number | null
+          trigger_deal_field?: string | null
+          trigger_deal_type_id?: string | null
+          trigger_source_step_id?: string | null
+          trigger_type: string
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          first_step_due_delay_days?: number
+          id?: string
+          is_functional?: boolean
+          name?: string
+          start_delay_days?: number
+          trigger_custom_field_id?: string | null
+          trigger_date_direction?: string | null
+          trigger_date_field?: string | null
+          trigger_date_offset_days?: number | null
+          trigger_deal_field?: string | null
+          trigger_deal_type_id?: string | null
+          trigger_source_step_id?: string | null
+          trigger_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "automation_templates_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "automation_templates_trigger_custom_field_id_fkey"
+            columns: ["trigger_custom_field_id"]
+            isOneToOne: false
+            referencedRelation: "custom_field_definitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "automation_templates_trigger_deal_type_id_fkey"
+            columns: ["trigger_deal_type_id"]
+            isOneToOne: false
+            referencedRelation: "deal_types"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "automation_templates_trigger_source_step_id_fkey"
+            columns: ["trigger_source_step_id"]
+            isOneToOne: false
+            referencedRelation: "automation_template_steps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cancelled_ab_reasons: {
         Row: {
           company_id: string

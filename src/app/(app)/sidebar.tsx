@@ -66,6 +66,10 @@ const SETTINGS_GROUPS: { label: string; sections: { id: string; label: string; h
     label: 'Contact Center',
     sections: [],
   },
+  {
+    label: 'Deal Automations',
+    sections: [{ id: 'automations', label: 'Automations', href: '/settings/automations' }],
+  },
 ]
 
 function settingsGroupForSection(sectionId: string): string {
@@ -168,7 +172,9 @@ export function Sidebar({
         ? 'employee-roles'
         : pathname.startsWith('/settings/pay-periods')
           ? 'pay-periods'
-          : DEFAULT_SETTINGS_SECTION
+          : pathname.startsWith('/settings/automations')
+            ? 'automations'
+            : DEFAULT_SETTINGS_SECTION
       : null
   const effectiveSettingsSection = settingsSubpageSection ?? activeSettingsSection
   const effectiveExpandedSettingsGroup = settingsSubpageSection
