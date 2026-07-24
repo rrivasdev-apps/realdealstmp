@@ -28,6 +28,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     // CONTACT_HUB_LINKS in sidebar.tsx.
     ...(canViewContacts ? [{ href: '/contacts', label: 'Contact Center' }] : []),
     ...(canManagePayroll ? [{ href: '/payroll', label: 'Payroll' }] : []),
+    // Same visibility tier as the Whiteboard -- it's a company-wide
+    // operational view, not Settings/configuration.
+    ...(canViewWhiteboard ? [{ href: '/deal-automations', label: 'Deal Automations' }] : []),
     ...(canManageSettings ? [{ href: '/settings', label: 'Settings' }] : []),
   ]
 

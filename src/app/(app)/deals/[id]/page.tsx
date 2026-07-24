@@ -121,7 +121,12 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
 
   return (
     <div>
-      <h1 className="text-xl font-semibold">Edit deal</h1>
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="text-xl font-semibold">Edit deal</h1>
+        <Link href={`/deals/${id}/automations`} className="text-sm underline">
+          Deal automations
+        </Link>
+      </div>
       <div className="mt-6">
         <DealForm
           mode="edit"
