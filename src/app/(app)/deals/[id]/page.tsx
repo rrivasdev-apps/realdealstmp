@@ -128,6 +128,9 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
           initialValues={{
             id: deal.id,
             address: deal.address ?? '',
+            city: deal.city ?? '',
+            state: deal.state ?? '',
+            zip_code: deal.zip_code ?? '',
             market_id: deal.market_id ?? '',
             property_type_id: deal.property_type_id ?? '',
             deal_type_id: deal.deal_type_id ?? '',

@@ -37,6 +37,9 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 
   const updatePayload = {
     address,
+    city: body.city || null,
+    state: body.state || null,
+    zip_code: body.zip_code || null,
     market_id: body.market_id || null,
     property_type_id: body.property_type_id || null,
     deal_type_id: body.deal_type_id || null,

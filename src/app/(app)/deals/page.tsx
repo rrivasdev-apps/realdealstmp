@@ -5,6 +5,8 @@ import { statusColors } from '@/lib/deals/status-colors'
 import { requirePermission } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
+import { NewDealButton } from './new-deal-button'
+
 const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
 
 type Deal = {
@@ -112,12 +114,16 @@ export default async function DealsPage({
   }
 
   const supabase = await createClient()
-  const { data } = await supabase
-    .from('deals')
-    .select(
-      'id, address, contract_price, projected_sales_price, buyer_contract_price, renegotiated_bc_price, closing_date, actual_closing_date, deal_statuses(name)'
-    )
-    .order('closing_date', { ascending: true })
+  const [{ data }, { data: dealTypes }, { data: leadSources }] = await Promise.all([
+    supabase
+      .from('deals')
+      .select(
+        'id, address, contract_price, projected_sales_price, buyer_contract_price, renegotiated_bc_price, closing_date, actual_closing_date, deal_statuses(name)'
+      )
+      .order('closing_date', { ascending: true }),
+    supabase.from('deal_types').select('id, name').order('name'),
+    supabase.from('lead_sources').select('id, name').order('name'),
+  ])
   const deals = (data as unknown as Deal[]) ?? []
 
   const filteredDeals = deals.filter((deal) => matchesFilter(deal, activeFilter))
@@ -125,13 +131,8 @@ export default async function DealsPage({
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-foreground">Whiteboard</h1>
-        <Link
-          href="/deals/new"
-          className="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
-        >
-          New deal
-        </Link>
+        <h1 className="heading-page">Whiteboard</h1>
+        <NewDealButton dealTypes={dealTypes ?? []} leadSources={leadSources ?? []} />
       </div>
 
       <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">

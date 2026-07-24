@@ -1085,6 +1085,7 @@ export type Database = {
           checklist_post_occupancy: boolean
           checklist_seller_info_sheet_needed: boolean
           checklist_survey_needed: boolean
+          city: string | null
           closing_date: string | null
           closing_extension_date: string | null
           company_id: string
@@ -1131,6 +1132,7 @@ export type Database = {
           seller_info_sheet_sent: boolean
           seller_info_sheet_signed: boolean
           split_amount: number | null
+          state: string | null
           status_id: string
           survey_ordered_date: string | null
           title_company_contact_id: string | null
@@ -1140,6 +1142,7 @@ export type Database = {
           total_commissions: number | null
           total_expenses: number | null
           total_payoff_amount: number | null
+          zip_code: string | null
         }
         Insert: {
           ab_emd_amount?: number | null
@@ -1171,6 +1174,7 @@ export type Database = {
           checklist_post_occupancy?: boolean
           checklist_seller_info_sheet_needed?: boolean
           checklist_survey_needed?: boolean
+          city?: string | null
           closing_date?: string | null
           closing_extension_date?: string | null
           company_id: string
@@ -1217,6 +1221,7 @@ export type Database = {
           seller_info_sheet_sent?: boolean
           seller_info_sheet_signed?: boolean
           split_amount?: number | null
+          state?: string | null
           status_id: string
           survey_ordered_date?: string | null
           title_company_contact_id?: string | null
@@ -1226,6 +1231,7 @@ export type Database = {
           total_commissions?: number | null
           total_expenses?: number | null
           total_payoff_amount?: number | null
+          zip_code?: string | null
         }
         Update: {
           ab_emd_amount?: number | null
@@ -1257,6 +1263,7 @@ export type Database = {
           checklist_post_occupancy?: boolean
           checklist_seller_info_sheet_needed?: boolean
           checklist_survey_needed?: boolean
+          city?: string | null
           closing_date?: string | null
           closing_extension_date?: string | null
           company_id?: string
@@ -1303,6 +1310,7 @@ export type Database = {
           seller_info_sheet_sent?: boolean
           seller_info_sheet_signed?: boolean
           split_amount?: number | null
+          state?: string | null
           status_id?: string
           survey_ordered_date?: string | null
           title_company_contact_id?: string | null
@@ -1312,6 +1320,7 @@ export type Database = {
           total_commissions?: number | null
           total_expenses?: number | null
           total_payoff_amount?: number | null
+          zip_code?: string | null
         }
         Relationships: [
           {

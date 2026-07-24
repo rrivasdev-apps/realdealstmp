@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 
 import { evaluateTriggersForDealCreated } from '@/lib/automations/runtime'
 import { buildCustomFieldsForSave } from '@/lib/deals/custom-fields'
+import { addDays } from '@/lib/deals/dates'
 import { requirePermission } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
@@ -31,6 +32,15 @@ export async function POST(request: Request) {
 
   const customFields = await buildCustomFieldsForSave(supabase, profile.company_id, body.custom_fields)
 
+  // The quick-create wizard sends a day count instead of a date -- the "current"
+  // value the client computes and sends must never be trusted directly (see
+  // CLAUDE.md's renegotiation rule), so the expiration date is derived here.
+  const dueDiligenceDays = Number(body.due_diligence_days)
+  const dueDiligenceExpiration =
+    Number.isFinite(dueDiligenceDays) && body.contract_date
+      ? addDays(body.contract_date, dueDiligenceDays)
+      : body.due_diligence_expiration || null
+
   // original_* is set once here, from the same values the client submitted
   // for the current fields -- never touched again after this insert (see
   // the protect_original_deal_values trigger).
@@ -39,6 +49,9 @@ export async function POST(request: Request) {
     .insert({
       company_id: profile.company_id,
       address,
+      city: body.city || null,
+      state: body.state || null,
+      zip_code: body.zip_code || null,
       market_id: body.market_id || null,
       property_type_id: body.property_type_id || null,
       deal_type_id: body.deal_type_id || null,
@@ -49,8 +62,8 @@ export async function POST(request: Request) {
       contract_date: body.contract_date || null,
       closing_date: body.closing_date || null,
       original_closing_date: body.closing_date || null,
-      due_diligence_expiration: body.due_diligence_expiration || null,
-      original_due_diligence_date: body.due_diligence_expiration || null,
+      due_diligence_expiration: dueDiligenceExpiration,
+      original_due_diligence_date: dueDiligenceExpiration,
       projected_sales_price: body.projected_sales_price ?? null,
       original_projected_sales_price: body.projected_sales_price ?? null,
       apn: body.apn || null,

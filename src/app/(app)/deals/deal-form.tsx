@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
+import { AddressFields } from '@/components/address-fields'
 import { CurrencyInput } from '@/components/currency-input'
 import { DealSection } from '@/components/deal-section'
 import { calculateProfitCascade } from '@/lib/deals/profit'
@@ -24,6 +25,9 @@ export type CustomFieldDefinition = {
 export type DealFormValues = {
   id?: string
   address: string
+  city: string
+  state: string
+  zip_code: string
   market_id: string
   property_type_id: string
   deal_type_id: string
@@ -182,6 +186,9 @@ export function DealForm({
 
     const payload = {
       address: values.address,
+      city: values.city || null,
+      state: values.state || null,
+      zip_code: values.zip_code || null,
       market_id: values.market_id || null,
       property_type_id: values.property_type_id || null,
       deal_type_id: values.deal_type_id || null,
@@ -285,16 +292,12 @@ export function DealForm({
   return (
     <form onSubmit={handleSubmit} className="flex max-w-xl flex-col gap-6">
       <DealSection id="deal-info" title="Deal Info">
-      <label className="field-label">
-        Address
-        <input
-          type="text"
-          required
-          value={values.address}
-          onChange={(event) => set('address', event.target.value)}
-          className="rounded border border-input-border bg-input-background px-3 py-2"
-        />
-      </label>
+      <AddressFields
+        value={{ address: values.address, city: values.city, state: values.state, zipCode: values.zip_code }}
+        onChange={(next) => {
+          setValues((prev) => ({ ...prev, address: next.address, city: next.city, state: next.state, zip_code: next.zipCode }))
+        }}
+      />
 
       <fieldset className="flex flex-col gap-4 rounded border border-border p-4">
         <legend className="px-1 text-sm font-medium">Property Facts</legend>
