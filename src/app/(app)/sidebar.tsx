@@ -22,6 +22,10 @@ const DEAL_SECTIONS = [
   { id: 'checklist', label: 'Checklist' },
   { id: 'custom-fields', label: 'Custom Fields' },
   { id: 'employees', label: 'Employees' },
+  // Not a hash section -- a real route (/deals/[id]/automations), so it's
+  // rendered as a <Link> below instead of a hash <a>, matching how Settings'
+  // Team entry works alongside its hash-anchored siblings.
+  { id: 'automations', label: 'Automations' },
 ]
 
 // Contact Center's sub-menu -- unlike DEAL_SECTIONS/SETTINGS_GROUPS these are
@@ -90,6 +94,14 @@ export function Sidebar({
 }) {
   const pathname = usePathname()
   const isDealDetail = /^\/deals\/(?!new$)[^/]+$/.test(pathname)
+  // Broader than isDealDetail (which is only the exact hash-sectioned edit
+  // page) -- also true on real sub-routes like the deal's Automations pages,
+  // so the Deal sub-nav (and an "Automations" entry within it) stays visible
+  // there instead of vanishing the moment the URL gains another segment.
+  const dealSubpageMatch = pathname.match(/^\/deals\/(?!new$)([^/]+)(\/.*)?$/)
+  const isDealSubpage = Boolean(dealSubpageMatch)
+  const dealId = dealSubpageMatch?.[1]
+  const dealSubpageSection = pathname.includes('/automations') ? 'automations' : null
   const isContactHub = pathname === '/contacts' || pathname.startsWith('/contacts/') || pathname === '/partner-companies' || pathname.startsWith('/partner-companies/')
   // Broader than just the exact /settings page -- sub-pages like an
   // employee role's detail page (/settings/employee-roles/[id]) still need
@@ -160,6 +172,8 @@ export function Sidebar({
     window.addEventListener('hashchange', sync)
     return () => window.removeEventListener('hashchange', sync)
   }, [isSettings, pathname])
+
+  const effectiveDealSection = dealSubpageSection ?? activeSection
 
   // Sub-pages (e.g. an employee role's detail page, or /team) aren't
   // hash-sectioned -- derive the active section straight from the pathname
@@ -244,23 +258,31 @@ export function Sidebar({
                 {item.label}
               </Link>
 
-              {item.href === '/deals' && isDealDetail && (
+              {item.href === '/deals' && isDealSubpage && (
                 <div className="ml-3 mt-1 flex flex-col gap-0.5 border-l border-white/10 pl-3">
                   <div className="rounded-md px-3 py-2 text-sm font-medium text-sidebar-muted">Deal</div>
                   <div className="ml-3 flex flex-col gap-0.5 border-l border-white/10 pl-3">
-                    {DEAL_SECTIONS.map((section) => (
-                      <a
-                        key={section.id}
-                        href={`#${section.id}`}
-                        className={`rounded-md px-3 py-1.5 text-sm transition-colors ${
-                          activeSection === section.id
-                            ? 'bg-sidebar-active text-white'
-                            : 'text-sidebar-muted hover:bg-sidebar-hover hover:text-sidebar-foreground'
-                        }`}
-                      >
-                        {section.label}
-                      </a>
-                    ))}
+                    {DEAL_SECTIONS.map((section) => {
+                      const sectionActive = effectiveDealSection === section.id
+                      const linkClassName = `rounded-md px-3 py-1.5 text-sm transition-colors ${
+                        sectionActive
+                          ? 'bg-sidebar-active text-white'
+                          : 'text-sidebar-muted hover:bg-sidebar-hover hover:text-sidebar-foreground'
+                      }`
+                      return section.id === 'automations' ? (
+                        <Link key={section.id} href={dealId ? `/deals/${dealId}/automations` : '#'} className={linkClassName}>
+                          {section.label}
+                        </Link>
+                      ) : (
+                        <a
+                          key={section.id}
+                          href={isDealDetail ? `#${section.id}` : `/deals/${dealId}#${section.id}`}
+                          className={linkClassName}
+                        >
+                          {section.label}
+                        </a>
+                      )
+                    })}
                   </div>
                 </div>
               )}
