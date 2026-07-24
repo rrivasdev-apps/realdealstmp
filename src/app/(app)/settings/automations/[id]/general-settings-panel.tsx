@@ -6,6 +6,7 @@ import { useState } from 'react'
 
 import type { DealField } from '@/lib/automations/deal-fields'
 
+import { buildFolderOptions, type AutomationFolder } from '../types'
 import type { AutomationTemplate, CustomFieldOption, LookupOption, OtherStepOption } from './types'
 
 const TRIGGER_OPTIONS: { value: string; label: string }[] = [
@@ -24,6 +25,7 @@ export function GeneralSettingsPanel({
   otherSteps,
   dealFields,
   dealDateFields,
+  folders,
 }: {
   template: AutomationTemplate
   dealTypes: LookupOption[]
@@ -32,9 +34,11 @@ export function GeneralSettingsPanel({
   otherSteps: OtherStepOption[]
   dealFields: DealField[]
   dealDateFields: DealField[]
+  folders: AutomationFolder[]
 }) {
   const router = useRouter()
   const [name, setName] = useState(template.name)
+  const [folderId, setFolderId] = useState(template.folder_id ?? '')
   const [triggerType, setTriggerType] = useState(template.trigger_type)
   const [triggerDealTypeId, setTriggerDealTypeId] = useState(template.trigger_deal_type_id ?? '')
   const [triggerDealField, setTriggerDealField] = useState(template.trigger_deal_field ?? '')
@@ -61,6 +65,7 @@ export function GeneralSettingsPanel({
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         name,
+        folder_id: folderId || null,
         trigger_type: triggerType,
         trigger_deal_type_id: triggerType === 'deal_created' ? triggerDealTypeId || null : null,
         trigger_deal_field: triggerType === 'field_changed' ? triggerDealField : null,
@@ -133,6 +138,21 @@ export function GeneralSettingsPanel({
           onChange={(event) => setName(event.target.value)}
           className="rounded border border-input-border bg-input-background px-3 py-2"
         />
+      </label>
+
+      <label className="flex flex-col gap-1 text-sm">
+        Folder
+        <select
+          value={folderId}
+          onChange={(event) => setFolderId(event.target.value)}
+          className="rounded border border-input-border bg-input-background px-3 py-2"
+        >
+          {buildFolderOptions(folders).map((option) => (
+            <option key={option.id ?? 'uncategorized'} value={option.id ?? ''}>
+              {option.label}
+            </option>
+          ))}
+        </select>
       </label>
 
       <label className="flex flex-col gap-1 text-sm">

@@ -16,6 +16,7 @@ export type AutomationTemplate = {
   start_delay_days: number
   first_step_due_delay_days: number
   is_functional: boolean
+  folder_id: string | null
 }
 
 export type AutomationStep = {

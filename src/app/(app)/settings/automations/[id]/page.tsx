@@ -31,6 +31,7 @@ export default async function AutomationPage({ params }: { params: Promise<{ id:
     { data: customFieldDefinitions },
     { data: otherTemplates },
     { data: otherSteps },
+    { data: folders },
   ] = await Promise.all([
     supabase.from('automation_templates').select('*').eq('id', id).single(),
     supabase.from('automation_template_steps').select('*').eq('template_id', id).order('step_number'),
@@ -40,6 +41,7 @@ export default async function AutomationPage({ params }: { params: Promise<{ id:
     supabase.from('custom_field_definitions').select('id, name, field_type').order('name'),
     supabase.from('automation_templates').select('id, name').neq('id', id).order('name'),
     supabase.from('automation_template_steps').select('id, name, template_id').neq('template_id', id).order('name'),
+    supabase.from('automation_folders').select('id, name, parent_folder_id').order('name'),
   ])
 
   if (!template || template.company_id !== profile.company_id) {
@@ -66,6 +68,7 @@ export default async function AutomationPage({ params }: { params: Promise<{ id:
         otherSteps={otherSteps ?? []}
         dealFields={DEAL_FIELDS}
         dealDateFields={DEAL_DATE_FIELDS}
+        folders={folders ?? []}
       />
     </div>
   )

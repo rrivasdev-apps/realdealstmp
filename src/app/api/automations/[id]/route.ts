@@ -146,10 +146,19 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     return NextResponse.json({ error: triggerResult.error }, { status: 400 })
   }
 
+  const folderId = typeof body.folder_id === 'string' && body.folder_id ? body.folder_id : null
+  if (folderId) {
+    const { data: folder } = await supabase.from('automation_folders').select('company_id').eq('id', folderId).single()
+    if (!folder || folder.company_id !== profile.company_id) {
+      return NextResponse.json({ error: 'That folder was not found.' }, { status: 400 })
+    }
+  }
+
   const { error } = await supabase
     .from('automation_templates')
     .update({
       name,
+      folder_id: folderId,
       start_delay_days: startDelayDays,
       first_step_due_delay_days: firstStepDueDelayDays,
       ...triggerResult.fields,

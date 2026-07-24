@@ -5,7 +5,9 @@ import { useState } from 'react'
 
 // Just creates a bare automation and opens the builder -- naming and every
 // other setting happens there as a second step, not up front in a form here.
-export function NewAutomationButton() {
+// An optional folderId pre-files the new automation when this button is
+// rendered inside a specific folder/subfolder's section.
+export function NewAutomationButton({ folderId, label = 'New' }: { folderId?: string; label?: string }) {
   const router = useRouter()
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
@@ -14,7 +16,11 @@ export function NewAutomationButton() {
     setError(null)
     setSubmitting(true)
 
-    const response = await fetch('/api/automations', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })
+    const response = await fetch('/api/automations', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ folder_id: folderId ?? null }),
+    })
     const result = await response.json()
 
     if (!response.ok) {
@@ -34,7 +40,7 @@ export function NewAutomationButton() {
         disabled={submitting}
         className="rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
       >
-        {submitting ? 'Creating…' : 'New'}
+        {submitting ? 'Creating…' : label}
       </button>
       {error && <p className="text-sm text-danger">{error}</p>}
     </div>

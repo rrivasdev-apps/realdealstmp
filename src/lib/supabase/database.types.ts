@@ -81,6 +81,45 @@ export type Database = {
           },
         ]
       }
+      automation_folders: {
+        Row: {
+          company_id: string
+          created_at: string
+          id: string
+          name: string
+          parent_folder_id: string | null
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          id?: string
+          name: string
+          parent_folder_id?: string | null
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          id?: string
+          name?: string
+          parent_folder_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "automation_folders_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "automation_folders_parent_folder_id_fkey"
+            columns: ["parent_folder_id"]
+            isOneToOne: false
+            referencedRelation: "automation_folders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       automation_processes: {
         Row: {
           completed_at: string | null
@@ -343,6 +382,7 @@ export type Database = {
           company_id: string
           created_at: string
           first_step_due_delay_days: number
+          folder_id: string | null
           id: string
           is_functional: boolean
           name: string
@@ -361,6 +401,7 @@ export type Database = {
           company_id: string
           created_at?: string
           first_step_due_delay_days?: number
+          folder_id?: string | null
           id?: string
           is_functional?: boolean
           name: string
@@ -379,6 +420,7 @@ export type Database = {
           company_id?: string
           created_at?: string
           first_step_due_delay_days?: number
+          folder_id?: string | null
           id?: string
           is_functional?: boolean
           name?: string
@@ -399,6 +441,13 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "automation_templates_folder_id_fkey"
+            columns: ["folder_id"]
+            isOneToOne: false
+            referencedRelation: "automation_folders"
             referencedColumns: ["id"]
           },
           {

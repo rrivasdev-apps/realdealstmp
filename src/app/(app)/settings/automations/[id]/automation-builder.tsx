@@ -4,6 +4,7 @@ import { useState } from 'react'
 
 import type { DealField } from '@/lib/automations/deal-fields'
 
+import type { AutomationFolder } from '../types'
 import { GeneralSettingsPanel } from './general-settings-panel'
 import { StepList } from './step-list'
 import type {
@@ -27,6 +28,7 @@ export function AutomationBuilder({
   otherSteps,
   dealFields,
   dealDateFields,
+  folders,
 }: {
   template: AutomationTemplate
   steps: AutomationStep[]
@@ -39,6 +41,7 @@ export function AutomationBuilder({
   otherSteps: OtherStepOption[]
   dealFields: DealField[]
   dealDateFields: DealField[]
+  folders: AutomationFolder[]
 }) {
   const [openStepId, setOpenStepId] = useState<string | null>(null)
 
@@ -52,6 +55,7 @@ export function AutomationBuilder({
         otherSteps={otherSteps}
         dealFields={dealFields}
         dealDateFields={dealDateFields}
+        folders={folders}
       />
 
       <StepList
