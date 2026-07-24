@@ -8,7 +8,7 @@ export default async function NewPartnerCompanyPage() {
   if (!profile) {
     return (
       <div>
-        <h1 className="text-xl font-semibold">New company</h1>
+        <h1 className="heading-page">New company</h1>
         <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to create companies.</p>
       </div>
     )
@@ -19,7 +19,7 @@ export default async function NewPartnerCompanyPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-semibold">New company</h1>
+      <h1 className="heading-page">New company</h1>
       <div className="mt-6">
         <PartnerCompanyForm
           mode="create"

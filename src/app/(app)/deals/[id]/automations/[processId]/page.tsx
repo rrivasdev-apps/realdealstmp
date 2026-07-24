@@ -28,7 +28,7 @@ export default async function AutomationProcessPage({
   if (!profile || !profile.company_id) {
     return (
       <div>
-        <h1 className="text-xl font-semibold">Automation</h1>
+        <h1 className="heading-page">Automation</h1>
         <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to view this deal.</p>
       </div>
     )
@@ -120,7 +120,7 @@ export default async function AutomationProcessPage({
       </div>
 
       <div className="w-full shrink-0 lg:w-80">
-        <h2 className="text-sm font-medium text-muted-foreground">Activity log</h2>
+        <h2 className="heading-subsection">Activity log</h2>
         <ul className="mt-2 flex flex-col gap-2 rounded-lg border border-border bg-background p-3">
           {(activityLog ?? []).map((entry) => (
             <li key={entry.id} className="text-xs">

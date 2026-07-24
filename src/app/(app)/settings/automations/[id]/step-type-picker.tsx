@@ -47,7 +47,7 @@ export function StepTypePicker({
 
   return (
     <div className="flex flex-col gap-2 rounded border border-dashed border-input-border p-4">
-      <p className="text-sm text-muted-foreground">Drop an action on this step</p>
+      <p className="text-sm text-muted-foreground">Select the action type for this step</p>
       <div className="flex flex-wrap gap-2">
         {STEP_TYPE_LABELS.map((option) => (
           <button

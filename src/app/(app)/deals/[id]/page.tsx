@@ -18,7 +18,7 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
   if (!profile) {
     return (
       <div>
-        <h1 className="text-xl font-semibold">Deal</h1>
+        <h1 className="heading-page">Deal</h1>
         <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to view this deal.</p>
       </div>
     )
@@ -121,7 +121,7 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
 
   return (
     <div>
-      <h1 className="text-xl font-semibold">Edit deal</h1>
+      <h1 className="heading-page">Edit deal</h1>
       <div className="mt-6">
         <DealForm
           mode="edit"
@@ -235,7 +235,7 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
       <DealSection id="jv-dispo">
       <div className="mt-10">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-medium text-muted-foreground">Offers</h2>
+          <h2 className="heading-subsection">Offers</h2>
           <Link href={`/deals/${id}/offers/new`} className="text-xs underline">
             + Add offer
           </Link>
@@ -267,7 +267,7 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
 
       <div className="mt-10">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-medium text-muted-foreground">Showings</h2>
+          <h2 className="heading-subsection">Showings</h2>
           <Link href={`/deals/${id}/showings/new`} className="text-xs underline">
             + Add showing
           </Link>
@@ -300,7 +300,7 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
 
       <DealSection id="employees">
       <div className="mt-10">
-        <h2 className="text-sm font-medium text-muted-foreground">Employees</h2>
+        <h2 className="heading-subsection">Employees</h2>
         <div className="mt-2">
           <DealEmployeeForm dealId={id} availableProfiles={availableProfiles} />
         </div>

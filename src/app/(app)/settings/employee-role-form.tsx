@@ -34,7 +34,7 @@ export function EmployeeRoleForm() {
 
   return (
     <form onSubmit={handleSubmit} className="flex items-end gap-3">
-      <label className="flex flex-1 flex-col gap-1 text-sm">
+      <label className="flex-1 field-label">
         Name
         <input
           type="text"

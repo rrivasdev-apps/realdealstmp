@@ -112,17 +112,57 @@
   }
 }
 
+/*
+ * Typography roles -- the single place to change how a field label, a
+ * subsection header, or the page title look everywhere they're used.
+ * Reuses the color tokens above (text-muted-foreground/text-foreground) so
+ * color hierarchy is already solved by the same "one place" mechanism.
+ */
+@layer components {
+  /* Caption above a single input/select/textarea, e.g. "Name". Deliberately
+     smaller and quieter than the input's own text so the two are never
+     confused for each other. */
+  .field-label {
+    @apply flex flex-col gap-1 text-xs font-medium text-muted-foreground;
+  }
+
+  /* Sub-panel header inside a section, e.g. "Automation general settings". */
+  .heading-subsection {
+    @apply text-sm font-medium text-muted-foreground;
+  }
+
+  /* A HashSection/SettingsSection/DealSection title. */
+  .heading-section {
+    @apply text-lg font-semibold text-foreground;
+  }
+
+  /* Page title (<h1>). */
+  .heading-page {
+    @apply text-xl font-semibold text-foreground;
+  }
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Inputs no longer inherit their font-size from a wrapping label (labels use
+   .field-label, which is deliberately smaller) -- set it explicitly here so
+   every input/select/textarea keeps rendering at the same 14px it always has,
+   without touching each field's className individually. */
+input,
+select,
+textarea {
+  font-size: 0.875rem;
+}
+
 /* iOS Safari auto-zooms the viewport when a focused form field computes to
-   <16px font-size. Inputs inherit text-sm (14px) from their wrapping label
-   almost everywhere in this app -- override at the width where iOS actually
-   applies, rather than bumping every input's className individually. Labels
-   themselves are untouched, so they stay 14px. */
+   <16px font-size -- override at the width where iOS actually applies. This
+   must stay a plain (unlayered) rule after the one above, not @layer
+   anything: Tailwind v4 hoists @layer rules below unlayered CSS regardless
+   of source order, and this needs to reliably win on small screens. */
 @media (max-width: 640px) {
   input,
   select,

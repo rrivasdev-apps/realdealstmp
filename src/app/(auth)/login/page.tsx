@@ -34,10 +34,10 @@ export default function LoginPage() {
 
   return (
     <div className="mx-auto max-w-sm py-24">
-      <h1 className="text-xl font-semibold">Log in</h1>
+      <h1 className="heading-page">Log in</h1>
 
       <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Email
           <input
             type="email"
@@ -48,7 +48,7 @@ export default function LoginPage() {
           />
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Password
           <input
             type="password"

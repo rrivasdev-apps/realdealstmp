@@ -11,7 +11,7 @@ export default async function NewOfferPage({ params }: { params: Promise<{ id: s
   if (!profile) {
     return (
       <div>
-        <h1 className="text-xl font-semibold">New offer</h1>
+        <h1 className="heading-page">New offer</h1>
         <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to edit this deal.</p>
       </div>
     )
@@ -30,7 +30,7 @@ export default async function NewOfferPage({ params }: { params: Promise<{ id: s
 
   return (
     <div>
-      <h1 className="text-xl font-semibold">New offer</h1>
+      <h1 className="heading-page">New offer</h1>
       <div className="mt-6">
         <OfferForm
           mode="create"

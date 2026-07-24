@@ -86,7 +86,7 @@ export function SimpleTaskModal({
       <form onSubmit={handleSave} className="flex flex-col gap-4">
         <p className="text-sm text-muted-foreground">{kind.blurb}</p>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Task title
           <input
             type="text"
@@ -97,7 +97,7 @@ export function SimpleTaskModal({
           />
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Task description
           <textarea
             value={description}

@@ -38,7 +38,7 @@ export function InviteForm() {
   return (
     <form onSubmit={handleSubmit} className="flex max-w-sm flex-col gap-2">
       <div className="flex items-end gap-2">
-        <label className="flex flex-1 flex-col gap-1 text-sm">
+        <label className="flex-1 field-label">
           Invite by email
           <input
             type="email"

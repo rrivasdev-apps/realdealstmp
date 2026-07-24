@@ -22,8 +22,8 @@ function FieldPickerList<T extends { key: string; label: string }>({
   const available = options.filter((option) => !selectedKeys.includes(option.key))
 
   return (
-    <div className="flex flex-col gap-1 text-sm">
-      <label className="flex flex-col gap-1 text-sm">
+    <div className="field-label">
+      <label className="field-label">
         {label}
         <select
           value=""
@@ -141,7 +141,7 @@ export function FillFieldsModal({
       <form onSubmit={handleSave} className="flex flex-col gap-4">
         <AssigneeFields value={assignee} onChange={setAssignee} employeeRoles={employeeRoles} profiles={profiles} />
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Task title
           <input
             type="text"

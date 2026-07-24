@@ -78,7 +78,7 @@ export default async function DashboardPage() {
       <h1 className="text-xl font-semibold text-foreground">Dashboard</h1>
 
       <section className="mt-6">
-        <h2 className="text-sm font-medium text-muted-foreground">Pipeline</h2>
+        <h2 className="heading-subsection">Pipeline</h2>
         <div className="mt-2 grid grid-cols-2 gap-4 sm:grid-cols-4">
           <PipelineCard label="Open Deals" value={String(openDeals.length)} />
           <PipelineCard label="Projected Profit" value={currency.format(projectedProfit)} />
@@ -88,7 +88,7 @@ export default async function DashboardPage() {
       </section>
 
       <section className="mt-8">
-        <h2 className="text-sm font-medium text-muted-foreground">Period Performance</h2>
+        <h2 className="heading-subsection">Period Performance</h2>
         <PeriodPerformanceTabs monthly={monthly} quarterly={quarterly} yearly={yearly} />
       </section>
     </div>

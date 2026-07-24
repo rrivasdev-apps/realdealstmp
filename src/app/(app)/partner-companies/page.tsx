@@ -8,7 +8,7 @@ export default async function PartnerCompaniesPage() {
   if (!profile) {
     return (
       <div>
-        <h1 className="text-xl font-semibold">Companies</h1>
+        <h1 className="heading-page">Companies</h1>
         <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to view companies.</p>
       </div>
     )
@@ -23,7 +23,7 @@ export default async function PartnerCompaniesPage() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Companies</h1>
+        <h1 className="heading-page">Companies</h1>
         <Link href="/partner-companies/new" className="rounded bg-foreground px-4 py-2 text-sm text-background">
           New company
         </Link>

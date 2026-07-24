@@ -35,7 +35,7 @@ export function NewRunForm() {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3 rounded border border-border p-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Pay period start
           <input
             type="date"
@@ -45,7 +45,7 @@ export function NewRunForm() {
             className="rounded border border-input-border bg-input-background px-3 py-2"
           />
         </label>
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Pay period end
           <input
             type="date"

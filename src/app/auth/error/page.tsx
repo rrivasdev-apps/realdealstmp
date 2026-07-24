@@ -7,7 +7,7 @@ export default async function AuthErrorPage({
 
   return (
     <div className="mx-auto max-w-sm py-24 text-center">
-      <h1 className="text-xl font-semibold">Something went wrong</h1>
+      <h1 className="heading-page">Something went wrong</h1>
       <p className="mt-2 text-muted-foreground">
         {error ?? 'That link is invalid or has expired.'}
       </p>

@@ -48,7 +48,7 @@ export default async function SettingsPage() {
   if (!profile) {
     return (
       <div>
-        <h1 className="text-xl font-semibold">Settings</h1>
+        <h1 className="heading-page">Settings</h1>
         <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to manage settings.</p>
       </div>
     )
@@ -91,7 +91,7 @@ export default async function SettingsPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-semibold">Settings</h1>
+      <h1 className="heading-page">Settings</h1>
 
       <div className="mt-6">
         <SettingsSection id="markets" title="Markets">

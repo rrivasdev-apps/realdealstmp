@@ -126,7 +126,7 @@ export function EmployeeForm({
 
       <fieldset className="grid grid-cols-1 gap-4 rounded border border-border p-4 sm:grid-cols-2">
         <legend className="px-1 text-sm font-medium">Additional info</legend>
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Employee type
           <select
             value={employeeType}
@@ -139,7 +139,7 @@ export function EmployeeForm({
             <option value="contractor">Contractor</option>
           </select>
         </label>
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Hire date
           <input
             type="date"
@@ -148,7 +148,7 @@ export function EmployeeForm({
             className="rounded border border-input-border bg-input-background px-3 py-2"
           />
         </label>
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Birth date
           <input
             type="date"
@@ -157,7 +157,7 @@ export function EmployeeForm({
             className="rounded border border-input-border bg-input-background px-3 py-2"
           />
         </label>
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Paid via
           <input
             type="text"
@@ -166,7 +166,7 @@ export function EmployeeForm({
             className="rounded border border-input-border bg-input-background px-3 py-2"
           />
         </label>
-        <label className="flex flex-col gap-1 text-sm sm:col-span-2">
+        <label className="field-label sm:col-span-2">
           Address
           <input
             type="text"
@@ -187,7 +187,7 @@ export function EmployeeForm({
 
       <fieldset className="grid grid-cols-1 gap-4 rounded border border-border p-4 sm:grid-cols-2">
         <legend className="px-1 text-sm font-medium">Pay rate</legend>
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Pay type
           <select
             value={payType}
@@ -199,7 +199,7 @@ export function EmployeeForm({
             <option value="salary">Salary</option>
           </select>
         </label>
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           {payType === 'salary' ? 'Salary per pay period' : 'Hourly rate'}
           <input
             type="number"

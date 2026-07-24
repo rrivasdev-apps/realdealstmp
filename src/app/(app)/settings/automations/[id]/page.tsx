@@ -14,7 +14,7 @@ export default async function AutomationPage({ params }: { params: Promise<{ id:
   if (!profile) {
     return (
       <div>
-        <h1 className="text-xl font-semibold">Automation</h1>
+        <h1 className="heading-page">Automation</h1>
         <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to manage settings.</p>
       </div>
     )

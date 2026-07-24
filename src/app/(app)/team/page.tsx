@@ -11,7 +11,7 @@ export default async function TeamPage() {
   if (!profile || !profile.company_id) {
     return (
       <div>
-        <h1 className="text-xl font-semibold">Team</h1>
+        <h1 className="heading-page">Team</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           You don&apos;t have permission to manage the team.
         </p>
@@ -33,7 +33,7 @@ export default async function TeamPage() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Team</h1>
+        <h1 className="heading-page">Team</h1>
         <span className="text-sm text-muted-foreground">
           Employee Center plan: {hasEmployeeCenter ? 'Yes' : 'No'}
         </span>

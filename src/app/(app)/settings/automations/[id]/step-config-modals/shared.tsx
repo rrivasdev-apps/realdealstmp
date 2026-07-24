@@ -49,7 +49,7 @@ export function AssigneeFields({
   const mode = value.assigned_profile_id ? 'user' : 'role'
 
   return (
-    <div className="flex flex-col gap-1 text-sm">
+    <div className="field-label">
       <span>Task assignee</span>
       <div className="flex items-center gap-2">
         <div className="flex overflow-hidden rounded border border-input-border">
@@ -159,7 +159,7 @@ export function NextStepFields({
 
       {goesToStep && (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="field-label">
             Next step
             <select
               value={value.next_step_id ?? ''}
@@ -176,7 +176,7 @@ export function NextStepFields({
               ))}
             </select>
           </label>
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="field-label">
             Days until due
             <input
               type="number"
@@ -208,7 +208,7 @@ export function TriggerAutomationFields({
   }
 
   return (
-    <div className="flex flex-col gap-1 text-sm">
+    <div className="field-label">
       <span className="text-muted-foreground">{label}</span>
       {otherTemplates.length === 0 ? (
         <span className="text-muted-foreground">No other automations to trigger yet.</span>

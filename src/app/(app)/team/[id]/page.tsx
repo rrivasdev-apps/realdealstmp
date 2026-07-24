@@ -27,7 +27,7 @@ export default async function TeamMemberPage({ params }: { params: Promise<{ id:
   if (!profile) {
     return (
       <div>
-        <h1 className="text-xl font-semibold">Team member</h1>
+        <h1 className="heading-page">Team member</h1>
         <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to manage team members.</p>
       </div>
     )
@@ -72,7 +72,7 @@ export default async function TeamMemberPage({ params }: { params: Promise<{ id:
 
   return (
     <div>
-      <h1 className="text-xl font-semibold">{member.name}</h1>
+      <h1 className="heading-page">{member.name}</h1>
       <p className="mt-1 text-sm text-muted-foreground">{member.email}</p>
 
       {profile.role === 'admin' && (

@@ -80,7 +80,7 @@ export function ConditionalStatementModal({
       <form onSubmit={handleSave} className="flex flex-col gap-4">
         <AssigneeFields value={assignee} onChange={setAssignee} employeeRoles={employeeRoles} profiles={profiles} />
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Question
           <textarea
             required
@@ -93,7 +93,7 @@ export function ConditionalStatementModal({
 
         <fieldset className="flex flex-col gap-3 rounded border border-border p-3">
           <legend className="px-1 text-sm font-medium">Option 1</legend>
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="field-label">
             Answer
             <input
               type="text"
@@ -119,7 +119,7 @@ export function ConditionalStatementModal({
 
         <fieldset className="flex flex-col gap-3 rounded border border-border p-3">
           <legend className="px-1 text-sm font-medium">Option 2</legend>
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="field-label">
             Answer
             <input
               type="text"

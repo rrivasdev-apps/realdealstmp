@@ -38,7 +38,7 @@ export function SimpleListForm({ endpoint, placeholder }: { endpoint: string; pl
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-end">
-      <label className="flex flex-1 flex-col gap-1 text-sm">
+      <label className="flex-1 field-label">
         Name
         <input
           type="text"

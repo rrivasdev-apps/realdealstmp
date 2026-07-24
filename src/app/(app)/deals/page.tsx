@@ -105,7 +105,7 @@ export default async function DealsPage({
   if (!profile) {
     return (
       <div>
-        <h1 className="text-xl font-semibold">Whiteboard</h1>
+        <h1 className="heading-page">Whiteboard</h1>
         <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to view the whiteboard.</p>
       </div>
     )
@@ -206,7 +206,7 @@ function ClosedGroup({ active, deals }: { active: FilterKey; deals: Deal[] }) {
 function DealSection({ title, deals }: { title: string; deals: Deal[] }) {
   return (
     <section className="mt-8">
-      <h2 className="text-sm font-medium text-muted-foreground">{title}</h2>
+      <h2 className="heading-subsection">{title}</h2>
       <ul className="mt-2 divide-y divide-border rounded-lg border border-border bg-background">
         {deals.map((deal) => {
           const profit = calculateProfit(deal)

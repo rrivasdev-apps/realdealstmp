@@ -14,7 +14,7 @@ export default async function EmployeeRolePage({ params }: { params: Promise<{ i
   if (!profile || profile.role !== 'admin') {
     return (
       <div>
-        <h1 className="text-xl font-semibold">Employee role</h1>
+        <h1 className="heading-page">Employee role</h1>
         <p className="mt-2 text-sm text-muted-foreground">Only admins can manage settings.</p>
       </div>
     )
@@ -47,7 +47,7 @@ export default async function EmployeeRolePage({ params }: { params: Promise<{ i
 
   return (
     <div>
-      <h1 className="text-xl font-semibold">{employeeRole.name}</h1>
+      <h1 className="heading-page">{employeeRole.name}</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         Commission types checked here apply to every employee with this role.
       </p>

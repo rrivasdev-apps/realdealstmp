@@ -114,7 +114,7 @@ export function ContactForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex max-w-xl flex-col gap-6">
-      <label className="flex flex-col gap-1 text-sm">
+      <label className="field-label">
         Name
         <input
           type="text"
@@ -207,7 +207,7 @@ export function ContactForm({
         ))}
       </div>
 
-      <label className="flex flex-col gap-1 text-sm">
+      <label className="field-label">
         Notes
         <textarea
           value={values.notes}

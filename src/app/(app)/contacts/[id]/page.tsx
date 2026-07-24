@@ -12,7 +12,7 @@ export default async function EditContactPage({ params }: { params: Promise<{ id
   if (!profile) {
     return (
       <div>
-        <h1 className="text-xl font-semibold">Contact</h1>
+        <h1 className="heading-page">Contact</h1>
         <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to view this contact.</p>
       </div>
     )
@@ -43,7 +43,7 @@ export default async function EditContactPage({ params }: { params: Promise<{ id
 
   return (
     <div>
-      <h1 className="text-xl font-semibold">Edit contact</h1>
+      <h1 className="heading-page">Edit contact</h1>
       <div className="mt-6">
         <ContactForm
           mode="edit"

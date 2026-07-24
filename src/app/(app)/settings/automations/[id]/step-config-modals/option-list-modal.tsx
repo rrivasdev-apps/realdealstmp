@@ -47,7 +47,7 @@ function OptionRow({
           Remove
         </button>
       </div>
-      <label className="flex flex-col gap-1 text-sm">
+      <label className="field-label">
         Option name
         <input
           type="text"
@@ -212,7 +212,7 @@ export function OptionListModal({
 
         <AssigneeFields value={assignee} onChange={setAssignee} employeeRoles={employeeRoles} profiles={profiles} />
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Option task title/description
           <textarea
             required

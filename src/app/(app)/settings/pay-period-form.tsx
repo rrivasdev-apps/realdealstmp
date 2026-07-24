@@ -84,7 +84,7 @@ export function PayPeriodForm({
   return (
     <form onSubmit={handleSubmit} className="flex max-w-xl flex-col gap-4 rounded border border-border p-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Pay period name
           <input
             type="text"
@@ -96,7 +96,7 @@ export function PayPeriodForm({
           />
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Payment type
           <select
             required
@@ -115,7 +115,7 @@ export function PayPeriodForm({
 
         {needsSalary && (
           <>
-            <label className="flex flex-col gap-1 text-sm">
+            <label className="field-label">
               Salary pay frequency
               <select
                 required
@@ -132,7 +132,7 @@ export function PayPeriodForm({
               </select>
             </label>
 
-            <label className="flex flex-col gap-1 text-sm">
+            <label className="field-label">
               Salary type
               <select
                 required
@@ -155,7 +155,7 @@ export function PayPeriodForm({
         )}
 
         {needsCommission && (
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="field-label">
             Commission pay frequency
             <select
               required
@@ -174,7 +174,7 @@ export function PayPeriodForm({
         )}
 
         {mode === 'create' ? (
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="field-label">
             First payday
             <input
               type="date"
@@ -186,7 +186,7 @@ export function PayPeriodForm({
           </label>
         ) : (
           <>
-            <label className="flex flex-col gap-1 text-sm">
+            <label className="field-label">
               First payday
               <input
                 type="date"
@@ -196,7 +196,7 @@ export function PayPeriodForm({
               />
               <span className="text-xs text-muted-foreground">Set once at creation, not editable.</span>
             </label>
-            <label className="flex flex-col gap-1 text-sm">
+            <label className="field-label">
               Next payday
               <input
                 type="date"
@@ -210,7 +210,7 @@ export function PayPeriodForm({
         )}
       </div>
 
-      <label className="flex flex-col gap-1 text-sm">
+      <label className="field-label">
         Comments / observations
         <textarea
           required

@@ -53,7 +53,7 @@ export function CommissionTypeForm() {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3 rounded border border-border p-4">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Name
           <input
             type="text"
@@ -65,7 +65,7 @@ export function CommissionTypeForm() {
           />
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Category
           <select
             value={category}
@@ -78,7 +78,7 @@ export function CommissionTypeForm() {
         </label>
 
         {category === 'percentage' && (
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="field-label">
             Basis
             <select
               value={basis}
@@ -94,7 +94,7 @@ export function CommissionTypeForm() {
           </label>
         )}
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           {category === 'flat' ? 'Amount' : 'Percent'}
           <input
             type="number"
@@ -107,7 +107,7 @@ export function CommissionTypeForm() {
         </label>
       </div>
 
-      <label className="flex flex-col gap-1 text-sm">
+      <label className="field-label">
         Description
         <textarea
           value={description}

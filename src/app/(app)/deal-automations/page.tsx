@@ -40,7 +40,7 @@ export default async function DealAutomationsPage({
   if (!profile || !profile.company_id) {
     return (
       <div>
-        <h1 className="text-xl font-semibold">Deal Automations</h1>
+        <h1 className="heading-page">Deal Automations</h1>
         <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to view this.</p>
       </div>
     )
@@ -147,7 +147,7 @@ export default async function DealAutomationsPage({
 
   return (
     <div>
-      <h1 className="text-xl font-semibold">Deal Automations</h1>
+      <h1 className="heading-page">Deal Automations</h1>
       <p className="mt-2 text-sm text-muted-foreground">Automation processes currently running against your deals.</p>
 
       <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
@@ -173,7 +173,7 @@ export default async function DealAutomationsPage({
 
       <form className="mt-6 flex flex-wrap items-end gap-3" method="get">
         {activeFilter && <input type="hidden" name="filter" value={activeFilter} />}
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Address
           <input
             type="text"
@@ -183,7 +183,7 @@ export default async function DealAutomationsPage({
             className="rounded border border-input-border bg-input-background px-3 py-2"
           />
         </label>
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Employee
           <select name="employee" defaultValue={employee ?? ''} className="rounded border border-input-border bg-input-background px-3 py-2">
             <option value="">Choose an option…</option>

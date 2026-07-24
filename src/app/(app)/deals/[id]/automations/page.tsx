@@ -13,7 +13,7 @@ export default async function DealAutomationsListPage({ params }: { params: Prom
   if (!profile || !profile.company_id) {
     return (
       <div>
-        <h1 className="text-xl font-semibold">Deal automations</h1>
+        <h1 className="heading-page">Deal automations</h1>
         <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to view this deal.</p>
       </div>
     )
@@ -97,7 +97,7 @@ export default async function DealAutomationsListPage({ params }: { params: Prom
     <div>
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-semibold">Deal automations</h1>
+          <h1 className="heading-page">Deal automations</h1>
           <p className="mt-1 text-sm text-muted-foreground">{deal.address}</p>
         </div>
         <Link href={`/deals/${id}`} className="text-sm underline">
@@ -110,7 +110,7 @@ export default async function DealAutomationsListPage({ params }: { params: Prom
       </div>
 
       <div className="mt-6">
-        <h2 className="text-sm font-medium text-muted-foreground">{running.length} running process(es)</h2>
+        <h2 className="heading-subsection">{running.length} running process(es)</h2>
         <ul className="mt-2 divide-y divide-border rounded-lg border border-border bg-background">
           {running.map(renderProcessRow)}
           {running.length === 0 && <li className="px-4 py-3 text-sm text-muted-foreground">No processes running.</li>}
@@ -118,7 +118,7 @@ export default async function DealAutomationsListPage({ params }: { params: Prom
       </div>
 
       <div className="mt-6">
-        <h2 className="text-sm font-medium text-muted-foreground">{completed.length} completed process(es)</h2>
+        <h2 className="heading-subsection">{completed.length} completed process(es)</h2>
         <ul className="mt-2 divide-y divide-border rounded-lg border border-border bg-background">
           {completed.map(renderProcessRow)}
           {completed.length === 0 && <li className="px-4 py-3 text-sm text-muted-foreground">No completed processes yet.</li>}

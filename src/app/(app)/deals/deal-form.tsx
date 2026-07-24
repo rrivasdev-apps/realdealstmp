@@ -285,7 +285,7 @@ export function DealForm({
   return (
     <form onSubmit={handleSubmit} className="flex max-w-xl flex-col gap-6">
       <DealSection id="deal-info" title="Deal Info">
-      <label className="flex flex-col gap-1 text-sm">
+      <label className="field-label">
         Address
         <input
           type="text"
@@ -300,7 +300,7 @@ export function DealForm({
         <legend className="px-1 text-sm font-medium">Property Facts</legend>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="field-label">
             APN
             <input
               type="text"
@@ -310,7 +310,7 @@ export function DealForm({
             />
           </label>
 
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="field-label">
             Lot size (acres)
             <input
               type="number"
@@ -321,7 +321,7 @@ export function DealForm({
             />
           </label>
 
-          <label className="flex flex-col gap-1 text-sm sm:col-span-2">
+          <label className="field-label sm:col-span-2">
             Legal description
             <textarea
               value={values.legal_description}
@@ -331,7 +331,7 @@ export function DealForm({
             />
           </label>
 
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="field-label">
             Mortgage company
             <select
               value={values.mortgage_company_contact_id}
@@ -347,7 +347,7 @@ export function DealForm({
             </select>
           </label>
 
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="field-label">
             Mortgage principal balance
             <CurrencyInput
               value={values.mortgage_principal_balance}
@@ -356,7 +356,7 @@ export function DealForm({
             />
           </label>
 
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="field-label">
             Mortgage rate (%)
             <input
               type="number"
@@ -367,7 +367,7 @@ export function DealForm({
             />
           </label>
 
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="field-label">
             Mortgage term (years)
             <input
               type="number"
@@ -378,7 +378,7 @@ export function DealForm({
             />
           </label>
 
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="field-label">
             Total payoff amount
             <CurrencyInput
               value={values.total_payoff_amount}
@@ -387,7 +387,7 @@ export function DealForm({
             />
           </label>
 
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="field-label">
             Foreclosure date
             <input
               type="date"
@@ -420,7 +420,7 @@ export function DealForm({
       </fieldset>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Market
           <select
             value={values.market_id}
@@ -436,7 +436,7 @@ export function DealForm({
           </select>
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Property type
           <select
             value={values.property_type_id}
@@ -452,7 +452,7 @@ export function DealForm({
           </select>
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Deal type
           <select
             value={values.deal_type_id}
@@ -468,7 +468,7 @@ export function DealForm({
           </select>
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Lead source
           <select
             value={values.lead_source_id}
@@ -485,7 +485,7 @@ export function DealForm({
         </label>
 
         {sellingReasons.length > 0 && (
-          <div className="flex flex-col gap-1 text-sm sm:col-span-2">
+          <div className="field-label sm:col-span-2">
             <span>Reasons for selling</span>
             <div className="flex flex-wrap gap-x-4 gap-y-1">
               {sellingReasons.map((reason) => (
@@ -503,7 +503,7 @@ export function DealForm({
         )}
 
         {mode === 'edit' && (
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="field-label">
             Status
             <select
               value={values.status_id}
@@ -521,7 +521,7 @@ export function DealForm({
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Contract price
           <CurrencyInput
             value={values.contract_price}
@@ -535,7 +535,7 @@ export function DealForm({
           )}
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Projected sales price
           <CurrencyInput
             value={values.projected_sales_price}
@@ -544,7 +544,7 @@ export function DealForm({
           />
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Contract date
           <input
             type="date"
@@ -554,7 +554,7 @@ export function DealForm({
           />
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Closing date
           <input
             type="date"
@@ -564,7 +564,7 @@ export function DealForm({
           />
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Due diligence expiration
           <input
             type="date"
@@ -575,7 +575,7 @@ export function DealForm({
         </label>
 
         {mode === 'edit' && (
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="field-label">
             Actual closing date
             <input
               type="date"
@@ -638,7 +638,7 @@ export function DealForm({
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="field-label">
             Title company
             <select
               value={values.title_company_contact_id}
@@ -654,7 +654,7 @@ export function DealForm({
             </select>
           </label>
 
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="field-label">
             Seller info
             <select
               value={values.seller_contact_id}
@@ -670,7 +670,7 @@ export function DealForm({
             </select>
           </label>
 
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="field-label">
             AB-Purchase type
             <select
               value={values.ab_purchase_type_id}
@@ -705,7 +705,7 @@ export function DealForm({
 
           {values.buyer_found && (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <label className="flex flex-col gap-1 text-sm">
+              <label className="field-label">
                 Buyer contract price
                 {initialValues.buyer_contract_price ? (
                   <>
@@ -728,7 +728,7 @@ export function DealForm({
                 )}
               </label>
 
-              <label className="flex flex-col gap-1 text-sm">
+              <label className="field-label">
                 Renegotiated BC price
                 <CurrencyInput
                   value={values.renegotiated_bc_price}
@@ -742,7 +742,7 @@ export function DealForm({
                 )}
               </label>
 
-              <label className="flex flex-col gap-1 text-sm">
+              <label className="field-label">
                 Buyer contract date
                 <input
                   type="date"
@@ -752,7 +752,7 @@ export function DealForm({
                 />
               </label>
 
-              <label className="flex flex-col gap-1 text-sm">
+              <label className="field-label">
                 BC contract closing date
                 <input
                   type="date"
@@ -762,7 +762,7 @@ export function DealForm({
                 />
               </label>
 
-              <label className="flex flex-col gap-1 text-sm">
+              <label className="field-label">
                 Buyer inspection deadline
                 <input
                   type="date"
@@ -772,7 +772,7 @@ export function DealForm({
                 />
               </label>
 
-              <label className="flex flex-col gap-1 text-sm">
+              <label className="field-label">
                 Buyer deposit amount
                 <CurrencyInput
                   value={values.buyer_deposit_amount}
@@ -813,7 +813,7 @@ export function DealForm({
 
           {values.is_jv_deal && (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <label className="flex flex-col gap-1 text-sm">
+              <label className="field-label">
                 JV partner company
                 <select
                   value={values.jv_partner_company_id}
@@ -829,7 +829,7 @@ export function DealForm({
                 </select>
               </label>
 
-              <label className="flex flex-col gap-1 text-sm">
+              <label className="field-label">
                 Split type
                 <select
                   value={values.jv_split_type_id}
@@ -845,7 +845,7 @@ export function DealForm({
                 </select>
               </label>
 
-              <label className="flex flex-col gap-1 text-sm">
+              <label className="field-label">
                 Split percent
                 <input
                   type="number"
@@ -856,7 +856,7 @@ export function DealForm({
                 />
               </label>
 
-              <label className="flex flex-col gap-1 text-sm">
+              <label className="field-label">
                 Split amount
                 <CurrencyInput
                   value={values.split_amount}
@@ -876,7 +876,7 @@ export function DealForm({
           <legend className="px-1 text-sm font-medium">Financial</legend>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <label className="flex flex-col gap-1 text-sm">
+            <label className="field-label">
               Total expenses
               <CurrencyInput
                 value={values.total_expenses}
@@ -885,7 +885,7 @@ export function DealForm({
               />
             </label>
 
-            <label className="flex flex-col gap-1 text-sm">
+            <label className="field-label">
               Total commissions
               <CurrencyInput
                 value={values.total_commissions}
@@ -944,7 +944,7 @@ export function DealForm({
               </label>
               {values.checklist_post_occupancy && (
                 <div className="mt-2 grid grid-cols-1 gap-3 sm:max-w-md sm:grid-cols-2">
-                  <label className="flex flex-col gap-1 text-sm">
+                  <label className="field-label">
                     Hold back dollar amount
                     <CurrencyInput
                       value={values.post_occupancy_hold_back_amount}
@@ -952,7 +952,7 @@ export function DealForm({
                       className="rounded border border-input-border bg-input-background px-3 py-2"
                     />
                   </label>
-                  <label className="flex flex-col gap-1 text-sm">
+                  <label className="field-label">
                     Move out date
                     <input
                       type="date"
@@ -975,7 +975,7 @@ export function DealForm({
                 Survey needed
               </label>
               {values.checklist_survey_needed && (
-                <label className="mt-2 flex max-w-xs flex-col gap-1 text-sm">
+                <label className="mt-2 max-w-xs field-label">
                   Survey ordered
                   <input
                     type="date"
@@ -998,7 +998,7 @@ export function DealForm({
               </label>
               {values.checklist_initial_photos_needed && (
                 <div className="mt-2 grid grid-cols-1 gap-3 sm:max-w-md sm:grid-cols-2">
-                  <label className="flex flex-col gap-1 text-sm">
+                  <label className="field-label">
                     Initial photos ordered
                     <input
                       type="date"
@@ -1007,7 +1007,7 @@ export function DealForm({
                       className="rounded border border-input-border bg-input-background px-3 py-2"
                     />
                   </label>
-                  <label className="flex flex-col gap-1 text-sm">
+                  <label className="field-label">
                     Initial photos received
                     <input
                       type="date"
@@ -1071,7 +1071,7 @@ export function DealForm({
               </label>
               {values.checklist_on_hold && (
                 <div className="mt-2 flex flex-col gap-3">
-                  <label className="flex max-w-xs flex-col gap-1 text-sm">
+                  <label className="max-w-xs field-label">
                     On hold date
                     <input
                       type="date"
@@ -1111,7 +1111,7 @@ export function DealForm({
                 Closing extension
               </label>
               {values.checklist_closing_extension && (
-                <label className="mt-2 flex max-w-xs flex-col gap-1 text-sm">
+                <label className="mt-2 max-w-xs field-label">
                   Extension closing date
                   <input
                     type="date"
@@ -1133,7 +1133,7 @@ export function DealForm({
                 Due diligence extension
               </label>
               {values.checklist_due_diligence_extension && (
-                <label className="mt-2 flex max-w-xs flex-col gap-1 text-sm">
+                <label className="mt-2 max-w-xs field-label">
                   DD extension date
                   <input
                     type="date"
@@ -1156,7 +1156,7 @@ export function DealForm({
               </label>
               {values.ab_emd_deposit_received && (
                 <div className="mt-2 flex flex-wrap items-end gap-4">
-                  <label className="flex max-w-xs flex-col gap-1 text-sm">
+                  <label className="max-w-xs field-label">
                     AB EMD amount
                     <CurrencyInput
                       value={values.ab_emd_amount}
@@ -1255,7 +1255,7 @@ export function DealForm({
               {values.cancelled_ab && (
                 <div className="mt-2 flex flex-col gap-3">
                   <div className="grid grid-cols-1 gap-3 sm:max-w-md sm:grid-cols-2">
-                    <label className="flex flex-col gap-1 text-sm">
+                    <label className="field-label">
                       Cancelled date
                       <input
                         type="date"
@@ -1264,7 +1264,7 @@ export function DealForm({
                         className="rounded border border-input-border bg-input-background px-3 py-2"
                       />
                     </label>
-                    <label className="flex flex-col gap-1 text-sm">
+                    <label className="field-label">
                       Cancelled AB party
                       <select
                         value={values.cancelled_ab_party}
@@ -1311,7 +1311,7 @@ export function DealForm({
               {values.cancelled_bc_ac && (
                 <div className="mt-2 flex flex-col gap-3">
                   <div className="grid grid-cols-1 gap-3 sm:max-w-md sm:grid-cols-2">
-                    <label className="flex flex-col gap-1 text-sm">
+                    <label className="field-label">
                       Cancelled date
                       <input
                         type="date"
@@ -1320,7 +1320,7 @@ export function DealForm({
                         className="rounded border border-input-border bg-input-background px-3 py-2"
                       />
                     </label>
-                    <label className="flex flex-col gap-1 text-sm">
+                    <label className="field-label">
                       Cancelled BC/AC party
                       <select
                         value={values.cancelled_bc_ac_party}
@@ -1396,7 +1396,7 @@ export function DealForm({
 
               if (definition.field_type === 'select') {
                 return (
-                  <label key={definition.id} className="flex flex-col gap-1 text-sm">
+                  <label key={definition.id} className="field-label">
                     {definition.name}
                     <select
                       value={stringValue}
@@ -1415,7 +1415,7 @@ export function DealForm({
               }
 
               return (
-                <label key={definition.id} className="flex flex-col gap-1 text-sm">
+                <label key={definition.id} className="field-label">
                   {definition.name}
                   <input
                     type={definition.field_type === 'number' ? 'number' : definition.field_type === 'date' ? 'date' : 'text'}

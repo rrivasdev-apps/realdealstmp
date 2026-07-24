@@ -17,7 +17,7 @@ export default async function EditShowingPage({
   if (!profile) {
     return (
       <div>
-        <h1 className="text-xl font-semibold">Showing</h1>
+        <h1 className="heading-page">Showing</h1>
         <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to edit this deal.</p>
       </div>
     )
@@ -40,7 +40,7 @@ export default async function EditShowingPage({
 
   return (
     <div>
-      <h1 className="text-xl font-semibold">Edit showing</h1>
+      <h1 className="heading-page">Edit showing</h1>
       <div className="mt-6">
         <ShowingForm
           mode="edit"

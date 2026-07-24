@@ -9,7 +9,7 @@ export default async function NewDealPage() {
   if (!profile) {
     return (
       <div>
-        <h1 className="text-xl font-semibold">New deal</h1>
+        <h1 className="heading-page">New deal</h1>
         <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to create deals.</p>
       </div>
     )
@@ -44,7 +44,7 @@ export default async function NewDealPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-semibold">New deal</h1>
+      <h1 className="heading-page">New deal</h1>
       <div className="mt-6">
         <DealForm
           mode="create"

@@ -35,7 +35,7 @@ export function HashSection({
 
   return (
     <div id={id}>
-      {title && <h2 className="text-lg font-semibold text-foreground">{title}</h2>}
+      {title && <h2 className="heading-section">{title}</h2>}
       <div className={title ? 'mt-4 flex flex-col gap-6' : 'flex flex-col gap-6'}>{children}</div>
     </div>
   )

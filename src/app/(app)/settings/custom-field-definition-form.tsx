@@ -56,7 +56,7 @@ export function CustomFieldDefinitionForm() {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3 rounded border border-border p-4">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Name
           <input
             type="text"
@@ -68,7 +68,7 @@ export function CustomFieldDefinitionForm() {
           />
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Type
           <select
             value={fieldType}
@@ -85,7 +85,7 @@ export function CustomFieldDefinitionForm() {
       </div>
 
       {fieldType === 'select' && (
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Options (one per line)
           <textarea
             value={optionsText}

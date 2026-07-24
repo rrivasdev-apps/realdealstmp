@@ -119,7 +119,7 @@ export function GeneralSettingsPanel({
   return (
     <form onSubmit={handleSave} className="flex flex-col gap-4 rounded-lg border border-border bg-background p-4">
       <div className="flex items-center justify-between gap-4">
-        <h2 className="text-sm font-medium text-muted-foreground">Automation general settings</h2>
+        <h2 className="heading-subsection">Automation general settings</h2>
         <span
           className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
             template.is_functional ? 'bg-success/15 text-success' : 'bg-muted text-muted-foreground'
@@ -129,7 +129,7 @@ export function GeneralSettingsPanel({
         </span>
       </div>
 
-      <label className="flex flex-col gap-1 text-sm">
+      <label className="field-label">
         Name
         <input
           type="text"
@@ -140,7 +140,7 @@ export function GeneralSettingsPanel({
         />
       </label>
 
-      <label className="flex flex-col gap-1 text-sm">
+      <label className="field-label">
         Folder
         <select
           value={folderId}
@@ -155,7 +155,7 @@ export function GeneralSettingsPanel({
         </select>
       </label>
 
-      <label className="flex flex-col gap-1 text-sm">
+      <label className="field-label">
         Choose when this automation starts
         <select
           value={triggerType}
@@ -171,7 +171,7 @@ export function GeneralSettingsPanel({
       </label>
 
       {triggerType === 'deal_created' && (
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Deal type (leave blank for any type)
           <select
             value={triggerDealTypeId}
@@ -189,7 +189,7 @@ export function GeneralSettingsPanel({
       )}
 
       {triggerType === 'field_changed' && (
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Deal field
           <select
             value={triggerDealField}
@@ -207,7 +207,7 @@ export function GeneralSettingsPanel({
       )}
 
       {triggerType === 'custom_field_changed' && (
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Custom field
           <select
             value={triggerCustomFieldId}
@@ -226,7 +226,7 @@ export function GeneralSettingsPanel({
 
       {triggerType === 'step_completed' && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="field-label">
             Automation
             <select
               value={triggerSourceTemplateId}
@@ -245,7 +245,7 @@ export function GeneralSettingsPanel({
             </select>
           </label>
 
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="field-label">
             Step
             <select
               value={triggerSourceStepId}
@@ -266,7 +266,7 @@ export function GeneralSettingsPanel({
 
       {triggerType === 'date_based' && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="field-label">
             Date field
             <select
               value={triggerDateField}
@@ -282,7 +282,7 @@ export function GeneralSettingsPanel({
             </select>
           </label>
 
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="field-label">
             When
             <select
               value={triggerDateDirection}
@@ -295,7 +295,7 @@ export function GeneralSettingsPanel({
             </select>
           </label>
 
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="field-label">
             Days {triggerDateDirection === 'on' ? '(n/a)' : ''}
             <input
               type="number"
@@ -310,7 +310,7 @@ export function GeneralSettingsPanel({
       )}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           <span className="flex min-h-[2.5rem] items-start">Days after triggered until the automation starts and is visible to users</span>
           <input
             type="number"
@@ -321,7 +321,7 @@ export function GeneralSettingsPanel({
           />
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           <span className="flex min-h-[2.5rem] items-start">Days after starting until the first step is due</span>
           <input
             type="number"

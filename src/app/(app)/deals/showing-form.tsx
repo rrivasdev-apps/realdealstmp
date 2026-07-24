@@ -78,7 +78,7 @@ export function ShowingForm({
   return (
     <form onSubmit={handleSubmit} className="flex max-w-xl flex-col gap-6">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Showing date
           <input
             type="date"
@@ -88,7 +88,7 @@ export function ShowingForm({
           />
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Status
           <select
             value={values.status_id}
@@ -103,7 +103,7 @@ export function ShowingForm({
           </select>
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Buyer contact
           <select
             value={values.buyer_contact_id}
@@ -119,7 +119,7 @@ export function ShowingForm({
           </select>
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Vendor contact
           <select
             value={values.vendor_contact_id}
@@ -136,7 +136,7 @@ export function ShowingForm({
         </label>
       </div>
 
-      <label className="flex flex-col gap-1 text-sm">
+      <label className="field-label">
         Details
         <textarea
           value={values.details}

@@ -12,7 +12,7 @@ export default async function PayrollRunPage({ params }: { params: Promise<{ id:
   if (!profile) {
     return (
       <div>
-        <h1 className="text-xl font-semibold">Payroll run</h1>
+        <h1 className="heading-page">Payroll run</h1>
         <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to manage payroll.</p>
       </div>
     )
@@ -33,7 +33,7 @@ export default async function PayrollRunPage({ params }: { params: Promise<{ id:
 
   return (
     <div>
-      <h1 className="text-xl font-semibold">
+      <h1 className="heading-page">
         Payroll run: {run.pay_period_start} – {run.pay_period_end}
       </h1>
       <p className="mt-1 text-sm text-muted-foreground capitalize">{run.status}</p>

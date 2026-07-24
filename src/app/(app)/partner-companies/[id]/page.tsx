@@ -13,7 +13,7 @@ export default async function EditPartnerCompanyPage({ params }: { params: Promi
   if (!profile) {
     return (
       <div>
-        <h1 className="text-xl font-semibold">Company</h1>
+        <h1 className="heading-page">Company</h1>
         <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to view this company.</p>
       </div>
     )
@@ -38,7 +38,7 @@ export default async function EditPartnerCompanyPage({ params }: { params: Promi
 
   return (
     <div>
-      <h1 className="text-xl font-semibold">Edit company</h1>
+      <h1 className="heading-page">Edit company</h1>
       <div className="mt-6">
         <PartnerCompanyForm
           mode="edit"

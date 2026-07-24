@@ -48,7 +48,7 @@ export function PayrollPaymentForm({ employees }: { employees: Employee[] }) {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3 rounded border border-border p-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Employee
           <select
             required
@@ -65,7 +65,7 @@ export function PayrollPaymentForm({ employees }: { employees: Employee[] }) {
           </select>
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Amount
           <input
             type="number"
@@ -77,7 +77,7 @@ export function PayrollPaymentForm({ employees }: { employees: Employee[] }) {
           />
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Pay period start
           <input
             type="date"
@@ -88,7 +88,7 @@ export function PayrollPaymentForm({ employees }: { employees: Employee[] }) {
           />
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Pay period end
           <input
             type="date"

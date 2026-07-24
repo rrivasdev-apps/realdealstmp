@@ -8,7 +8,7 @@ export default async function ContactsPage() {
   if (!profile) {
     return (
       <div>
-        <h1 className="text-xl font-semibold">Contacts</h1>
+        <h1 className="heading-page">Contacts</h1>
         <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to view contacts.</p>
       </div>
     )
@@ -28,7 +28,7 @@ export default async function ContactsPage() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Contacts</h1>
+        <h1 className="heading-page">Contacts</h1>
         <Link href="/contacts/new" className="rounded bg-foreground px-4 py-2 text-sm text-background">
           New contact
         </Link>

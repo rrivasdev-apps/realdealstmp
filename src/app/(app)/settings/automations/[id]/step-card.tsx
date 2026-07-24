@@ -93,7 +93,7 @@ function TriggerStepInline({
 
   return (
     <div className="flex flex-col gap-3 border-t border-border pt-3">
-      <label className="flex flex-col gap-1 text-sm">
+      <label className="field-label">
         Step name
         <input
           type="text"

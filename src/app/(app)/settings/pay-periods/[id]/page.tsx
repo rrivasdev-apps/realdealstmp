@@ -12,7 +12,7 @@ export default async function PayPeriodPage({ params }: { params: Promise<{ id: 
   if (!profile) {
     return (
       <div>
-        <h1 className="text-xl font-semibold">Pay period</h1>
+        <h1 className="heading-page">Pay period</h1>
         <p className="mt-2 text-sm text-muted-foreground">Only managers can manage settings.</p>
       </div>
     )
@@ -33,7 +33,7 @@ export default async function PayPeriodPage({ params }: { params: Promise<{ id: 
 
   return (
     <div>
-      <h1 className="text-xl font-semibold">{payPeriod.name}</h1>
+      <h1 className="heading-page">{payPeriod.name}</h1>
 
       <div className="mt-6">
         <PayPeriodForm

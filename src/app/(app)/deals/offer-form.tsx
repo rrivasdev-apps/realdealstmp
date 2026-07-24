@@ -90,7 +90,7 @@ export function OfferForm({
   return (
     <form onSubmit={handleSubmit} className="flex max-w-xl flex-col gap-6">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Offer price
           <CurrencyInput
             value={values.offer_price}
@@ -99,7 +99,7 @@ export function OfferForm({
           />
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Offer date
           <input
             type="date"
@@ -109,7 +109,7 @@ export function OfferForm({
           />
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Status
           <select
             value={values.status_id}
@@ -124,7 +124,7 @@ export function OfferForm({
           </select>
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Purchase type
           <select
             value={values.purchase_type_id}
@@ -140,7 +140,7 @@ export function OfferForm({
           </select>
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Inspection deadline
           <input
             type="date"
@@ -150,7 +150,7 @@ export function OfferForm({
           />
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Closing deadline
           <input
             type="date"
@@ -160,7 +160,7 @@ export function OfferForm({
           />
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           EMD deadline
           <input
             type="date"
@@ -170,7 +170,7 @@ export function OfferForm({
           />
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Realtor
           <select
             value={values.realtor_contact_id}
@@ -186,7 +186,7 @@ export function OfferForm({
           </select>
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Investor
           <select
             value={values.investor_contact_id}
@@ -203,7 +203,7 @@ export function OfferForm({
         </label>
       </div>
 
-      <label className="flex flex-col gap-1 text-sm">
+      <label className="field-label">
         Notes
         <textarea
           value={values.notes}

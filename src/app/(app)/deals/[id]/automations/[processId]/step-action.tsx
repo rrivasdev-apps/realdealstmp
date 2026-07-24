@@ -100,7 +100,7 @@ export function StepAction({
             const field = dealFields.find((candidate) => candidate.key === key)
             if (!field) return null
             return (
-              <label key={key} className="flex flex-col gap-1 text-sm">
+              <label key={key} className="field-label">
                 {field.label}
                 {field.type === 'checkbox' ? (
                   <input
@@ -122,7 +122,7 @@ export function StepAction({
           {customFieldDefinitions.map((definition) => {
             const key = `custom:${definition.id}`
             return (
-              <label key={key} className="flex flex-col gap-1 text-sm">
+              <label key={key} className="field-label">
                 {definition.name}
                 {definition.field_type === 'checkbox' ? (
                   <input

@@ -77,7 +77,7 @@ export function StepList({
 
   return (
     <div className="flex flex-col gap-3 rounded-lg border border-border bg-background p-4">
-      <h2 className="text-sm font-medium text-muted-foreground">Steps</h2>
+      <h2 className="heading-subsection">Steps</h2>
 
       {ordered.map((step, index) => (
         <StepCard

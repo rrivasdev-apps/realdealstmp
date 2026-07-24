@@ -9,7 +9,7 @@ export default async function AutomationsPage() {
   if (!profile) {
     return (
       <div>
-        <h1 className="text-xl font-semibold">Automations</h1>
+        <h1 className="heading-page">Automations</h1>
         <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to manage settings.</p>
       </div>
     )
@@ -23,7 +23,7 @@ export default async function AutomationsPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-semibold">Automations</h1>
+      <h1 className="heading-page">Automations</h1>
       <p className="mt-2 text-sm text-muted-foreground">
         Configure the automated step-by-step workflows (&ldquo;Deal Automations&rdquo;) that run against your deals.
       </p>

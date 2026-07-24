@@ -45,7 +45,7 @@ export function SetPasswordForm() {
 
   return (
     <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
-      <label className="flex flex-col gap-1 text-sm">
+      <label className="field-label">
         Your name
         <input
           type="text"
@@ -56,7 +56,7 @@ export function SetPasswordForm() {
         />
       </label>
 
-      <label className="flex flex-col gap-1 text-sm">
+      <label className="field-label">
         New password
         <input
           type="password"

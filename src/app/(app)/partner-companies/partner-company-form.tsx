@@ -71,7 +71,7 @@ export function PartnerCompanyForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex max-w-xl flex-col gap-6">
-      <label className="flex flex-col gap-1 text-sm">
+      <label className="field-label">
         Business Name
         <input
           type="text"
@@ -82,7 +82,7 @@ export function PartnerCompanyForm({
         />
       </label>
 
-      <label className="flex flex-col gap-1 text-sm">
+      <label className="field-label">
         Business Address
         <input
           type="text"
@@ -92,7 +92,7 @@ export function PartnerCompanyForm({
         />
       </label>
 
-      <label className="flex flex-col gap-1 text-sm">
+      <label className="field-label">
         Email
         <input
           type="email"
@@ -102,7 +102,7 @@ export function PartnerCompanyForm({
         />
       </label>
 
-      <label className="flex flex-col gap-1 text-sm">
+      <label className="field-label">
         Phone Number
         <input
           type="tel"

@@ -37,7 +37,7 @@ export default function SignupPage() {
   if (submitted) {
     return (
       <div className="mx-auto max-w-sm py-24 text-center">
-        <h1 className="text-xl font-semibold">Check your email</h1>
+        <h1 className="heading-page">Check your email</h1>
         <p className="mt-2 text-muted-foreground">
           We sent a confirmation link to {email}. Click it to finish setting up{' '}
           {companyName}.
@@ -48,13 +48,13 @@ export default function SignupPage() {
 
   return (
     <div className="mx-auto max-w-sm py-24">
-      <h1 className="text-xl font-semibold">Create your company</h1>
+      <h1 className="heading-page">Create your company</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         You&apos;ll be the admin — invite teammates once you&apos;re in.
       </p>
 
       <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Company name
           <input
             type="text"
@@ -65,7 +65,7 @@ export default function SignupPage() {
           />
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Your name
           <input
             type="text"
@@ -76,7 +76,7 @@ export default function SignupPage() {
           />
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Email
           <input
             type="email"
@@ -87,7 +87,7 @@ export default function SignupPage() {
           />
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="field-label">
           Password
           <input
             type="password"
