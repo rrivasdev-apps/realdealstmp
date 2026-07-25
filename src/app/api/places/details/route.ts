@@ -32,6 +32,7 @@ export async function GET(request: Request) {
   })
 
   if (!response.ok) {
+    console.error('Places details request failed:', response.status, await response.text())
     return NextResponse.json({ error: 'Could not look up that address.' }, { status: 400 })
   }
 

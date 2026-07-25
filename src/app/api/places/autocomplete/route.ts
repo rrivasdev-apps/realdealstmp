@@ -29,6 +29,11 @@ export async function GET(request: Request) {
   })
 
   if (!response.ok) {
+    // Swallowed for the client (falls back to plain manual entry either way), but
+    // logged server-side -- a misconfigured key/API in Google Cloud Console (wrong
+    // API enabled, key restrictions, billing) otherwise looks identical to "working
+    // as designed" from the UI, with no way to tell the two apart.
+    console.error('Places autocomplete request failed:', response.status, await response.text())
     return NextResponse.json({ configured: true, predictions: [] })
   }
 
