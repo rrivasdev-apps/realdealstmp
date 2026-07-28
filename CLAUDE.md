@@ -45,9 +45,9 @@ This project is on **Next.js 16**, which has breaking changes from the Next.js m
 
 **Authorization.** [src/lib/supabase/auth.ts](src/lib/supabase/auth.ts) exports `requireUser()`, which every mutating Route Handler / Server Action must call and check before touching data — see [src/app/api/profile/route.ts](src/app/api/profile/route.ts) for the pattern. `requireProfile()` additionally loads the caller's `company_id`/`role`/`employee_role` capabilities (most routes need it to scope queries/writes). Two ways to gate a route on top of that: `requirePermission('can_manage_team' | 'can_manage_settings' | 'can_view_financials')` checks the caller's `employee_role` capability flags (`role === 'admin'` always passes regardless) — this is the one to use for Team/Settings/Dashboard-financials routes. `requireAdmin()` is a hard `role === 'admin'` check, reserved specifically for `employee_roles`' own routes (creating/editing a role's capability flags) — a `can_manage_settings` caller must never be able to edit `employee_roles`, or they could grant themselves every capability, an escalation straight to admin-equivalent power. This is non-negotiable per project requirements: permission checks happen server-side on every mutation, never inferred from what the UI shows or hides. The proxy's optimistic cookie check is not a substitute for this. RLS policies (scoped via the `is_company_member()` Postgres function, plus `can_manage_team()`/`can_manage_settings()`/`can_view_financials()`/`is_company_admin()` for the tables that need tighter-than-membership checks) are defense in depth underneath these checks, not a replacement for them — see `supabase/migrations/`.
 
-**Environment variables.** See [.env.local.example](.env.local.example) for the full list. `NEXT_PUBLIC_*` vars are exposed to the browser; `SUPABASE_SERVICE_ROLE_KEY`, `ANTHROPIC_API_KEY`, and `GOOGLE_MAPS_API_KEY` (optional -- proxied through `src/app/api/places/*` for deal-address autocomplete, falls back to plain manual entry when unset) are server-only and must never be prefixed `NEXT_PUBLIC_` or referenced from a Client Component.
+**Environment variables.** See [.env.local.example](.env.local.example) for the full list. `NEXT_PUBLIC_*` vars are exposed to the browser; `SUPABASE_SERVICE_ROLE_KEY`, `ANTHROPIC_API_KEY`, `GOOGLE_MAPS_API_KEY` (optional -- proxied through `src/app/api/places/*` for deal-address autocomplete, falls back to plain manual entry when unset), and `CRON_SECRET` (gates [src/app/api/cron/automations](src/app/api/cron/automations/route.ts), the Deal Automations date-based-trigger/stalled-process sweep) are server-only and must never be prefixed `NEXT_PUBLIC_` or referenced from a Client Component.
 
-**Deployment.** Vercel project `realdealstmp` (scope `rerss-projects`), live at https://realdealstmp.vercel.app, auto-deploys on push to `main`. No CI config exists yet beyond Vercel's own build step (`npm run build`).
+**Deployment.** Vercel project `realdealstmp` (scope `rerss-projects`), live at https://realdealstmp.vercel.app, auto-deploys on push to `main`. No CI config exists yet beyond Vercel's own build step (`npm run build`). [vercel.json](vercel.json) schedules the Deal Automations cron sweep (`/api/cron/automations`) daily via Vercel Cron; that file is Vercel-specific, but the route it calls is a plain secret-gated HTTP endpoint any other scheduler can hit the same way.
 
 ## Current phase: Phase 2 (Operations)
 
@@ -86,9 +86,19 @@ Scope now — nothing beyond this list until Phase 2 is validated:
   `lead_sources`/custom fields all have a Settings UI now, alongside the
   commission types/employee roles/checklist items/reason lists that were
   already there.
-- **Transaction Guardian**: the event-triggered automation engine (named step
-  ownership on deal-lifecycle events) — the only piece of Phase 2 still
-  open.
+- ~~**Transaction Guardian**: the event-triggered automation engine (named
+  step ownership on deal-lifecycle events)~~ **Done**, shipped as "Deal
+  Automations" (Settings > Automations for the builder, `/deal-automations`
+  + the per-deal sidebar for runtime). Template builder, runtime engine
+  (`src/lib/automations/runtime.ts`), and all five trigger types
+  (`deal_created`/`field_changed`/`custom_field_changed`/`step_completed`
+  evaluated inline off the relevant mutation; `date_based` plus stalled
+  `pending_start` processes swept by the `CRON_SECRET`-gated
+  `GET /api/cron/automations`, scheduled daily via `vercel.json`) are all
+  live.
+
+All four Phase 2 features are now built — Phase 2 still needs real usage
+before it's considered validated, per the phased-rollout approach below.
 
 Do not build Phase 3 features early, even if they seem easy to add "while
 we're in there." The point of each phase is to validate its slice before the
@@ -163,7 +173,7 @@ Custom fields per company (Settings module) are Phase 2 — the `custom_fields` 
 ## Roadmap
 
 1. ~~**Phase 1 — Financial engine**: role-based commission rules, JV expense allocation, cascading gross/net profit, monthly/quarterly/yearly KPI reporting.~~ **Done.**
-2. **Phase 2 — Operations** *(current)*: ~~Employee Center (roles, permissions, payroll)~~, ~~per-company custom fields~~, ~~full Settings module~~ — all done. Transaction Guardian automation engine (event-triggered, named step ownership) is the only piece left before Phase 2 is validated.
+2. **Phase 2 — Operations** *(current)*: ~~Employee Center (roles, permissions, payroll)~~, ~~per-company custom fields~~, ~~full Settings module~~, ~~Transaction Guardian automation engine (event-triggered, named step ownership)~~ — all built. Phase 2 now needs real usage before it's considered validated and Phase 3 planning starts.
 3. **Phase 3 — Platform**: multi-tenant licensing, API layer, automation marketplace between companies.
 
 ## Conventions

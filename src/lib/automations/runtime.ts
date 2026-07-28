@@ -5,7 +5,7 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import { buildCustomFieldsForSave } from '@/lib/deals/custom-fields'
 import type { Database, Json } from '@/lib/supabase/database.types'
 
-import { DEAL_FIELDS, type DealField } from './deal-fields'
+import { DEAL_FIELDS, isValidDealDateField, type DealField } from './deal-fields'
 import type { BranchOption, SimpleOption } from './step-config'
 
 type SupaClient = SupabaseClient<Database>
@@ -13,6 +13,12 @@ type SupaClient = SupabaseClient<Database>
 function todayPlusDays(days: number): string {
   const date = new Date()
   date.setDate(date.getDate() + days)
+  return date.toISOString().slice(0, 10)
+}
+
+function addDaysToIsoDate(isoDate: string, days: number): string {
+  const date = new Date(`${isoDate}T00:00:00Z`)
+  date.setUTCDate(date.getUTCDate() + days)
   return date.toISOString().slice(0, 10)
 }
 
@@ -343,4 +349,74 @@ export async function evaluateTriggersForDealUpdated(
       }
     }
   }
+}
+
+// Milestone 3: the one trigger type that can't fire off a single deal
+// create/update request -- nothing on the deal changes when a date simply
+// arrives, so this has to be swept for on a schedule. Called from the cron
+// route at src/app/api/cron/automations. Re-fires each day the condition
+// still holds once a prior run of the same template completes (same
+// level-triggered behavior a recurring date condition implies), which
+// matches how field_changed already allows a template to restart after
+// completion when the field changes again.
+export async function evaluateTriggersForDateBased(supabase: SupaClient): Promise<number> {
+  const { data: templates } = await supabase
+    .from('automation_templates')
+    .select('id, company_id, trigger_date_field, trigger_date_direction, trigger_date_offset_days')
+    .eq('trigger_type', 'date_based')
+    .eq('is_functional', true)
+
+  const today = new Date().toISOString().slice(0, 10)
+  let startedCount = 0
+
+  for (const template of templates ?? []) {
+    const field = template.trigger_date_field
+    if (!isValidDealDateField(field)) continue
+
+    const offsetDays = template.trigger_date_offset_days ?? 0
+    const targetValue =
+      template.trigger_date_direction === 'before'
+        ? addDaysToIsoDate(today, offsetDays)
+        : template.trigger_date_direction === 'after'
+          ? addDaysToIsoDate(today, -offsetDays)
+          : today
+
+    const { data: deals } = await supabase
+      .from('deals')
+      .select('id')
+      .eq('company_id', template.company_id)
+      .eq(field as keyof Database['public']['Tables']['deals']['Row'], targetValue)
+
+    for (const deal of deals ?? []) {
+      const process = await startProcess(supabase, { templateId: template.id, dealId: deal.id, startedManually: false })
+      if (process) startedCount++
+    }
+  }
+
+  return startedCount
+}
+
+// The counterpart to startProcess's start_delay_days === 0 fast path: a
+// process created against a template with a nonzero start_delay_days sits in
+// pending_start until something flips it, and nothing did before this --
+// also called from the cron route.
+export async function advanceStalledProcesses(supabase: SupaClient): Promise<number> {
+  const { data: pending } = await supabase.from('automation_processes').select('id, template_id, triggered_at').eq('status', 'pending_start')
+  if (!pending || pending.length === 0) return 0
+
+  const templateIds = Array.from(new Set(pending.map((process) => process.template_id)))
+  const { data: templates } = await supabase.from('automation_templates').select('id, start_delay_days').in('id', templateIds)
+  const delayById = new Map((templates ?? []).map((template) => [template.id, template.start_delay_days]))
+
+  const now = Date.now()
+  let advancedCount = 0
+  for (const process of pending) {
+    const delayDays = delayById.get(process.template_id) ?? 0
+    const dueAt = new Date(process.triggered_at).getTime() + delayDays * 24 * 60 * 60 * 1000
+    if (dueAt <= now) {
+      await activateProcess(supabase, process.id)
+      advancedCount++
+    }
+  }
+  return advancedCount
 }
