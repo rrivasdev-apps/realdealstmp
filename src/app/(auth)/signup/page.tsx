@@ -3,11 +3,14 @@
 import Link from 'next/link'
 import { useState } from 'react'
 
+import countries from '@/lib/geography/data/countries.json'
+
 export default function SignupPage() {
   const [companyName, setCompanyName] = useState('')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [homeCountryCode, setHomeCountryCode] = useState('US')
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
@@ -20,7 +23,7 @@ export default function SignupPage() {
     const response = await fetch('/api/signup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ companyName, name, email, password }),
+      body: JSON.stringify({ companyName, name, email, password, homeCountryCode }),
     })
     const result = await response.json()
 
@@ -98,6 +101,26 @@ export default function SignupPage() {
             className="rounded border border-input-border bg-input-background px-3 py-2"
           />
         </label>
+
+        <label className="field-label">
+          Home country
+          <select
+            required
+            value={homeCountryCode}
+            onChange={(event) => setHomeCountryCode(event.target.value)}
+            className="rounded border border-input-border bg-input-background px-3 py-2"
+          >
+            {countries.map((country) => (
+              <option key={country.iso_code} value={country.iso_code}>
+                {country.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <p className="text-xs text-muted-foreground">
+          If it&apos;s the United States, we&apos;ll pre-load every state and city so
+          they&apos;re ready to pick from on your deals.
+        </p>
 
         {error && <p className="text-sm text-danger">{error}</p>}
 

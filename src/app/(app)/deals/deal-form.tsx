@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
-import { AddressFields } from '@/components/address-fields'
+import { AddressFields, type CountryOption } from '@/components/address-fields'
 import { CurrencyInput } from '@/components/currency-input'
 import { DealSection } from '@/components/deal-section'
 import { calculateProfitCascade } from '@/lib/deals/profit'
@@ -25,8 +25,12 @@ export type CustomFieldDefinition = {
 export type DealFormValues = {
   id?: string
   address: string
-  city: string
-  state: string
+  country_id: string
+  country_name: string
+  state_id: string
+  state_name: string
+  city_id: string
+  city_name: string
   zip_code: string
   market_id: string
   property_type_id: string
@@ -113,6 +117,7 @@ export type DealFormValues = {
 export function DealForm({
   mode,
   initialValues,
+  countries,
   markets,
   propertyTypes,
   dealTypes,
@@ -134,6 +139,7 @@ export function DealForm({
 }: {
   mode: 'create' | 'edit'
   initialValues: DealFormValues
+  countries: CountryOption[]
   markets: LookupOption[]
   propertyTypes: LookupOption[]
   dealTypes: LookupOption[]
@@ -186,8 +192,9 @@ export function DealForm({
 
     const payload = {
       address: values.address,
-      city: values.city || null,
-      state: values.state || null,
+      country_id: values.country_id || null,
+      state_id: values.state_id || null,
+      city_id: values.city_id || null,
       zip_code: values.zip_code || null,
       market_id: values.market_id || null,
       property_type_id: values.property_type_id || null,
@@ -293,9 +300,29 @@ export function DealForm({
     <form onSubmit={handleSubmit} className="flex max-w-xl flex-col gap-6">
       <DealSection id="deal-info" title="Deal Info">
       <AddressFields
-        value={{ address: values.address, city: values.city, state: values.state, zipCode: values.zip_code }}
+        value={{
+          address: values.address,
+          countryId: values.country_id,
+          countryName: values.country_name,
+          stateId: values.state_id,
+          stateName: values.state_name,
+          cityId: values.city_id,
+          cityName: values.city_name,
+          zipCode: values.zip_code,
+        }}
+        countries={countries}
         onChange={(next) => {
-          setValues((prev) => ({ ...prev, address: next.address, city: next.city, state: next.state, zip_code: next.zipCode }))
+          setValues((prev) => ({
+            ...prev,
+            address: next.address,
+            country_id: next.countryId,
+            country_name: next.countryName,
+            state_id: next.stateId,
+            state_name: next.stateName,
+            city_id: next.cityId,
+            city_name: next.cityName,
+            zip_code: next.zipCode,
+          }))
         }}
       />
 

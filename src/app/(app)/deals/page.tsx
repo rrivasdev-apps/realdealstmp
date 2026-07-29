@@ -114,7 +114,7 @@ export default async function DealsPage({
   }
 
   const supabase = await createClient()
-  const [{ data }, { data: dealTypes }, { data: leadSources }] = await Promise.all([
+  const [{ data }, { data: dealTypes }, { data: leadSources }, { data: countries }, { data: company }] = await Promise.all([
     supabase
       .from('deals')
       .select(
@@ -123,6 +123,8 @@ export default async function DealsPage({
       .order('closing_date', { ascending: true }),
     supabase.from('deal_types').select('id, name').order('name'),
     supabase.from('lead_sources').select('id, name').order('name'),
+    supabase.from('countries').select('id, name, iso_code').order('name'),
+    supabase.from('companies').select('default_country_id').eq('id', profile.company_id ?? '').single(),
   ])
   const deals = (data as unknown as Deal[]) ?? []
 
@@ -132,7 +134,12 @@ export default async function DealsPage({
     <div>
       <div className="flex items-center justify-between">
         <h1 className="heading-page">Whiteboard</h1>
-        <NewDealButton dealTypes={dealTypes ?? []} leadSources={leadSources ?? []} />
+        <NewDealButton
+          dealTypes={dealTypes ?? []}
+          leadSources={leadSources ?? []}
+          countries={countries ?? []}
+          defaultCountryId={company?.default_country_id ?? null}
+        />
       </div>
 
       <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">

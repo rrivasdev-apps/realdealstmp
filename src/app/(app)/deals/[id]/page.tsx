@@ -28,6 +28,7 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
 
   const [
     { data: deal },
+    { data: countries },
     { data: markets },
     { data: propertyTypes },
     { data: dealTypes },
@@ -54,7 +55,8 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
     { data: checkedCancelledBcAcReasons },
     { data: customFieldDefinitions },
   ] = await Promise.all([
-    supabase.from('deals').select('*').eq('id', id).single(),
+    supabase.from('deals').select('*, countries(name), states(name), cities(name)').eq('id', id).single(),
+    supabase.from('countries').select('id, name, iso_code').order('name'),
     supabase.from('markets').select('id, name').order('name'),
     supabase.from('property_types').select('id, name').order('name'),
     supabase.from('deal_types').select('id, name').order('name'),
@@ -128,8 +130,12 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
           initialValues={{
             id: deal.id,
             address: deal.address ?? '',
-            city: deal.city ?? '',
-            state: deal.state ?? '',
+            country_id: deal.country_id ?? '',
+            country_name: deal.countries?.name ?? '',
+            state_id: deal.state_id ?? '',
+            state_name: deal.states?.name ?? '',
+            city_id: deal.city_id ?? '',
+            city_name: deal.cities?.name ?? '',
             zip_code: deal.zip_code ?? '',
             market_id: deal.market_id ?? '',
             property_type_id: deal.property_type_id ?? '',
@@ -214,6 +220,7 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
             ),
             customFields,
           }}
+          countries={countries ?? []}
           markets={markets ?? []}
           propertyTypes={propertyTypes ?? []}
           dealTypes={dealTypes ?? []}

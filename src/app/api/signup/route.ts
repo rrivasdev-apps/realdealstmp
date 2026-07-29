@@ -1,7 +1,11 @@
 import { NextResponse } from 'next/server'
 
+import countriesData from '@/lib/geography/data/countries.json'
+import { seedCompanyGeography } from '@/lib/geography/seed-company'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
+
+const VALID_ISO_CODES = new Set(countriesData.map((country) => country.iso_code))
 
 const DEFAULT_MARKETS = ['Default Market']
 const DEFAULT_DEAL_TYPES = ['Wholesale', 'Flip', 'Wholetail']
@@ -25,9 +29,13 @@ export async function POST(request: Request) {
   const name = typeof body.name === 'string' ? body.name.trim() : ''
   const email = typeof body.email === 'string' ? body.email.trim() : ''
   const password = typeof body.password === 'string' ? body.password : ''
+  const homeCountryCode = typeof body.homeCountryCode === 'string' ? body.homeCountryCode.trim().toUpperCase() : ''
 
   if (!companyName || !name || !email || !password) {
     return NextResponse.json({ error: 'All fields are required.' }, { status: 400 })
+  }
+  if (!VALID_ISO_CODES.has(homeCountryCode)) {
+    return NextResponse.json({ error: 'Choose a valid home country.' }, { status: 400 })
   }
 
   const admin = createAdminClient()
@@ -42,16 +50,29 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Could not create company.' }, { status: 400 })
   }
 
-  const seedResults = await Promise.all([
-    admin.from('markets').insert(DEFAULT_MARKETS.map((name) => ({ company_id: company.id, name }))),
-    admin.from('deal_types').insert(DEFAULT_DEAL_TYPES.map((name) => ({ company_id: company.id, name }))),
-    admin
-      .from('lead_sources')
-      .insert(DEFAULT_LEAD_SOURCES.map((name) => ({ company_id: company.id, name }))),
+  const [seedResults, geographyResult] = await Promise.all([
+    Promise.all([
+      admin.from('markets').insert(DEFAULT_MARKETS.map((name) => ({ company_id: company.id, name }))),
+      admin.from('deal_types').insert(DEFAULT_DEAL_TYPES.map((name) => ({ company_id: company.id, name }))),
+      admin
+        .from('lead_sources')
+        .insert(DEFAULT_LEAD_SOURCES.map((name) => ({ company_id: company.id, name }))),
+    ]),
+    seedCompanyGeography(admin, company.id, homeCountryCode),
   ])
   const seedError = seedResults.find((result) => result.error)?.error
 
-  if (seedError) {
+  if (seedError || !geographyResult.ok) {
+    await admin.from('companies').delete().eq('id', company.id)
+    return NextResponse.json({ error: 'Could not set up company defaults.' }, { status: 400 })
+  }
+
+  const { error: defaultCountryError } = await admin
+    .from('companies')
+    .update({ default_country_id: geographyResult.defaultCountryId })
+    .eq('id', company.id)
+
+  if (defaultCountryError) {
     await admin.from('companies').delete().eq('id', company.id)
     return NextResponse.json({ error: 'Could not set up company defaults.' }, { status: 400 })
   }

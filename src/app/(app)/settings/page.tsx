@@ -1,5 +1,6 @@
 import Link from 'next/link'
 
+import { ListImportForm } from '@/components/list-import-form'
 import { SettingsSection } from '@/components/settings-section'
 import { SimpleListForm } from '@/components/simple-list-form'
 import { COMMISSION_PAY_FREQUENCY_LABELS, SALARY_PAY_FREQUENCY_LABELS } from '@/lib/pay-periods/labels'
@@ -7,10 +8,14 @@ import { requirePermission } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
 import { ChecklistItemForm } from './checklist-item-form'
+import { CitiesSection } from './cities-section'
 import { CommissionTypeForm } from './commission-type-form'
+import { CountryForm } from './country-form'
 import { CustomFieldDefinitionForm } from './custom-field-definition-form'
+import { DefaultCountryForm } from './default-country-form'
 import { EmployeeRoleForm } from './employee-role-form'
 import { PayPeriodForm, type PayPeriodFormValues } from './pay-period-form'
+import { StatesSection } from './states-section'
 
 const FIELD_TYPE_LABELS: Record<string, string> = {
   text: 'Text',
@@ -68,6 +73,8 @@ export default async function SettingsPage() {
     { data: leadSources },
     { data: customFieldDefinitions },
     { data: payPeriods },
+    { data: countries },
+    { data: company },
   ] = await Promise.all([
     supabase.from('employee_roles').select('id, name').order('name'),
     supabase
@@ -87,6 +94,8 @@ export default async function SettingsPage() {
       .from('pay_periods')
       .select('id, name, payment_type, salary_pay_frequency, commission_pay_frequency, next_payday')
       .order('name'),
+    supabase.from('countries').select('id, name, iso_code').order('name'),
+    supabase.from('companies').select('default_country_id').eq('id', profile.company_id ?? '').single(),
   ])
 
   return (
@@ -109,6 +118,55 @@ export default async function SettingsPage() {
             ))}
             {markets?.length === 0 && <li className="py-2 text-sm text-muted-foreground">No markets yet.</li>}
           </ul>
+        </SettingsSection>
+
+        <SettingsSection id="countries" title="Countries">
+          <p className="text-sm text-muted-foreground">
+            Standardized country list used for deal addresses, so state/city segmentation and reporting stay
+            consistent instead of relying on free text. Seeded automatically at signup.
+          </p>
+          <div className="max-w-md">
+            <CountryForm />
+          </div>
+          <div className="max-w-md">
+            <ListImportForm
+              endpoint="/api/countries/import"
+              placeholder={'Mexico,MX\nCanada,CA'}
+              hint='One "Name,Code" pair per line.'
+            />
+          </div>
+          <ul className="max-w-md divide-y divide-border">
+            {countries?.map((country) => (
+              <li key={country.id} className="py-2 text-sm">
+                {country.name}
+                <span className="ml-2 text-xs text-muted-foreground">{country.iso_code}</span>
+              </li>
+            ))}
+            {countries?.length === 0 && <li className="py-2 text-sm text-muted-foreground">No countries yet.</li>}
+          </ul>
+        </SettingsSection>
+
+        <SettingsSection id="states" title="States">
+          <p className="text-sm text-muted-foreground">
+            States/provinces for each country above. Every US company is pre-loaded with all 50 states + DC.
+          </p>
+          <StatesSection countries={countries ?? []} defaultCountryId={company?.default_country_id ?? null} />
+        </SettingsSection>
+
+        <SettingsSection id="cities" title="Cities">
+          <p className="text-sm text-muted-foreground">
+            Cities within each state above. US companies are pre-loaded with a real dataset of US cities/towns
+            (US Census Gazetteer) -- search below rather than a full list, since there can be thousands.
+          </p>
+          <CitiesSection countries={countries ?? []} defaultCountryId={company?.default_country_id ?? null} />
+        </SettingsSection>
+
+        <SettingsSection id="default-country" title="Default Country">
+          <p className="text-sm text-muted-foreground">
+            The country pre-selected when starting a new deal&apos;s address. Set from your home country at
+            signup -- change it here if that ever needs to change.
+          </p>
+          <DefaultCountryForm countries={countries ?? []} defaultCountryId={company?.default_country_id ?? null} />
         </SettingsSection>
 
         <SettingsSection id="deal-types" title="Deal Types">

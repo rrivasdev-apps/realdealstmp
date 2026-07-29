@@ -48,6 +48,10 @@ const SETTINGS_GROUPS: { label: string; sections: { id: string; label: string; h
     label: 'Deal',
     sections: [
       { id: 'markets', label: 'Markets' },
+      { id: 'countries', label: 'Countries' },
+      { id: 'states', label: 'States' },
+      { id: 'cities', label: 'Cities' },
+      { id: 'default-country', label: 'Default Country' },
       { id: 'deal-types', label: 'Deal Types' },
       { id: 'lead-sources', label: 'Lead Sources' },
       { id: 'custom-fields', label: 'Custom Fields' },

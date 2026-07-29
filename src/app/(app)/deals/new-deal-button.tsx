@@ -3,20 +3,42 @@
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
-import { AddressFields, type AddressValue } from '@/components/address-fields'
+import { AddressFields, type AddressValue, type CountryOption } from '@/components/address-fields'
 
 type LookupOption = { id: string; name: string }
 
-const EMPTY_ADDRESS: AddressValue = { address: '', city: '', state: '', zipCode: '' }
+function emptyAddress(defaultCountry?: CountryOption): AddressValue {
+  return {
+    address: '',
+    countryId: defaultCountry?.id ?? '',
+    countryName: defaultCountry?.name ?? '',
+    stateId: '',
+    stateName: '',
+    cityId: '',
+    cityName: '',
+    zipCode: '',
+  }
+}
 
 // Quick-create popup for "New deal" -- intake usually only has these six-plus-two
 // fields, not the full ~75-field form. Landing on the deal's detail page afterward
 // (not the whiteboard) is where everything else gets filled in -- DealForm in edit
 // mode already exposes every field, so nothing is lost by not asking for it up front.
-export function NewDealButton({ dealTypes, leadSources }: { dealTypes: LookupOption[]; leadSources: LookupOption[] }) {
+export function NewDealButton({
+  dealTypes,
+  leadSources,
+  countries,
+  defaultCountryId,
+}: {
+  dealTypes: LookupOption[]
+  leadSources: LookupOption[]
+  countries: CountryOption[]
+  defaultCountryId: string | null
+}) {
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
-  const [address, setAddress] = useState<AddressValue>(EMPTY_ADDRESS)
+  const defaultCountry = countries.find((country) => country.id === defaultCountryId)
+  const [address, setAddress] = useState<AddressValue>(() => emptyAddress(defaultCountry))
   const [dealTypeId, setDealTypeId] = useState('')
   const [leadSourceId, setLeadSourceId] = useState('')
   const [contractPrice, setContractPrice] = useState('')
@@ -29,7 +51,7 @@ export function NewDealButton({ dealTypes, leadSources }: { dealTypes: LookupOpt
 
   function handleClose() {
     setIsOpen(false)
-    setAddress(EMPTY_ADDRESS)
+    setAddress(emptyAddress(defaultCountry))
     setDealTypeId('')
     setLeadSourceId('')
     setContractPrice('')
@@ -50,8 +72,9 @@ export function NewDealButton({ dealTypes, leadSources }: { dealTypes: LookupOpt
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         address: address.address,
-        city: address.city || null,
-        state: address.state || null,
+        country_id: address.countryId || null,
+        state_id: address.stateId || null,
+        city_id: address.cityId || null,
         zip_code: address.zipCode || null,
         deal_type_id: dealTypeId,
         lead_source_id: leadSourceId,
@@ -94,7 +117,7 @@ export function NewDealButton({ dealTypes, leadSources }: { dealTypes: LookupOpt
             </div>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-              <AddressFields value={address} onChange={setAddress} />
+              <AddressFields value={address} onChange={setAddress} countries={countries} />
 
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <label className="field-label">

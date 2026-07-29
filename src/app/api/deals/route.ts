@@ -49,8 +49,9 @@ export async function POST(request: Request) {
     .insert({
       company_id: profile.company_id,
       address,
-      city: body.city || null,
-      state: body.state || null,
+      country_id: body.country_id || null,
+      state_id: body.state_id || null,
+      city_id: body.city_id || null,
       zip_code: body.zip_code || null,
       market_id: body.market_id || null,
       property_type_id: body.property_type_id || null,

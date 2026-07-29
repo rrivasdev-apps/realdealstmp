@@ -2,23 +2,74 @@
 
 import { useEffect, useRef, useState } from 'react'
 
-export type AddressValue = { address: string; city: string; state: string; zipCode: string }
+export type AddressValue = {
+  address: string
+  countryId: string
+  countryName: string
+  stateId: string
+  stateName: string
+  cityId: string
+  cityName: string
+  zipCode: string
+}
 
+export type CountryOption = { id: string; name: string; iso_code: string }
+type StateOption = { id: string; name: string; code: string | null }
+type CityOption = { id: string; name: string }
 type Prediction = { placeId: string; text: string }
 
 // Street-address input with an optional Google Places autocomplete dropdown, plus
-// always-editable City/State/Zip inputs beneath it. Works identically whether
-// GOOGLE_MAPS_API_KEY is configured or not -- when it isn't (or a given address has no
-// match), suggestions simply never appear and every field stays plain manual entry, so
-// there's no separate "unavailable" state to design for.
-export function AddressFields({ value, onChange }: { value: AddressValue; onChange: (value: AddressValue) => void }) {
+// Country/State dropdowns and a searchable City combobox. Country/State/City are FK
+// dropdowns into the company's own geography lists (src/lib/geography) rather than
+// free text, so "Texas"/"TX"/"texas" can't become three different values -- see the
+// deal-geography migration. Works identically whether GOOGLE_MAPS_API_KEY is
+// configured or not -- when it isn't (or a given address has no match), predictions
+// simply never appear and the three dropdowns stay plain manual selection.
+export function AddressFields({
+  value,
+  onChange,
+  countries,
+}: {
+  value: AddressValue
+  onChange: (value: AddressValue) => void
+  countries: CountryOption[]
+}) {
   const [predictions, setPredictions] = useState<Prediction[]>([])
   const [showPredictions, setShowPredictions] = useState(false)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  const [states, setStates] = useState<StateOption[]>([])
+  const [statesLoading, setStatesLoading] = useState(false)
+
+  const [cityResults, setCityResults] = useState<CityOption[]>([])
+  const [showCityResults, setShowCityResults] = useState(false)
+  const cityDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    // Deferred a microtask via Promise.resolve().then() so the reset/loading setState
+    // calls aren't synchronous within the effect body itself (react-hooks/set-state-in-effect).
+    Promise.resolve().then(async () => {
+      setStates([])
+      if (!value.countryId) return
+      setStatesLoading(true)
+      try {
+        const response = await fetch(`/api/states?country_id=${encodeURIComponent(value.countryId)}`)
+        const data = response.ok ? await response.json() : []
+        if (!cancelled) setStates(data)
+      } finally {
+        if (!cancelled) setStatesLoading(false)
+      }
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [value.countryId])
+
   useEffect(() => {
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current)
+      if (cityDebounceRef.current) clearTimeout(cityDebounceRef.current)
     }
   }, [])
 
@@ -55,11 +106,61 @@ export function AddressFields({ value, onChange }: { value: AddressValue; onChan
 
     onChange({
       address: result.address ?? prediction.text,
-      city: result.city ?? '',
-      state: result.state ?? '',
+      countryId: result.country_id ?? '',
+      countryName: result.country_name ?? '',
+      stateId: result.state_id ?? '',
+      stateName: result.state_name ?? '',
+      cityId: result.city_id ?? '',
+      cityName: result.city_name ?? '',
       zipCode: result.zip_code ?? '',
     })
   }
+
+  function handleCountryChange(countryId: string) {
+    const country = countries.find((option) => option.id === countryId)
+    onChange({ ...value, countryId, countryName: country?.name ?? '', stateId: '', stateName: '', cityId: '', cityName: '' })
+  }
+
+  function handleStateChange(stateId: string) {
+    const state = states.find((option) => option.id === stateId)
+    onChange({ ...value, stateId, stateName: state?.name ?? '', cityId: '', cityName: '' })
+  }
+
+  function handleCityQueryChange(query: string) {
+    onChange({ ...value, cityId: '', cityName: query })
+    setShowCityResults(true)
+
+    if (cityDebounceRef.current) clearTimeout(cityDebounceRef.current)
+    if (!value.stateId || !query.trim()) {
+      setCityResults([])
+      return
+    }
+    cityDebounceRef.current = setTimeout(async () => {
+      const response = await fetch(`/api/cities?state_id=${encodeURIComponent(value.stateId)}&q=${encodeURIComponent(query)}`)
+      setCityResults(response.ok ? await response.json() : [])
+    }, 300)
+  }
+
+  function handleCityPick(city: CityOption) {
+    setShowCityResults(false)
+    setCityResults([])
+    onChange({ ...value, cityId: city.id, cityName: city.name })
+  }
+
+  async function handleCreateCity() {
+    const name = value.cityName.trim()
+    if (!value.stateId || !name) return
+    const response = await fetch('/api/cities', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, state_id: value.stateId }),
+    })
+    if (!response.ok) return
+    handleCityPick(await response.json())
+  }
+
+  const trimmedCityQuery = value.cityName.trim()
+  const exactCityMatch = cityResults.some((city) => city.name.toLowerCase() === trimmedCityQuery.toLowerCase())
 
   return (
     <div className="flex flex-col gap-3">
@@ -96,23 +197,80 @@ export function AddressFields({ value, onChange }: { value: AddressValue; onChan
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <label className="field-label">
-          City
-          <input
-            type="text"
-            value={value.city}
-            onChange={(event) => onChange({ ...value, city: event.target.value })}
+          Country
+          <select
+            value={value.countryId}
+            onChange={(event) => handleCountryChange(event.target.value)}
             className="rounded border border-input-border bg-input-background px-3 py-2"
-          />
+          >
+            <option value="">Select…</option>
+            {countries.map((country) => (
+              <option key={country.id} value={country.id}>
+                {country.name}
+              </option>
+            ))}
+          </select>
         </label>
         <label className="field-label">
           State
-          <input
-            type="text"
-            value={value.state}
-            onChange={(event) => onChange({ ...value, state: event.target.value })}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
-          />
+          <select
+            value={value.stateId}
+            onChange={(event) => handleStateChange(event.target.value)}
+            disabled={!value.countryId}
+            className="rounded border border-input-border bg-input-background px-3 py-2 disabled:opacity-50"
+          >
+            <option value="">{statesLoading ? 'Loading…' : 'Select…'}</option>
+            {states.map((state) => (
+              <option key={state.id} value={state.id}>
+                {state.name}
+              </option>
+            ))}
+          </select>
         </label>
+        <div className="relative">
+          <label className="field-label">
+            City
+            <input
+              type="text"
+              value={value.cityName}
+              onChange={(event) => handleCityQueryChange(event.target.value)}
+              onFocus={() => setShowCityResults(true)}
+              onBlur={() => setTimeout(() => setShowCityResults(false), 150)}
+              disabled={!value.stateId}
+              autoComplete="off"
+              className="rounded border border-input-border bg-input-background px-3 py-2 disabled:opacity-50"
+            />
+          </label>
+          {showCityResults && value.stateId && trimmedCityQuery && (
+            <ul className="absolute z-10 mt-1 w-full rounded border border-border bg-background shadow-lg">
+              {cityResults.map((city) => (
+                <li key={city.id}>
+                  <button
+                    type="button"
+                    onClick={() => handleCityPick(city)}
+                    className="block w-full px-3 py-2 text-left text-sm hover:bg-muted"
+                  >
+                    {city.name}
+                  </button>
+                </li>
+              ))}
+              {!exactCityMatch && (
+                <li>
+                  <button
+                    type="button"
+                    onClick={handleCreateCity}
+                    className="block w-full px-3 py-2 text-left text-sm text-brand-600 hover:bg-muted"
+                  >
+                    + Add &quot;{trimmedCityQuery}&quot;
+                  </button>
+                </li>
+              )}
+            </ul>
+          )}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <label className="field-label">
           Zip code
           <input

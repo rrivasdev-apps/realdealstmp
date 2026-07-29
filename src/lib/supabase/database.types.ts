@@ -560,6 +560,45 @@ export type Database = {
           },
         ]
       }
+      cities: {
+        Row: {
+          company_id: string
+          created_at: string
+          id: string
+          name: string
+          state_id: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          id?: string
+          name: string
+          state_id: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          id?: string
+          name?: string
+          state_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cities_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cities_state_id_fkey"
+            columns: ["state_id"]
+            isOneToOne: false
+            referencedRelation: "states"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       commission_types: {
         Row: {
           basis: string | null
@@ -604,23 +643,34 @@ export type Database = {
       companies: {
         Row: {
           created_at: string
+          default_country_id: string | null
           id: string
           name: string
           subscription_tier: string
         }
         Insert: {
           created_at?: string
+          default_country_id?: string | null
           id?: string
           name: string
           subscription_tier?: string
         }
         Update: {
           created_at?: string
+          default_country_id?: string | null
           id?: string
           name?: string
           subscription_tier?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "companies_default_country_id_fkey"
+            columns: ["default_country_id"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       company_types: {
         Row: {
@@ -782,6 +832,38 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "contacts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      countries: {
+        Row: {
+          company_id: string
+          created_at: string
+          id: string
+          iso_code: string
+          name: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          id?: string
+          iso_code: string
+          name: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          id?: string
+          iso_code?: string
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "countries_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
@@ -1085,13 +1167,14 @@ export type Database = {
           checklist_post_occupancy: boolean
           checklist_seller_info_sheet_needed: boolean
           checklist_survey_needed: boolean
-          city: string | null
+          city_id: string | null
           closing_date: string | null
           closing_extension_date: string | null
           company_id: string
           contract_date: string | null
           contract_price: number | null
           contract_price_renegotiated_date: string | null
+          country_id: string | null
           created_at: string
           custom_fields: Json
           deal_type_id: string | null
@@ -1132,7 +1215,7 @@ export type Database = {
           seller_info_sheet_sent: boolean
           seller_info_sheet_signed: boolean
           split_amount: number | null
-          state: string | null
+          state_id: string | null
           status_id: string
           survey_ordered_date: string | null
           title_company_contact_id: string | null
@@ -1174,13 +1257,14 @@ export type Database = {
           checklist_post_occupancy?: boolean
           checklist_seller_info_sheet_needed?: boolean
           checklist_survey_needed?: boolean
-          city?: string | null
+          city_id?: string | null
           closing_date?: string | null
           closing_extension_date?: string | null
           company_id: string
           contract_date?: string | null
           contract_price?: number | null
           contract_price_renegotiated_date?: string | null
+          country_id?: string | null
           created_at?: string
           custom_fields?: Json
           deal_type_id?: string | null
@@ -1221,7 +1305,7 @@ export type Database = {
           seller_info_sheet_sent?: boolean
           seller_info_sheet_signed?: boolean
           split_amount?: number | null
-          state?: string | null
+          state_id?: string | null
           status_id: string
           survey_ordered_date?: string | null
           title_company_contact_id?: string | null
@@ -1263,13 +1347,14 @@ export type Database = {
           checklist_post_occupancy?: boolean
           checklist_seller_info_sheet_needed?: boolean
           checklist_survey_needed?: boolean
-          city?: string | null
+          city_id?: string | null
           closing_date?: string | null
           closing_extension_date?: string | null
           company_id?: string
           contract_date?: string | null
           contract_price?: number | null
           contract_price_renegotiated_date?: string | null
+          country_id?: string | null
           created_at?: string
           custom_fields?: Json
           deal_type_id?: string | null
@@ -1310,7 +1395,7 @@ export type Database = {
           seller_info_sheet_sent?: boolean
           seller_info_sheet_signed?: boolean
           split_amount?: number | null
-          state?: string | null
+          state_id?: string | null
           status_id?: string
           survey_ordered_date?: string | null
           title_company_contact_id?: string | null
@@ -1331,10 +1416,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "deals_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "deals_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deals_country_id_fkey"
+            columns: ["country_id"]
+            isOneToOne: false
+            referencedRelation: "countries"
             referencedColumns: ["id"]
           },
           {
@@ -1391,6 +1490,13 @@ export type Database = {
             columns: ["seller_contact_id"]
             isOneToOne: false
             referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deals_state_id_fkey"
+            columns: ["state_id"]
+            isOneToOne: false
+            referencedRelation: "states"
             referencedColumns: ["id"]
           },
           {
@@ -2363,6 +2469,48 @@ export type Database = {
           name?: string
         }
         Relationships: []
+      }
+      states: {
+        Row: {
+          code: string | null
+          company_id: string
+          country_id: string
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          code?: string | null
+          company_id: string
+          country_id: string
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          code?: string | null
+          company_id?: string
+          country_id?: string
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "states_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "states_country_id_fkey"
+            columns: ["country_id"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
