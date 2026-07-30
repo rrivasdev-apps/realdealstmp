@@ -3,6 +3,8 @@ import Link from 'next/link'
 import { requirePermission } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
+import { ContactsList } from './contacts-list'
+
 export default async function ContactsPage() {
   const profile = await requirePermission('view_contacts')
   if (!profile) {
@@ -15,15 +17,28 @@ export default async function ContactsPage() {
   }
 
   const supabase = await createClient()
-  const { data: contacts } = await supabase
-    .from('contacts')
-    .select(
-      `id, name, notes,
-       contact_contact_types(contact_types(name)),
-       contact_phone_numbers(phone),
-       contact_emails(email)`
-    )
-    .order('name')
+  const [{ data: contacts }, { data: contactTypes }] = await Promise.all([
+    supabase
+      .from('contacts')
+      .select(
+        `id, name, notes,
+         contact_contact_types(contact_type_id, contact_types(name)),
+         contact_phone_numbers(phone),
+         contact_emails(email)`
+      )
+      .order('name'),
+    supabase.from('contact_types').select('id, name').order('name'),
+  ])
+
+  const shapedContacts = (contacts ?? []).map((contact) => ({
+    id: contact.id,
+    name: contact.name,
+    notes: contact.notes,
+    typeIds: contact.contact_contact_types.map((row) => row.contact_type_id),
+    typeNames: contact.contact_contact_types.map((row) => row.contact_types?.name).filter((name): name is string => Boolean(name)),
+    phones: contact.contact_phone_numbers.map((row) => row.phone),
+    emails: contact.contact_emails.map((row) => row.email),
+  }))
 
   return (
     <div>
@@ -34,30 +49,7 @@ export default async function ContactsPage() {
         </Link>
       </div>
 
-      <ul className="mt-6 divide-y divide-border">
-        {contacts?.map((contact) => {
-          const types = contact.contact_contact_types
-            .map((row) => row.contact_types?.name)
-            .filter(Boolean)
-            .join(', ')
-          const phone = contact.contact_phone_numbers[0]?.phone
-          const email = contact.contact_emails[0]?.email
-
-          return (
-            <li key={contact.id} className="py-3">
-              <Link href={`/contacts/${contact.id}`} className="font-medium hover:underline">
-                {contact.name}
-              </Link>
-              <div className="text-sm text-muted-foreground">
-                {[types, phone, email].filter(Boolean).join(' · ') || 'No details yet'}
-              </div>
-            </li>
-          )
-        })}
-        {contacts?.length === 0 && (
-          <li className="py-3 text-sm text-muted-foreground">No contacts yet.</li>
-        )}
-      </ul>
+      <ContactsList contacts={shapedContacts} contactTypes={contactTypes ?? []} />
     </div>
   )
 }

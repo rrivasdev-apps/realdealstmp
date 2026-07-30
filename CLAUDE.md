@@ -49,7 +49,12 @@ This project is on **Next.js 16**, which has breaking changes from the Next.js m
 
 **Deployment.** Vercel project `realdealstmp` (scope `rerss-projects`), live at https://realdealstmp.vercel.app, auto-deploys on push to `main`. No CI config exists yet beyond Vercel's own build step (`npm run build`). [vercel.json](vercel.json) schedules the Deal Automations cron sweep (`/api/cron/automations`) daily via Vercel Cron; that file is Vercel-specific, but the route it calls is a plain secret-gated HTTP endpoint any other scheduler can hit the same way.
 
-## Current phase: Phase 2 (Operations)
+## Current phase: Phase 2.5 (Contact Hub) — done, pending real usage
+
+Phase 2 (Operations) is done — see below. Phase 2.5 (Contact Hub full
+buildout) is now also done — see the "Phase 2.5" write-up further down this
+section for what shipped. Both need real usage before Phase 3 planning
+starts, per the phased-rollout approach below.
 
 **Phase 0 (MVP) and Phase 1 (Financial Engine) are both complete and live.**
 Phase 0 shipped the Deal Whiteboard (now at `/deals`), the KPI Dashboard
@@ -103,6 +108,53 @@ before it's considered validated, per the phased-rollout approach below.
 Do not build Phase 3 features early, even if they seem easy to add "while
 we're in there." The point of each phase is to validate its slice before the
 next one starts.
+
+**Phase 2.5 — Contact Hub full buildout.** **Done.** Closed a gap left over
+from Phase 0/1 rather than a new Phase 2 feature, so it was tracked as its
+own step. `/contacts` now has the full [docs/reference/contact-hub.md](docs/reference/contact-hub.md)
+spec: badge/count/filter list page (`contacts-list.tsx`, client-side —
+contact lists are small), the 3-column (type → sub-section → detail) edit
+view (`contact-form.tsx`), and every per-type sub-section.
+
+Data-model decision (confirmed with Rafael, replaces the original app's
+approach): the **contact is the entity related to the deal**; a linked
+`partner_companies` row is an optional attribute of that contact, not a
+parallel record. The original app modeled company and contact as peers, so a
+solo investor with no LLC still had to be entered twice (once as a contact,
+once as a company) to fill the deal's investor slot — this repo does not
+repeat that.
+
+- `contact_partner_companies (contact_id, partner_company_id)` — many-to-many
+  join table, no separate role column (`partner_companies` already carries a
+  multi-select type tag via `partner_company_types`). UI: a "select existing
+  to link" dropdown + removable list, not a flat checkbox list (see
+  `contact-form.tsx`'s linked-companies panel) — matters once a company has
+  more than a handful of `partner_companies` rows.
+- Dropped `contacts.investor_llc_id` — predated `partner_companies`, never
+  had a working FK.
+- Every deal/offer contact slot that has a matching `partner_companies`
+  company_type got a sibling company field, filtered to that contact's
+  linked companies via the shared `ContactCompanyField` component: JV
+  partner (`jv_partner_contact_id` + `jv_partner_company_id`), title
+  company, mortgage company (on `deals`), realtor/brokerage, investor (on
+  `offers`).
+- Contact Hub sub-sections, all live: Investor Criteria/Preferences (Type of
+  Investor, Communication Preferences, Markets/Cities/Zip Codes Interested
+  In, Type of Deals/Properties Interested In), Realtor tab (Select
+  Industry(s)/Asset Type(s)/Specialty(s) — fixed global lookups), Areas of
+  Coverage (States/Markets/Cities/Zip Codes Serving), Listings (minimal:
+  address/price/status/date/notes, own CRUD routes under
+  `/api/contacts/[id]/listings`), plus the engagement-tracking column
+  (Created By/On, Last Updated, Last Contacted with an "Update to Today"
+  button).
+- New lookups introduced along the way: `investor_types`,
+  `communication_preferences`, `zip_codes` (company-scoped, no prior table
+  existed), `realtor_industries`/`realtor_asset_types`/`realtor_specialties`,
+  `listing_statuses`. Bounded/company-scoped lists (Markets, States) got an
+  inline "+ Add" affordance directly in the panel (`MultiSelectCheckboxes`'
+  `onCreate` prop) rather than requiring a trip to Settings; unbounded ones
+  (Cities, Zip Codes) use a debounced search-and-add control
+  (`SearchAddMultiSelect`) instead of a flat list.
 
 ## Data model — Phase 0 starting point (see `supabase/migrations/` for the current full schema)
 
@@ -173,8 +225,9 @@ Custom fields per company (Settings module) are Phase 2 — the `custom_fields` 
 ## Roadmap
 
 1. ~~**Phase 1 — Financial engine**: role-based commission rules, JV expense allocation, cascading gross/net profit, monthly/quarterly/yearly KPI reporting.~~ **Done.**
-2. **Phase 2 — Operations** *(current)*: ~~Employee Center (roles, permissions, payroll)~~, ~~per-company custom fields~~, ~~full Settings module~~, ~~Transaction Guardian automation engine (event-triggered, named step ownership)~~ — all built. Phase 2 now needs real usage before it's considered validated and Phase 3 planning starts.
-3. **Phase 3 — Platform**: multi-tenant licensing, API layer, automation marketplace between companies.
+2. ~~**Phase 2 — Operations**: Employee Center (roles, permissions, payroll), per-company custom fields, full Settings module, Transaction Guardian automation engine (event-triggered, named step ownership).~~ **Done.**
+3. ~~**Phase 2.5 — Contact Hub full buildout**: badge/count/filter list page, 3-column type→sub-section→detail edit view, `contact_partner_companies` join table (contact-as-primary-entity model, see above), per-type sub-sections (Investor/Realtor/etc.), deal-form contact-slot + company-slot pairing.~~ **Done.** See the Phase 2.5 section above for the full spec. Phase 2 and 2.5 both need real usage before Phase 3 planning starts.
+4. **Phase 3 — Platform**: multi-tenant licensing, API layer, automation marketplace between companies.
 
 ## Conventions
 

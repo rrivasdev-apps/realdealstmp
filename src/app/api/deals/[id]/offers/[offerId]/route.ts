@@ -37,7 +37,9 @@ export async function PATCH(
       emd_deadline: body.emd_deadline || null,
       purchase_type_id: body.purchase_type_id || null,
       realtor_contact_id: body.realtor_contact_id || null,
+      realtor_company_id: body.realtor_company_id || null,
       investor_contact_id: body.investor_contact_id || null,
+      investor_company_id: body.investor_company_id || null,
       notes: body.notes || null,
     })
     .eq('id', offerId)

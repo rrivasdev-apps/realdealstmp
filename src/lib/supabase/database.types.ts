@@ -640,6 +640,21 @@ export type Database = {
           },
         ]
       }
+      communication_preferences: {
+        Row: {
+          id: string
+          name: string
+        }
+        Insert: {
+          id?: string
+          name: string
+        }
+        Update: {
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       companies: {
         Row: {
           created_at: string
@@ -687,6 +702,96 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_cities_interested: {
+        Row: {
+          city_id: string
+          contact_id: string
+        }
+        Insert: {
+          city_id: string
+          contact_id: string
+        }
+        Update: {
+          city_id?: string
+          contact_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_cities_interested_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contact_cities_interested_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contact_cities_serving: {
+        Row: {
+          city_id: string
+          contact_id: string
+        }
+        Insert: {
+          city_id: string
+          contact_id: string
+        }
+        Update: {
+          city_id?: string
+          contact_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_cities_serving_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contact_cities_serving_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contact_communication_preferences: {
+        Row: {
+          communication_preference_id: string
+          contact_id: string
+        }
+        Insert: {
+          communication_preference_id: string
+          contact_id: string
+        }
+        Update: {
+          communication_preference_id?: string
+          contact_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_communication_preferen_communication_preference_id_fkey"
+            columns: ["communication_preference_id"]
+            isOneToOne: false
+            referencedRelation: "communication_preferences"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contact_communication_preferences_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contact_contact_types: {
         Row: {
           contact_id: string
@@ -713,6 +818,36 @@ export type Database = {
             columns: ["contact_type_id"]
             isOneToOne: false
             referencedRelation: "contact_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contact_deal_types_interested: {
+        Row: {
+          contact_id: string
+          deal_type_id: string
+        }
+        Insert: {
+          contact_id: string
+          deal_type_id: string
+        }
+        Update: {
+          contact_id?: string
+          deal_type_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_deal_types_interested_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contact_deal_types_interested_deal_type_id_fkey"
+            columns: ["deal_type_id"]
+            isOneToOne: false
+            referencedRelation: "deal_types"
             referencedColumns: ["id"]
           },
         ]
@@ -753,6 +888,126 @@ export type Database = {
           },
         ]
       }
+      contact_investor_types: {
+        Row: {
+          contact_id: string
+          investor_type_id: string
+        }
+        Insert: {
+          contact_id: string
+          investor_type_id: string
+        }
+        Update: {
+          contact_id?: string
+          investor_type_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_investor_types_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contact_investor_types_investor_type_id_fkey"
+            columns: ["investor_type_id"]
+            isOneToOne: false
+            referencedRelation: "investor_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contact_markets_interested: {
+        Row: {
+          contact_id: string
+          market_id: string
+        }
+        Insert: {
+          contact_id: string
+          market_id: string
+        }
+        Update: {
+          contact_id?: string
+          market_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_markets_interested_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contact_markets_interested_market_id_fkey"
+            columns: ["market_id"]
+            isOneToOne: false
+            referencedRelation: "markets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contact_markets_serving: {
+        Row: {
+          contact_id: string
+          market_id: string
+        }
+        Insert: {
+          contact_id: string
+          market_id: string
+        }
+        Update: {
+          contact_id?: string
+          market_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_markets_serving_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contact_markets_serving_market_id_fkey"
+            columns: ["market_id"]
+            isOneToOne: false
+            referencedRelation: "markets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contact_partner_companies: {
+        Row: {
+          contact_id: string
+          partner_company_id: string
+        }
+        Insert: {
+          contact_id: string
+          partner_company_id: string
+        }
+        Update: {
+          contact_id?: string
+          partner_company_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_partner_companies_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contact_partner_companies_partner_company_id_fkey"
+            columns: ["partner_company_id"]
+            isOneToOne: false
+            referencedRelation: "partner_companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contact_phone_numbers: {
         Row: {
           contact_id: string
@@ -789,6 +1044,156 @@ export type Database = {
           },
         ]
       }
+      contact_property_types_interested: {
+        Row: {
+          contact_id: string
+          property_type_id: string
+        }
+        Insert: {
+          contact_id: string
+          property_type_id: string
+        }
+        Update: {
+          contact_id?: string
+          property_type_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_property_types_interested_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contact_property_types_interested_property_type_id_fkey"
+            columns: ["property_type_id"]
+            isOneToOne: false
+            referencedRelation: "property_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contact_realtor_asset_types: {
+        Row: {
+          contact_id: string
+          realtor_asset_type_id: string
+        }
+        Insert: {
+          contact_id: string
+          realtor_asset_type_id: string
+        }
+        Update: {
+          contact_id?: string
+          realtor_asset_type_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_realtor_asset_types_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contact_realtor_asset_types_realtor_asset_type_id_fkey"
+            columns: ["realtor_asset_type_id"]
+            isOneToOne: false
+            referencedRelation: "realtor_asset_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contact_realtor_industries: {
+        Row: {
+          contact_id: string
+          realtor_industry_id: string
+        }
+        Insert: {
+          contact_id: string
+          realtor_industry_id: string
+        }
+        Update: {
+          contact_id?: string
+          realtor_industry_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_realtor_industries_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contact_realtor_industries_realtor_industry_id_fkey"
+            columns: ["realtor_industry_id"]
+            isOneToOne: false
+            referencedRelation: "realtor_industries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contact_realtor_specialties: {
+        Row: {
+          contact_id: string
+          realtor_specialty_id: string
+        }
+        Insert: {
+          contact_id: string
+          realtor_specialty_id: string
+        }
+        Update: {
+          contact_id?: string
+          realtor_specialty_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_realtor_specialties_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contact_realtor_specialties_realtor_specialty_id_fkey"
+            columns: ["realtor_specialty_id"]
+            isOneToOne: false
+            referencedRelation: "realtor_specialties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contact_states_serving: {
+        Row: {
+          contact_id: string
+          state_id: string
+        }
+        Insert: {
+          contact_id: string
+          state_id: string
+        }
+        Update: {
+          contact_id?: string
+          state_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_states_serving_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contact_states_serving_state_id_fkey"
+            columns: ["state_id"]
+            isOneToOne: false
+            referencedRelation: "states"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contact_types: {
         Row: {
           id: string
@@ -804,30 +1209,96 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_zip_codes_interested: {
+        Row: {
+          contact_id: string
+          zip_code_id: string
+        }
+        Insert: {
+          contact_id: string
+          zip_code_id: string
+        }
+        Update: {
+          contact_id?: string
+          zip_code_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_zip_codes_interested_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contact_zip_codes_interested_zip_code_id_fkey"
+            columns: ["zip_code_id"]
+            isOneToOne: false
+            referencedRelation: "zip_codes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contact_zip_codes_serving: {
+        Row: {
+          contact_id: string
+          zip_code_id: string
+        }
+        Insert: {
+          contact_id: string
+          zip_code_id: string
+        }
+        Update: {
+          contact_id?: string
+          zip_code_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_zip_codes_serving_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contact_zip_codes_serving_zip_code_id_fkey"
+            columns: ["zip_code_id"]
+            isOneToOne: false
+            referencedRelation: "zip_codes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contacts: {
         Row: {
           company_id: string
           created_at: string
+          created_by: string | null
           id: string
-          investor_llc_id: string | null
+          last_contacted_at: string | null
           name: string
           notes: string | null
+          updated_at: string
         }
         Insert: {
           company_id: string
           created_at?: string
+          created_by?: string | null
           id?: string
-          investor_llc_id?: string | null
+          last_contacted_at?: string | null
           name: string
           notes?: string | null
+          updated_at?: string
         }
         Update: {
           company_id?: string
           created_at?: string
+          created_by?: string | null
           id?: string
-          investor_llc_id?: string | null
+          last_contacted_at?: string | null
           name?: string
           notes?: string | null
+          updated_at?: string
         }
         Relationships: [
           {
@@ -835,6 +1306,13 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contacts_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -1188,6 +1666,7 @@ export type Database = {
           is_jv_deal: boolean
           is_listed: boolean
           jv_partner_company_id: string | null
+          jv_partner_contact_id: string | null
           jv_split_percent: number | null
           jv_split_type_id: string | null
           lead_source_id: string | null
@@ -1195,6 +1674,7 @@ export type Database = {
           lot_size_acres: number | null
           market_id: string | null
           mortgage_company_contact_id: string | null
+          mortgage_company_id: string | null
           mortgage_principal_balance: number | null
           mortgage_rate: number | null
           mortgage_term: number | null
@@ -1219,6 +1699,7 @@ export type Database = {
           status_id: string
           survey_ordered_date: string | null
           title_company_contact_id: string | null
+          title_company_id: string | null
           title_opened: boolean
           title_ordered: boolean
           title_ready: boolean
@@ -1278,6 +1759,7 @@ export type Database = {
           is_jv_deal?: boolean
           is_listed?: boolean
           jv_partner_company_id?: string | null
+          jv_partner_contact_id?: string | null
           jv_split_percent?: number | null
           jv_split_type_id?: string | null
           lead_source_id?: string | null
@@ -1285,6 +1767,7 @@ export type Database = {
           lot_size_acres?: number | null
           market_id?: string | null
           mortgage_company_contact_id?: string | null
+          mortgage_company_id?: string | null
           mortgage_principal_balance?: number | null
           mortgage_rate?: number | null
           mortgage_term?: number | null
@@ -1309,6 +1792,7 @@ export type Database = {
           status_id: string
           survey_ordered_date?: string | null
           title_company_contact_id?: string | null
+          title_company_id?: string | null
           title_opened?: boolean
           title_ordered?: boolean
           title_ready?: boolean
@@ -1368,6 +1852,7 @@ export type Database = {
           is_jv_deal?: boolean
           is_listed?: boolean
           jv_partner_company_id?: string | null
+          jv_partner_contact_id?: string | null
           jv_split_percent?: number | null
           jv_split_type_id?: string | null
           lead_source_id?: string | null
@@ -1375,6 +1860,7 @@ export type Database = {
           lot_size_acres?: number | null
           market_id?: string | null
           mortgage_company_contact_id?: string | null
+          mortgage_company_id?: string | null
           mortgage_principal_balance?: number | null
           mortgage_rate?: number | null
           mortgage_term?: number | null
@@ -1399,6 +1885,7 @@ export type Database = {
           status_id?: string
           survey_ordered_date?: string | null
           title_company_contact_id?: string | null
+          title_company_id?: string | null
           title_opened?: boolean
           title_ordered?: boolean
           title_ready?: boolean
@@ -1451,6 +1938,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "deals_jv_partner_contact_id_fkey"
+            columns: ["jv_partner_contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "deals_jv_split_type_id_fkey"
             columns: ["jv_split_type_id"]
             isOneToOne: false
@@ -1476,6 +1970,13 @@ export type Database = {
             columns: ["mortgage_company_contact_id"]
             isOneToOne: false
             referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deals_mortgage_company_id_fkey"
+            columns: ["mortgage_company_id"]
+            isOneToOne: false
+            referencedRelation: "partner_companies"
             referencedColumns: ["id"]
           },
           {
@@ -1511,6 +2012,13 @@ export type Database = {
             columns: ["title_company_contact_id"]
             isOneToOne: false
             referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deals_title_company_id_fkey"
+            columns: ["title_company_id"]
+            isOneToOne: false
+            referencedRelation: "partner_companies"
             referencedColumns: ["id"]
           },
         ]
@@ -1646,6 +2154,21 @@ export type Database = {
           },
         ]
       }
+      investor_types: {
+        Row: {
+          id: string
+          name: string
+        }
+        Insert: {
+          id?: string
+          name: string
+        }
+        Update: {
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       lead_sources: {
         Row: {
           company_id: string
@@ -1671,6 +2194,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      listing_statuses: {
+        Row: {
+          id: string
+          name: string
+          sort_order: number
+        }
+        Insert: {
+          id?: string
+          name: string
+          sort_order: number
+        }
+        Update: {
+          id?: string
+          name?: string
+          sort_order?: number
+        }
+        Relationships: []
       }
       markets: {
         Row: {
@@ -1724,11 +2265,13 @@ export type Database = {
           emd_deadline: string | null
           id: string
           inspection_deadline: string | null
+          investor_company_id: string | null
           investor_contact_id: string | null
           notes: string | null
           offer_date: string | null
           offer_price: number | null
           purchase_type_id: string | null
+          realtor_company_id: string | null
           realtor_contact_id: string | null
           status_id: string
         }
@@ -1739,11 +2282,13 @@ export type Database = {
           emd_deadline?: string | null
           id?: string
           inspection_deadline?: string | null
+          investor_company_id?: string | null
           investor_contact_id?: string | null
           notes?: string | null
           offer_date?: string | null
           offer_price?: number | null
           purchase_type_id?: string | null
+          realtor_company_id?: string | null
           realtor_contact_id?: string | null
           status_id: string
         }
@@ -1754,11 +2299,13 @@ export type Database = {
           emd_deadline?: string | null
           id?: string
           inspection_deadline?: string | null
+          investor_company_id?: string | null
           investor_contact_id?: string | null
           notes?: string | null
           offer_date?: string | null
           offer_price?: number | null
           purchase_type_id?: string | null
+          realtor_company_id?: string | null
           realtor_contact_id?: string | null
           status_id?: string
         }
@@ -1768,6 +2315,13 @@ export type Database = {
             columns: ["deal_id"]
             isOneToOne: false
             referencedRelation: "deals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offers_investor_company_id_fkey"
+            columns: ["investor_company_id"]
+            isOneToOne: false
+            referencedRelation: "partner_companies"
             referencedColumns: ["id"]
           },
           {
@@ -1782,6 +2336,13 @@ export type Database = {
             columns: ["purchase_type_id"]
             isOneToOne: false
             referencedRelation: "purchase_types"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offers_realtor_company_id_fkey"
+            columns: ["realtor_company_id"]
+            isOneToOne: false
+            referencedRelation: "partner_companies"
             referencedColumns: ["id"]
           },
           {
@@ -2346,6 +2907,99 @@ export type Database = {
         }
         Relationships: []
       }
+      realtor_asset_types: {
+        Row: {
+          id: string
+          name: string
+        }
+        Insert: {
+          id?: string
+          name: string
+        }
+        Update: {
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      realtor_industries: {
+        Row: {
+          id: string
+          name: string
+        }
+        Insert: {
+          id?: string
+          name: string
+        }
+        Update: {
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      realtor_listings: {
+        Row: {
+          address: string
+          contact_id: string
+          created_at: string
+          id: string
+          list_price: number | null
+          listing_date: string | null
+          notes: string | null
+          status_id: string | null
+        }
+        Insert: {
+          address: string
+          contact_id: string
+          created_at?: string
+          id?: string
+          list_price?: number | null
+          listing_date?: string | null
+          notes?: string | null
+          status_id?: string | null
+        }
+        Update: {
+          address?: string
+          contact_id?: string
+          created_at?: string
+          id?: string
+          list_price?: number | null
+          listing_date?: string | null
+          notes?: string | null
+          status_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "realtor_listings_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "realtor_listings_status_id_fkey"
+            columns: ["status_id"]
+            isOneToOne: false
+            referencedRelation: "listing_statuses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      realtor_specialties: {
+        Row: {
+          id: string
+          name: string
+        }
+        Insert: {
+          id?: string
+          name: string
+        }
+        Update: {
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       selling_reasons: {
         Row: {
           company_id: string
@@ -2508,6 +3162,35 @@ export type Database = {
             columns: ["country_id"]
             isOneToOne: false
             referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      zip_codes: {
+        Row: {
+          code: string
+          company_id: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          code: string
+          company_id: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          code?: string
+          company_id?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "zip_codes_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
             referencedColumns: ["id"]
           },
         ]

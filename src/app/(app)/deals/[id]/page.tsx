@@ -40,6 +40,7 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
     { data: purchaseTypes },
     { data: contacts },
     { data: partnerCompanies },
+    { data: contactPartnerCompanies },
     { data: splitTypes },
     { data: showings },
     { data: dealEmployees },
@@ -72,6 +73,7 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
     supabase.from('purchase_types').select('id, name').order('name'),
     supabase.from('contacts').select('id, name, contact_contact_types(contact_types(name))').order('name'),
     supabase.from('partner_companies').select('id, name').order('name'),
+    supabase.from('contact_partner_companies').select('contact_id, partner_company_id'),
     supabase.from('split_types').select('id, name').order('name'),
     supabase
       .from('showings')
@@ -109,6 +111,7 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
   const titleCompanyContacts = filterContactsByType(contacts ?? [], 'Title Company')
   const mortgageCompanyContacts = filterContactsByType(contacts ?? [], 'Mortgage Company')
   const sellerContacts = filterContactsByType(contacts ?? [], 'Seller')
+  const investorContacts = filterContactsByType(contacts ?? [], 'Investor')
 
   const assignedProfileIds = new Set((dealEmployees ?? []).map((row) => row.profile_id))
   const availableProfiles = (companyProfiles ?? []).filter((p) => !assignedProfileIds.has(p.id))
@@ -168,7 +171,9 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
             title_ready: deal.title_ready ?? false,
             poa_needed: deal.poa_needed ?? false,
             title_company_contact_id: deal.title_company_contact_id ?? '',
+            title_company_id: deal.title_company_id ?? '',
             mortgage_company_contact_id: deal.mortgage_company_contact_id ?? '',
+            mortgage_company_id: deal.mortgage_company_id ?? '',
             payoff_ordered: deal.payoff_ordered ?? false,
             mortgage_principal_balance: deal.mortgage_principal_balance?.toString() ?? '',
             mortgage_rate: deal.mortgage_rate?.toString() ?? '',
@@ -179,6 +184,7 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
             seller_contact_id: deal.seller_contact_id ?? '',
             is_listed: deal.is_listed ?? false,
             is_jv_deal: deal.is_jv_deal ?? false,
+            jv_partner_contact_id: deal.jv_partner_contact_id ?? '',
             jv_partner_company_id: deal.jv_partner_company_id ?? '',
             jv_split_type_id: deal.jv_split_type_id ?? '',
             jv_split_percent: deal.jv_split_percent?.toString() ?? '',
@@ -231,7 +237,9 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
           titleCompanyContacts={titleCompanyContacts}
           mortgageCompanyContacts={mortgageCompanyContacts}
           sellerContacts={sellerContacts}
+          investorContacts={investorContacts}
           partnerCompanies={partnerCompanies ?? []}
+          contactPartnerCompanies={contactPartnerCompanies ?? []}
           splitTypes={splitTypes ?? []}
           checklistItems={checklistItems ?? []}
           checkedChecklistItemIds={(checkedChecklistItems ?? []).map((row) => row.checklist_item_id)}

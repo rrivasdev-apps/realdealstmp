@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
+import { ContactCompanyField } from '@/components/contact-company-field'
 import { CurrencyInput } from '@/components/currency-input'
 
 type LookupOption = { id: string; name: string }
@@ -19,7 +20,9 @@ export type OfferFormValues = {
   emd_deadline: string
   purchase_type_id: string
   realtor_contact_id: string
+  realtor_company_id: string
   investor_contact_id: string
+  investor_company_id: string
   notes: string
 }
 
@@ -30,6 +33,8 @@ export function OfferForm({
   purchaseTypes,
   realtorContacts,
   investorContacts,
+  partnerCompanies,
+  contactPartnerCompanies,
 }: {
   mode: 'create' | 'edit'
   initialValues: OfferFormValues
@@ -37,6 +42,8 @@ export function OfferForm({
   purchaseTypes: LookupOption[]
   realtorContacts: LookupOption[]
   investorContacts: LookupOption[]
+  partnerCompanies: LookupOption[]
+  contactPartnerCompanies: { contact_id: string; partner_company_id: string }[]
 }) {
   const router = useRouter()
   const [values, setValues] = useState(initialValues)
@@ -65,7 +72,9 @@ export function OfferForm({
       emd_deadline: values.emd_deadline || null,
       purchase_type_id: values.purchase_type_id || null,
       realtor_contact_id: values.realtor_contact_id || null,
+      realtor_company_id: values.realtor_company_id || null,
       investor_contact_id: values.investor_contact_id || null,
+      investor_company_id: values.investor_company_id || null,
       notes: values.notes || null,
     }
 
@@ -170,37 +179,33 @@ export function OfferForm({
           />
         </label>
 
-        <label className="field-label">
-          Realtor
-          <select
-            value={values.realtor_contact_id}
-            onChange={(event) => set('realtor_contact_id', event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
-          >
-            <option value="">—</option>
-            {realtorContacts.map((option) => (
-              <option key={option.id} value={option.id}>
-                {option.name}
-              </option>
-            ))}
-          </select>
-        </label>
+        <ContactCompanyField
+          contactLabel="Realtor"
+          companyLabel="Brokerage"
+          contacts={realtorContacts}
+          companies={partnerCompanies}
+          contactPartnerCompanies={contactPartnerCompanies}
+          contactId={values.realtor_contact_id}
+          companyId={values.realtor_company_id}
+          onContactChange={(contactId, companyId) =>
+            setValues((prev) => ({ ...prev, realtor_contact_id: contactId, realtor_company_id: companyId }))
+          }
+          onCompanyChange={(companyId) => set('realtor_company_id', companyId)}
+        />
 
-        <label className="field-label">
-          Investor
-          <select
-            value={values.investor_contact_id}
-            onChange={(event) => set('investor_contact_id', event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
-          >
-            <option value="">—</option>
-            {investorContacts.map((option) => (
-              <option key={option.id} value={option.id}>
-                {option.name}
-              </option>
-            ))}
-          </select>
-        </label>
+        <ContactCompanyField
+          contactLabel="Investor"
+          companyLabel="Investor company"
+          contacts={investorContacts}
+          companies={partnerCompanies}
+          contactPartnerCompanies={contactPartnerCompanies}
+          contactId={values.investor_contact_id}
+          companyId={values.investor_company_id}
+          onContactChange={(contactId, companyId) =>
+            setValues((prev) => ({ ...prev, investor_contact_id: contactId, investor_company_id: companyId }))
+          }
+          onCompanyChange={(companyId) => set('investor_company_id', companyId)}
+        />
       </div>
 
       <label className="field-label">

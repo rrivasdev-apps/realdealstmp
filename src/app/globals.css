@@ -50,6 +50,18 @@
   --status-closed: #17915a;
   --status-on-hold: #6b7280;
   --status-cancelled: #d43d3d;
+
+  /* Contact type colors -- one per row in contact_types, used for the
+     Contact Hub's type badges/pills. Soft/muted tones, same "solid text on
+     a 10%-opacity tint" treatment as the deal status colors above. */
+  --contact-type-investor: #0891b2;
+  --contact-type-realtor: #2563eb;
+  --contact-type-lender: #ca8a04;
+  --contact-type-vendor: #64748b;
+  --contact-type-seller: #db2777;
+  --contact-type-mortgage-company: #7c3aed;
+  --contact-type-title-company: #059669;
+  --contact-type-other: #6b7280;
 }
 
 @theme inline {
@@ -89,6 +101,15 @@
   --color-status-closed: var(--status-closed);
   --color-status-on-hold: var(--status-on-hold);
   --color-status-cancelled: var(--status-cancelled);
+
+  --color-contact-type-investor: var(--contact-type-investor);
+  --color-contact-type-realtor: var(--contact-type-realtor);
+  --color-contact-type-lender: var(--contact-type-lender);
+  --color-contact-type-vendor: var(--contact-type-vendor);
+  --color-contact-type-seller: var(--contact-type-seller);
+  --color-contact-type-mortgage-company: var(--contact-type-mortgage-company);
+  --color-contact-type-title-company: var(--contact-type-title-company);
+  --color-contact-type-other: var(--contact-type-other);
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);

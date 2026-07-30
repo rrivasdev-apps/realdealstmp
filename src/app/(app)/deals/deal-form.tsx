@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 import { AddressFields, type CountryOption } from '@/components/address-fields'
+import { ContactCompanyField } from '@/components/contact-company-field'
 import { CurrencyInput } from '@/components/currency-input'
 import { DealSection } from '@/components/deal-section'
 import { calculateProfitCascade } from '@/lib/deals/profit'
@@ -63,7 +64,9 @@ export type DealFormValues = {
   title_ready: boolean
   poa_needed: boolean
   title_company_contact_id: string
+  title_company_id: string
   mortgage_company_contact_id: string
+  mortgage_company_id: string
   payoff_ordered: boolean
   mortgage_principal_balance: string
   mortgage_rate: string
@@ -74,6 +77,7 @@ export type DealFormValues = {
   seller_contact_id: string
   is_listed: boolean
   is_jv_deal: boolean
+  jv_partner_contact_id: string
   jv_partner_company_id: string
   jv_split_type_id: string
   jv_split_percent: string
@@ -128,7 +132,9 @@ export function DealForm({
   titleCompanyContacts,
   mortgageCompanyContacts,
   sellerContacts,
+  investorContacts,
   partnerCompanies,
+  contactPartnerCompanies,
   splitTypes,
   checklistItems,
   checkedChecklistItemIds,
@@ -150,7 +156,9 @@ export function DealForm({
   titleCompanyContacts: LookupOption[]
   mortgageCompanyContacts: LookupOption[]
   sellerContacts: LookupOption[]
+  investorContacts: LookupOption[]
   partnerCompanies: LookupOption[]
+  contactPartnerCompanies: { contact_id: string; partner_company_id: string }[]
   splitTypes: LookupOption[]
   checklistItems: LookupOption[]
   checkedChecklistItemIds: string[]
@@ -225,7 +233,9 @@ export function DealForm({
       title_ready: values.title_ready,
       poa_needed: values.poa_needed,
       title_company_contact_id: values.title_company_contact_id || null,
+      title_company_id: values.title_company_id || null,
       mortgage_company_contact_id: values.mortgage_company_contact_id || null,
+      mortgage_company_id: values.mortgage_company_id || null,
       payoff_ordered: values.payoff_ordered,
       mortgage_principal_balance: values.mortgage_principal_balance ? Number(values.mortgage_principal_balance) : null,
       mortgage_rate: values.mortgage_rate ? Number(values.mortgage_rate) : null,
@@ -236,6 +246,7 @@ export function DealForm({
       seller_contact_id: values.seller_contact_id || null,
       is_listed: values.is_listed,
       is_jv_deal: values.is_jv_deal,
+      jv_partner_contact_id: values.jv_partner_contact_id || null,
       jv_partner_company_id: values.jv_partner_company_id || null,
       jv_split_type_id: values.jv_split_type_id || null,
       jv_split_percent: values.jv_split_percent ? Number(values.jv_split_percent) : null,
@@ -361,21 +372,19 @@ export function DealForm({
             />
           </label>
 
-          <label className="field-label">
-            Mortgage company
-            <select
-              value={values.mortgage_company_contact_id}
-              onChange={(event) => set('mortgage_company_contact_id', event.target.value)}
-              className="rounded border border-input-border bg-input-background px-3 py-2"
-            >
-              <option value="">—</option>
-              {mortgageCompanyContacts.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.name}
-                </option>
-              ))}
-            </select>
-          </label>
+          <ContactCompanyField
+            contactLabel="Mortgage company contact"
+            companyLabel="Mortgage company"
+            contacts={mortgageCompanyContacts}
+            companies={partnerCompanies}
+            contactPartnerCompanies={contactPartnerCompanies}
+            contactId={values.mortgage_company_contact_id}
+            companyId={values.mortgage_company_id}
+            onContactChange={(contactId, companyId) =>
+              setValues((prev) => ({ ...prev, mortgage_company_contact_id: contactId, mortgage_company_id: companyId }))
+            }
+            onCompanyChange={(companyId) => set('mortgage_company_id', companyId)}
+          />
 
           <label className="field-label">
             Mortgage principal balance
@@ -668,21 +677,19 @@ export function DealForm({
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <label className="field-label">
-            Title company
-            <select
-              value={values.title_company_contact_id}
-              onChange={(event) => set('title_company_contact_id', event.target.value)}
-              className="rounded border border-input-border bg-input-background px-3 py-2"
-            >
-              <option value="">—</option>
-              {titleCompanyContacts.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.name}
-                </option>
-              ))}
-            </select>
-          </label>
+          <ContactCompanyField
+            contactLabel="Title company contact"
+            companyLabel="Title company"
+            contacts={titleCompanyContacts}
+            companies={partnerCompanies}
+            contactPartnerCompanies={contactPartnerCompanies}
+            contactId={values.title_company_contact_id}
+            companyId={values.title_company_id}
+            onContactChange={(contactId, companyId) =>
+              setValues((prev) => ({ ...prev, title_company_contact_id: contactId, title_company_id: companyId }))
+            }
+            onCompanyChange={(companyId) => set('title_company_id', companyId)}
+          />
 
           <label className="field-label">
             Seller info
@@ -843,21 +850,19 @@ export function DealForm({
 
           {values.is_jv_deal && (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <label className="field-label">
-                JV partner company
-                <select
-                  value={values.jv_partner_company_id}
-                  onChange={(event) => set('jv_partner_company_id', event.target.value)}
-                  className="rounded border border-input-border bg-input-background px-3 py-2"
-                >
-                  <option value="">—</option>
-                  {partnerCompanies.map((option) => (
-                    <option key={option.id} value={option.id}>
-                      {option.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
+              <ContactCompanyField
+                contactLabel="JV partner"
+                companyLabel="JV partner company"
+                contacts={investorContacts}
+                companies={partnerCompanies}
+                contactPartnerCompanies={contactPartnerCompanies}
+                contactId={values.jv_partner_contact_id}
+                companyId={values.jv_partner_company_id}
+                onContactChange={(contactId, companyId) =>
+                  setValues((prev) => ({ ...prev, jv_partner_contact_id: contactId, jv_partner_company_id: companyId }))
+                }
+                onCompanyChange={(companyId) => set('jv_partner_company_id', companyId)}
+              />
 
               <label className="field-label">
                 Split type
