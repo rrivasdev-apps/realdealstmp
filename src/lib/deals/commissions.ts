@@ -64,42 +64,52 @@ export function calculateCommissionAmount(commissionType: CommissionValues, deal
   return (base * commissionType.value) / 100
 }
 
+// Direct profile-level assignment always applies + every commission type
+// tied to the role(s) the employee was assigned to play on *this* deal --
+// not every role they hold company-wide; an employee configured as both
+// Closer and TC only earns Closer commissions on a deal he was added to as
+// Closer.
+async function applicableCommissionTypesFor(
+  supabase: SupabaseClient<Database>,
+  profileId: string,
+  employeeRoleIds: string[]
+): Promise<CommissionType[]> {
+  const [{ data: direct }, { data: viaRole }] = await Promise.all([
+    supabase.from('profile_commission_types').select('commission_types(*)').eq('profile_id', profileId),
+    employeeRoleIds.length
+      ? supabase
+          .from('employee_role_commission_types')
+          .select('commission_types(*)')
+          .in('employee_role_id', employeeRoleIds)
+      : Promise.resolve({ data: [] }),
+  ])
+
+  return [...(direct ?? []), ...(viaRole ?? [])]
+    .map((row) => row.commission_types)
+    .filter((ct): ct is CommissionType => ct != null)
+}
+
 // Called when an employee is added to a deal: creates one payment row per
-// commission type that applies to them (direct assignment + every
-// employee_role they hold's assignment -- all apply and stack, per Rafael).
+// applicable commission type.
 export async function createCommissionPaymentsForDealEmployee(
   supabase: SupabaseClient<Database>,
-  params: { companyId: string; dealId: string; profileId: string }
+  params: { companyId: string; dealId: string; profileId: string; employeeRoleIds: string[] }
 ) {
-  const { companyId, dealId, profileId } = params
+  const { companyId, dealId, profileId, employeeRoleIds } = params
 
-  const [{ data: deal }, { data: roleAssignments }] = await Promise.all([
-    supabase
-      .from('deals')
-      .select(
-        'contract_price, renegotiated_bc_price, buyer_contract_price, projected_sales_price, actual_closing_date, deal_statuses(name)'
-      )
-      .eq('id', dealId)
-      .single(),
-    supabase.from('profile_employee_roles').select('employee_role_id').eq('profile_id', profileId),
-  ])
+  const { data: deal } = await supabase
+    .from('deals')
+    .select(
+      'contract_price, renegotiated_bc_price, buyer_contract_price, projected_sales_price, actual_closing_date, deal_statuses(name)'
+    )
+    .eq('id', dealId)
+    .single()
 
   if (!deal) {
     return
   }
 
-  const roleIds = (roleAssignments ?? []).map((row) => row.employee_role_id)
-
-  const [{ data: direct }, { data: viaRole }] = await Promise.all([
-    supabase.from('profile_commission_types').select('commission_types(*)').eq('profile_id', profileId),
-    roleIds.length
-      ? supabase.from('employee_role_commission_types').select('commission_types(*)').in('employee_role_id', roleIds)
-      : Promise.resolve({ data: [] }),
-  ])
-
-  const commissionTypes = [...(direct ?? []), ...(viaRole ?? [])]
-    .map((row) => row.commission_types)
-    .filter((ct): ct is CommissionType => ct != null)
+  const commissionTypes = await applicableCommissionTypesFor(supabase, profileId, employeeRoleIds)
 
   if (commissionTypes.length === 0) {
     return
@@ -121,6 +131,111 @@ export async function createCommissionPaymentsForDealEmployee(
   })
 
   await supabase.from('payments').insert(rows)
+}
+
+// Called when an employee's per-deal role selection changes: reconciles
+// their commission payments on this deal to match whatever the new role
+// selection earns. Payments for commission types that no longer apply are
+// deleted outright (per Rafael: they never represented real money moving);
+// payments for newly-applicable commission types are created; payments for
+// commission types that still apply are left untouched. If any
+// no-longer-applicable commission type has already been marked 'paid', the
+// whole change is refused -- paid money is never silently erased.
+export async function syncCommissionPaymentsForDealEmployeeRoles(
+  supabase: SupabaseClient<Database>,
+  params: { companyId: string; dealId: string; profileId: string; employeeRoleIds: string[] }
+): Promise<{ error?: string }> {
+  const { companyId, dealId, profileId, employeeRoleIds } = params
+
+  const [{ data: deal }, { data: existingPayments }] = await Promise.all([
+    supabase
+      .from('deals')
+      .select(
+        'contract_price, renegotiated_bc_price, buyer_contract_price, projected_sales_price, actual_closing_date, deal_statuses(name)'
+      )
+      .eq('id', dealId)
+      .single(),
+    supabase
+      .from('payments')
+      .select('id, commission_type_id, status')
+      .eq('deal_id', dealId)
+      .eq('profile_id', profileId)
+      .eq('type', 'commission'),
+  ])
+
+  if (!deal) {
+    return {}
+  }
+
+  const desiredTypes = await applicableCommissionTypesFor(supabase, profileId, employeeRoleIds)
+  const desiredTypeIds = new Set(desiredTypes.map((ct) => ct.id))
+
+  const noLongerApplicable = (existingPayments ?? []).filter(
+    (payment) => payment.commission_type_id && !desiredTypeIds.has(payment.commission_type_id)
+  )
+  if (noLongerApplicable.some((payment) => payment.status === 'paid')) {
+    return { error: 'Cannot change roles: a commission tied to a role being removed has already been paid.' }
+  }
+
+  const existingTypeIds = new Set((existingPayments ?? []).map((payment) => payment.commission_type_id))
+  const newlyApplicable = desiredTypes.filter((ct) => !existingTypeIds.has(ct.id))
+
+  if (noLongerApplicable.length > 0) {
+    await supabase
+      .from('payments')
+      .delete()
+      .in('id', noLongerApplicable.map((payment) => payment.id))
+  }
+
+  if (newlyApplicable.length > 0) {
+    const funded = isDealFunded(deal)
+    const rows = newlyApplicable.map((commissionType) => {
+      const calculable = isCommissionCalculable(commissionType, funded)
+      return {
+        company_id: companyId,
+        type: 'commission',
+        deal_id: dealId,
+        profile_id: profileId,
+        commission_type_id: commissionType.id,
+        amount: calculable ? calculateCommissionAmount(commissionType, deal) : null,
+        status: calculable ? 'pending' : 'created',
+      }
+    })
+    await supabase.from('payments').insert(rows)
+  }
+
+  return {}
+}
+
+// Called when an employee is removed from a deal entirely: deletes every
+// not-yet-paid commission payment tied to them on this deal. Refuses (and
+// leaves the deal_employee row in place) if any of those payments are
+// already 'paid' -- removing the assignment must not erase paid history.
+export async function removeCommissionPaymentsForDealEmployee(
+  supabase: SupabaseClient<Database>,
+  params: { dealId: string; profileId: string }
+): Promise<{ error?: string }> {
+  const { dealId, profileId } = params
+
+  const { data: existingPayments } = await supabase
+    .from('payments')
+    .select('id, status')
+    .eq('deal_id', dealId)
+    .eq('profile_id', profileId)
+    .eq('type', 'commission')
+
+  if ((existingPayments ?? []).some((payment) => payment.status === 'paid')) {
+    return { error: 'Cannot remove this employee: a commission on this deal has already been paid.' }
+  }
+
+  if (existingPayments?.length) {
+    await supabase
+      .from('payments')
+      .delete()
+      .in('id', existingPayments.map((payment) => payment.id))
+  }
+
+  return {}
 }
 
 // Called after any deal update that could move a commission-relevant number

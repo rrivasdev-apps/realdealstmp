@@ -24,6 +24,8 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     return NextResponse.json({ error: 'profile_id is required.' }, { status: 400 })
   }
 
+  const requestedRoleIds: string[] = Array.isArray(body.employee_role_ids) ? body.employee_role_ids : []
+
   const { data: employeeProfile } = await supabase
     .from('profiles')
     .select('company_id')
@@ -32,6 +34,15 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   if (!employeeProfile || employeeProfile.company_id !== profile.company_id) {
     return NextResponse.json({ error: 'Employee not found.' }, { status: 400 })
   }
+
+  // The only roles selectable for this deal are the ones already configured
+  // on the employee's profile -- never trust the client's list as-is.
+  const { data: configuredRoles } = await supabase
+    .from('profile_employee_roles')
+    .select('employee_role_id')
+    .eq('profile_id', employeeProfileId)
+  const configuredRoleIds = new Set((configuredRoles ?? []).map((row) => row.employee_role_id))
+  const employeeRoleIds = requestedRoleIds.filter((roleId) => configuredRoleIds.has(roleId))
 
   const { data: dealEmployee, error } = await supabase
     .from('deal_employees')
@@ -43,12 +54,22 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     return NextResponse.json({ error: error?.message ?? 'Could not add employee.' }, { status: 400 })
   }
 
+  if (employeeRoleIds.length > 0) {
+    const { error: rolesError } = await supabase
+      .from('deal_employee_roles')
+      .insert(employeeRoleIds.map((employee_role_id) => ({ deal_employee_id: dealEmployee.id, employee_role_id })))
+    if (rolesError) {
+      return NextResponse.json({ error: rolesError.message }, { status: 400 })
+    }
+  }
+
   // Commission calc runs immediately, per Rafael -- as soon as the employee
   // is added to the deal, not deferred to a later step.
   await createCommissionPaymentsForDealEmployee(supabase, {
     companyId: profile.company_id,
     dealId,
     profileId: employeeProfileId,
+    employeeRoleIds,
   })
 
   return NextResponse.json({ id: dealEmployee.id })

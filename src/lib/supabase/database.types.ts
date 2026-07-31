@@ -1474,6 +1474,42 @@ export type Database = {
           },
         ]
       }
+      deal_employee_roles: {
+        Row: {
+          created_at: string
+          deal_employee_id: string
+          employee_role_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          deal_employee_id: string
+          employee_role_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          deal_employee_id?: string
+          employee_role_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deal_employee_roles_deal_employee_id_fkey"
+            columns: ["deal_employee_id"]
+            isOneToOne: false
+            referencedRelation: "deal_employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deal_employee_roles_employee_role_id_fkey"
+            columns: ["employee_role_id"]
+            isOneToOne: false
+            referencedRelation: "employee_roles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       deal_employees: {
         Row: {
           created_at: string

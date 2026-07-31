@@ -7,6 +7,7 @@ import { requirePermission } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
 import { DealEmployeeForm } from '../deal-employee-form'
+import { DealEmployeeItem } from '../deal-employee-item'
 import { DealForm } from '../deal-form'
 
 const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
@@ -80,8 +81,11 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
       .select('id, showing_date, showing_statuses(name), buyer:contacts!showings_buyer_contact_id_fkey(name)')
       .eq('deal_id', id)
       .order('created_at', { ascending: false }),
-    supabase.from('deal_employees').select('id, profile_id, profiles(name)').eq('deal_id', id),
-    supabase.from('profiles').select('id, name').order('name'),
+    supabase
+      .from('deal_employees')
+      .select('id, profile_id, profiles(name), deal_employee_roles(employee_roles(id, name))')
+      .eq('deal_id', id),
+    supabase.from('profiles').select('id, name, profile_employee_roles(employee_roles(id, name))').order('name'),
     supabase
       .from('payments')
       .select('id, profile_id, amount, status, commission_types(name, category)')
@@ -325,25 +329,23 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
         <ul className="mt-4 divide-y divide-border rounded-lg border border-border bg-background">
           {(dealEmployees ?? []).map((dealEmployee) => {
             const employeePayments = paymentsByProfile.get(dealEmployee.profile_id) ?? []
+            const companyProfile = (companyProfiles ?? []).find((p) => p.id === dealEmployee.profile_id)
+            const configuredRoles = (companyProfile?.profile_employee_roles ?? [])
+              .map((assignment) => assignment.employee_roles)
+              .filter((role): role is { id: string; name: string } => role != null)
+            const currentRoleIds = (dealEmployee.deal_employee_roles ?? [])
+              .map((assignment) => assignment.employee_roles?.id)
+              .filter((roleId): roleId is string => roleId != null)
             return (
-              <li key={dealEmployee.id} className="px-4 py-3">
-                <div className="text-sm font-medium">{dealEmployee.profiles?.name ?? 'Unknown'}</div>
-                {employeePayments.length === 0 ? (
-                  <div className="text-sm text-muted-foreground">No commissions apply.</div>
-                ) : (
-                  <ul className="mt-1 flex flex-col gap-1">
-                    {employeePayments.map((payment) => (
-                      <li key={payment.id} className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">{payment.commission_types?.name}</span>
-                        <span className="flex items-center gap-2">
-                          <span>{payment.amount != null ? currency.format(payment.amount) : '—'}</span>
-                          <span className="rounded bg-muted px-2 py-0.5 text-xs font-medium">{payment.status}</span>
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </li>
+              <DealEmployeeItem
+                key={dealEmployee.id}
+                dealId={id}
+                dealEmployeeId={dealEmployee.id}
+                profileName={dealEmployee.profiles?.name ?? 'Unknown'}
+                configuredRoles={configuredRoles}
+                currentRoleIds={currentRoleIds}
+                payments={employeePayments}
+              />
             )
           })}
           {(dealEmployees ?? []).length === 0 && (
