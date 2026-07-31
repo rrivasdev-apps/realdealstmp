@@ -10,6 +10,7 @@ import { createClient } from '@/lib/supabase/server'
 import { ChecklistItemForm } from './checklist-item-form'
 import { CitiesSection } from './cities-section'
 import { CommissionTypeForm } from './commission-type-form'
+import { CommissionTypeListItem } from './commission-type-list-item'
 import { CountryForm } from './country-form'
 import { CustomFieldDefinitionForm } from './custom-field-definition-form'
 import { DefaultCountryForm } from './default-country-form'
@@ -23,17 +24,6 @@ const FIELD_TYPE_LABELS: Record<string, string> = {
   date: 'Date',
   checkbox: 'Checkbox',
   select: 'Dropdown',
-}
-
-const CATEGORY_LABELS: Record<string, string> = {
-  flat: 'Flat fee',
-  percentage: 'Percentage',
-}
-
-const BASIS_LABELS: Record<string, string> = {
-  contract_price: 'contract price',
-  gross_profit: 'gross profit',
-  current_selling_price: 'current selling price',
 }
 
 const EMPTY_PAY_PERIOD: PayPeriodFormValues = {
@@ -325,7 +315,7 @@ export default async function SettingsPage() {
           </ul>
         </SettingsSection>
 
-        <SettingsSection id="commission-types" title="Deal Commissions">
+        <SettingsSection id="commission-types" title="Commission Types">
           <p className="text-sm text-muted-foreground">
             Commission types available to assign to employees or roles. Applied automatically when an
             employee is added to a deal.
@@ -335,21 +325,7 @@ export default async function SettingsPage() {
           </div>
           <ul className="max-w-xl divide-y divide-border">
             {commissionTypes?.map((commissionType) => (
-              <li key={commissionType.id} className="py-3 text-sm">
-                <div className="flex items-center justify-between">
-                  <span className="font-medium">{commissionType.name}</span>
-                  <span className="text-muted-foreground">
-                    {commissionType.category === 'flat'
-                      ? `$${commissionType.value}`
-                      : `${commissionType.value}% of ${BASIS_LABELS[commissionType.basis ?? ''] ?? commissionType.basis}`}
-                    {' · '}
-                    {CATEGORY_LABELS[commissionType.category] ?? commissionType.category}
-                  </span>
-                </div>
-                {commissionType.description && (
-                  <div className="mt-1 text-muted-foreground">{commissionType.description}</div>
-                )}
-              </li>
+              <CommissionTypeListItem key={commissionType.id} commissionType={commissionType} />
             ))}
             {commissionTypes?.length === 0 && (
               <li className="py-2 text-sm text-muted-foreground">No commission types yet.</li>

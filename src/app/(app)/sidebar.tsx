@@ -59,13 +59,13 @@ const SETTINGS_GROUPS: { label: string; sections: { id: string; label: string; h
       { id: 'cancelled-ab-reasons', label: 'Cancelled — AB Reasons' },
       { id: 'cancelled-bc-ac-reasons', label: 'Cancelled — BC/AC Reasons' },
       { id: 'checklist-items', label: 'Checklist Items' },
-      { id: 'commission-types', label: 'Deal Commissions' },
     ],
   },
   {
     label: 'Employee Center',
     sections: [
       { id: 'team', label: 'Team', href: '/team' },
+      { id: 'commission-types', label: 'Commission Types' },
       { id: 'employee-roles', label: 'Employee Roles' },
       { id: 'pay-periods', label: 'Pay Periods' },
     ],
