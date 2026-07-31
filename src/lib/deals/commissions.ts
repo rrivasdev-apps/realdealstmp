@@ -68,7 +68,10 @@ export function calculateCommissionAmount(commissionType: CommissionValues, deal
 // tied to the role(s) the employee was assigned to play on *this* deal --
 // not every role they hold company-wide; an employee configured as both
 // Closer and TC only earns Closer commissions on a deal he was added to as
-// Closer.
+// Closer. A commission type can reach an employee through more than one
+// path at once (direct assignment + a role's assignment, or two roles that
+// both carry it) -- de-duped by commission_type id so it's still only
+// counted once, per Rafael.
 async function applicableCommissionTypesFor(
   supabase: SupabaseClient<Database>,
   profileId: string,
@@ -84,9 +87,11 @@ async function applicableCommissionTypesFor(
       : Promise.resolve({ data: [] }),
   ])
 
-  return [...(direct ?? []), ...(viaRole ?? [])]
+  const commissionTypes = [...(direct ?? []), ...(viaRole ?? [])]
     .map((row) => row.commission_types)
     .filter((ct): ct is CommissionType => ct != null)
+
+  return [...new Map(commissionTypes.map((ct) => [ct.id, ct])).values()]
 }
 
 // Called when an employee is added to a deal: creates one payment row per
