@@ -641,8 +641,11 @@ export function ContactForm({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
-        <div className="flex flex-col gap-2">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-4 lg:gap-6">
+        <div className="flex flex-col gap-2 rounded-lg border border-border bg-muted/30 p-3">
+          <span className="px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            Contact Type
+          </span>
           {selectedTypes.map((type) => {
             const colors = contactTypeColors(type.name)
             const isActive = type.id === effectiveActiveTypeId
@@ -683,7 +686,8 @@ export function ContactForm({
           )}
         </div>
 
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1 rounded-lg border border-border bg-muted/30 p-3">
+          <span className="px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">Section</span>
           {activeType ? (
             subNavItems.map((item) => (
               <button
@@ -704,9 +708,9 @@ export function ContactForm({
           )}
         </div>
 
-        <div className="rounded-lg border border-border p-4">{renderDetailPanel()}</div>
+        <div className="rounded-lg border-2 border-border bg-background p-4 shadow-sm">{renderDetailPanel()}</div>
 
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 rounded-lg border border-border bg-muted/30 p-3">
           <label className="field-label">
             Notes
             <textarea
