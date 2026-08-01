@@ -1,39 +1,44 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 import { DEFAULT_DEAL_SECTION } from '@/components/deal-section'
 import { DEFAULT_SETTINGS_SECTION } from '@/components/settings-section'
+import type messages from '@/messages/en.json'
 
 import { LogoutButton } from './logout-button'
 
-type NavItem = { href: string; label: string }
+export type NavKey = keyof (typeof messages)['Nav']
+type NavItem = { href: string; labelKey: NavKey }
 
 // Ids/order must match the DealSection ids used in deal-form.tsx and
 // deals/[id]/page.tsx -- clicking one of these just changes the browser
-// hash, which those components independently watch to show/hide.
-const DEAL_SECTIONS = [
-  { id: 'deal-info', label: 'Deal Info' },
-  { id: 'buyer-bc', label: 'Buyer / BC Contract' },
-  { id: 'jv-dispo', label: 'JV & Dispo' },
-  { id: 'financial', label: 'Financial' },
-  { id: 'checklist', label: 'Checklist' },
-  { id: 'custom-fields', label: 'Custom Fields' },
-  { id: 'employees', label: 'Employees' },
+// hash, which those components independently watch to show/hide. Labels are
+// translation keys into messages/*.json's "Nav" namespace, resolved at
+// render time below (module-scope constants can't call useTranslations).
+const DEAL_SECTIONS: { id: string; labelKey: NavKey }[] = [
+  { id: 'deal-info', labelKey: 'dealInfo' },
+  { id: 'buyer-bc', labelKey: 'buyerBc' },
+  { id: 'jv-dispo', labelKey: 'jvDispo' },
+  { id: 'financial', labelKey: 'financial' },
+  { id: 'checklist', labelKey: 'checklist' },
+  { id: 'custom-fields', labelKey: 'customFields' },
+  { id: 'employees', labelKey: 'employees' },
   // Not a hash section -- a real route (/deals/[id]/automations), so it's
   // rendered as a <Link> below instead of a hash <a>, matching how Settings'
   // Team entry works alongside its hash-anchored siblings.
-  { id: 'automations', label: 'Automations' },
+  { id: 'automations', labelKey: 'automations' },
 ]
 
 // Contact Center's sub-menu -- unlike DEAL_SECTIONS/SETTINGS_GROUPS these are
 // real routes (two separate pages), not hash-anchored sections of one page,
 // so they render as plain <Link>s highlighted by pathname instead of by hash.
-const CONTACT_HUB_LINKS = [
-  { href: '/contacts', label: 'Contacts' },
-  { href: '/partner-companies', label: 'Companies' },
+const CONTACT_HUB_LINKS: { href: string; labelKey: NavKey }[] = [
+  { href: '/contacts', labelKey: 'contacts' },
+  { href: '/partner-companies', labelKey: 'companies' },
 ]
 
 // Ids/order must match the SettingsSection ids used in settings/page.tsx --
@@ -43,47 +48,55 @@ const CONTACT_HUB_LINKS = [
 // within /settings -- Team is the one example, since /team is its own page,
 // not a SettingsSection. Its `id` still has to exist here so
 // settingsGroupForSection('team') resolves to the right group.
-const SETTINGS_GROUPS: { label: string; sections: { id: string; label: string; href?: string }[] }[] = [
+//
+// Groups are identified by `id`, not their translated label -- expanded-group
+// state must stay stable across locales (comparing translated strings would
+// break the moment the app isn't in English).
+const SETTINGS_GROUPS: { id: string; labelKey: NavKey; sections: { id: string; labelKey: NavKey; href?: string }[] }[] = [
   {
-    label: 'Deal',
+    id: 'deal',
+    labelKey: 'settingsGroupDeal',
     sections: [
-      { id: 'markets', label: 'Markets' },
-      { id: 'countries', label: 'Countries' },
-      { id: 'states', label: 'States' },
-      { id: 'cities', label: 'Cities' },
-      { id: 'default-country', label: 'Default Country' },
-      { id: 'deal-types', label: 'Deal Types' },
-      { id: 'lead-sources', label: 'Lead Sources' },
-      { id: 'expense-categories', label: 'Expense Categories' },
-      { id: 'custom-fields', label: 'Custom Fields' },
-      { id: 'on-hold-reasons', label: 'On Hold Reasons' },
-      { id: 'cancelled-ab-reasons', label: 'Cancelled — AB Reasons' },
-      { id: 'cancelled-bc-ac-reasons', label: 'Cancelled — BC/AC Reasons' },
-      { id: 'checklist-items', label: 'Checklist Items' },
+      { id: 'markets', labelKey: 'settingsMarkets' },
+      { id: 'countries', labelKey: 'settingsCountries' },
+      { id: 'states', labelKey: 'settingsStates' },
+      { id: 'cities', labelKey: 'settingsCities' },
+      { id: 'default-country', labelKey: 'settingsDefaultCountry' },
+      { id: 'deal-types', labelKey: 'settingsDealTypes' },
+      { id: 'lead-sources', labelKey: 'settingsLeadSources' },
+      { id: 'expense-categories', labelKey: 'settingsExpenseCategories' },
+      { id: 'custom-fields', labelKey: 'settingsCustomFields' },
+      { id: 'on-hold-reasons', labelKey: 'settingsOnHoldReasons' },
+      { id: 'cancelled-ab-reasons', labelKey: 'settingsCancelledAbReasons' },
+      { id: 'cancelled-bc-ac-reasons', labelKey: 'settingsCancelledBcAcReasons' },
+      { id: 'checklist-items', labelKey: 'settingsChecklistItems' },
     ],
   },
   {
-    label: 'Employee Center',
+    id: 'employee-center',
+    labelKey: 'settingsGroupEmployeeCenter',
     sections: [
-      { id: 'team', label: 'Team', href: '/team' },
-      { id: 'commission-types', label: 'Commission Types' },
-      { id: 'employee-roles', label: 'Employee Roles' },
-      { id: 'pay-periods', label: 'Pay Periods' },
+      { id: 'team', labelKey: 'settingsTeam', href: '/team' },
+      { id: 'commission-types', labelKey: 'settingsCommissionTypes' },
+      { id: 'employee-roles', labelKey: 'settingsEmployeeRoles' },
+      { id: 'pay-periods', labelKey: 'settingsPayPeriods' },
     ],
   },
   {
-    label: 'Contact Center',
+    id: 'contact-center',
+    labelKey: 'settingsGroupContactCenter',
     sections: [],
   },
   {
-    label: 'Deal Automations',
-    sections: [{ id: 'automations', label: 'Automations', href: '/settings/automations' }],
+    id: 'deal-automations',
+    labelKey: 'settingsGroupDealAutomations',
+    sections: [{ id: 'automations', labelKey: 'automations', href: '/settings/automations' }],
   },
 ]
 
 function settingsGroupForSection(sectionId: string): string {
-  return SETTINGS_GROUPS.find((group) => group.sections.some((section) => section.id === sectionId))?.label
-    ?? SETTINGS_GROUPS[0].label
+  return SETTINGS_GROUPS.find((group) => group.sections.some((section) => section.id === sectionId))?.id
+    ?? SETTINGS_GROUPS[0].id
 }
 
 export function Sidebar({
@@ -117,19 +130,45 @@ export function Sidebar({
   // though /team isn't itself under /settings -- treated as a Settings
   // sub-page for sidebar purposes, same as employee-roles/[id] above.
   const isTeam = pathname === '/team' || pathname.startsWith('/team/')
+  const t = useTranslations('Nav')
   const visibleSettingsGroups = SETTINGS_GROUPS.map((group) =>
-    group.label === 'Employee Center'
+    group.id === 'employee-center'
       ? { ...group, sections: group.sections.filter((section) => section.id !== 'team' || canManageTeam) }
       : group
   )
+
+  // Sub-pages (e.g. an employee role's detail page, /team, or an
+  // automation's builder) aren't hash-sectioned -- derive which
+  // section/group they belong to straight from the pathname. Used only to
+  // *seed/reset* state below when the pathname actually changes to one of
+  // these (see the prevPathname block), not to force it on every render --
+  // forcing it unconditionally was the bug: it made effectiveExpandedSettingsGroup
+  // permanently pin to e.g. "Deal Automations" while parked on an
+  // automation's builder page, so clicking a *different* group's header to
+  // expand it (say, "Deal") visually did nothing and its sections (Markets,
+  // etc.) never became clickable -- navigation looked "stuck."
+  const settingsSubpageSection = isTeam
+    ? 'team'
+    : isSettings && pathname !== '/settings'
+      ? pathname.startsWith('/settings/employee-roles')
+        ? 'employee-roles'
+        : pathname.startsWith('/settings/pay-periods')
+          ? 'pay-periods'
+          : pathname.startsWith('/settings/automations')
+            ? 'automations'
+            : DEFAULT_SETTINGS_SECTION
+      : null
+
   const [activeSection, setActiveSection] = useState(DEFAULT_DEAL_SECTION)
-  const [activeSettingsSection, setActiveSettingsSection] = useState(DEFAULT_SETTINGS_SECTION)
+  const [activeSettingsSection, setActiveSettingsSection] = useState(
+    () => settingsSubpageSection ?? DEFAULT_SETTINGS_SECTION
+  )
   // Which group's sub-tabs are expanded -- normally follows activeSettingsSection
   // (whichever group owns it), but clicking a group label directly (e.g. an
   // empty group like Contact Center with nothing to navigate to) overrides it
   // without touching the hash.
   const [expandedSettingsGroup, setExpandedSettingsGroup] = useState(() =>
-    settingsGroupForSection(DEFAULT_SETTINGS_SECTION),
+    settingsGroupForSection(settingsSubpageSection ?? DEFAULT_SETTINGS_SECTION),
   )
   // Drawer open state, mobile only (the <aside> is a permanent rail at lg
   // regardless of this value -- see the lg: classes below). Starts false on
@@ -138,11 +177,18 @@ export function Sidebar({
   const [open, setOpen] = useState(false)
   // Closing on route change is a render-time state adjustment (React's
   // recommended pattern for "reset state when a prop changes"), not an
-  // effect, so it doesn't cascade an extra render.
+  // effect, so it doesn't cascade an extra render. Also re-seeds the
+  // settings section/group *once, on the pathname change itself* when
+  // landing on a new subpage -- after that, clicks are free to expand a
+  // different group without being fought on every subsequent render.
   const [prevPathname, setPrevPathname] = useState(pathname)
   if (pathname !== prevPathname) {
     setPrevPathname(pathname)
     setOpen(false)
+    if (settingsSubpageSection) {
+      setActiveSettingsSection(settingsSubpageSection)
+      setExpandedSettingsGroup(settingsGroupForSection(settingsSubpageSection))
+    }
   }
 
   useEffect(() => {
@@ -180,26 +226,6 @@ export function Sidebar({
 
   const effectiveDealSection = dealSubpageSection ?? activeSection
 
-  // Sub-pages (e.g. an employee role's detail page, or /team) aren't
-  // hash-sectioned -- derive the active section straight from the pathname
-  // at render time instead of syncing it into state, so the sub-nav still
-  // highlights/expands the right group there instead of just vanishing.
-  const settingsSubpageSection = isTeam
-    ? 'team'
-    : isSettings && pathname !== '/settings'
-      ? pathname.startsWith('/settings/employee-roles')
-        ? 'employee-roles'
-        : pathname.startsWith('/settings/pay-periods')
-          ? 'pay-periods'
-          : pathname.startsWith('/settings/automations')
-            ? 'automations'
-            : DEFAULT_SETTINGS_SECTION
-      : null
-  const effectiveSettingsSection = settingsSubpageSection ?? activeSettingsSection
-  const effectiveExpandedSettingsGroup = settingsSubpageSection
-    ? settingsGroupForSection(settingsSubpageSection)
-    : expandedSettingsGroup
-
   return (
     <>
       <div className="flex items-center justify-between border-b border-border bg-sidebar px-4 py-3 text-sidebar-foreground lg:hidden">
@@ -209,7 +235,7 @@ export function Sidebar({
         <button
           type="button"
           onClick={() => setOpen(true)}
-          aria-label="Open menu"
+          aria-label={t('openMenu')}
           className="rounded-md p-2 text-sidebar-foreground hover:bg-sidebar-hover"
         >
           <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2">
@@ -238,7 +264,7 @@ export function Sidebar({
         <button
           type="button"
           onClick={() => setOpen(false)}
-          aria-label="Close menu"
+          aria-label={t('closeMenu')}
           className="rounded-md p-1 text-sidebar-muted hover:bg-sidebar-hover hover:text-sidebar-foreground lg:hidden"
         >
           <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
@@ -260,12 +286,12 @@ export function Sidebar({
                     : 'text-sidebar-muted hover:bg-sidebar-hover hover:text-sidebar-foreground'
                 }`}
               >
-                {item.label}
+                {t(item.labelKey)}
               </Link>
 
               {item.href === '/deals' && isDealSubpage && (
                 <div className="ml-3 mt-1 flex flex-col gap-0.5 border-l border-white/10 pl-3">
-                  <div className="rounded-md px-3 py-2 text-sm font-medium text-sidebar-muted">Deal</div>
+                  <div className="rounded-md px-3 py-2 text-sm font-medium text-sidebar-muted">{t('deal')}</div>
                   <div className="ml-3 flex flex-col gap-0.5 border-l border-white/10 pl-3">
                     {DEAL_SECTIONS.map((section) => {
                       const sectionActive = effectiveDealSection === section.id
@@ -276,7 +302,7 @@ export function Sidebar({
                       }`
                       return section.id === 'automations' ? (
                         <Link key={section.id} href={dealId ? `/deals/${dealId}/automations` : '#'} className={linkClassName}>
-                          {section.label}
+                          {t(section.labelKey)}
                         </Link>
                       ) : (
                         <a
@@ -284,7 +310,7 @@ export function Sidebar({
                           href={isDealDetail ? `#${section.id}` : `/deals/${dealId}#${section.id}`}
                           className={linkClassName}
                         >
-                          {section.label}
+                          {t(section.labelKey)}
                         </a>
                       )
                     })}
@@ -306,7 +332,7 @@ export function Sidebar({
                             : 'text-sidebar-muted hover:bg-sidebar-hover hover:text-sidebar-foreground'
                         }`}
                       >
-                        {link.label}
+                        {t(link.labelKey)}
                       </Link>
                     )
                   })}
@@ -316,24 +342,24 @@ export function Sidebar({
               {item.href === '/settings' && (isSettings || isTeam) && (
                 <div className="ml-3 mt-1 flex flex-col gap-0.5 border-l border-white/10 pl-3">
                   {visibleSettingsGroups.map((group) => {
-                    const groupExpanded = effectiveExpandedSettingsGroup === group.label
+                    const groupExpanded = expandedSettingsGroup === group.id
                     return (
-                      <div key={group.label}>
+                      <div key={group.id}>
                         <button
                           type="button"
-                          onClick={() => setExpandedSettingsGroup(group.label)}
+                          onClick={() => setExpandedSettingsGroup(group.id)}
                           className={`w-full rounded-md px-3 py-2 text-left text-sm font-medium transition-colors ${
                             groupExpanded
                               ? 'text-sidebar-foreground'
                               : 'text-sidebar-muted hover:text-sidebar-foreground'
                           }`}
                         >
-                          {group.label}
+                          {t(group.labelKey)}
                         </button>
                         {groupExpanded && (
                           <div className="ml-3 flex flex-col gap-0.5 border-l border-white/10 pl-3">
                             {group.sections.map((section) => {
-                              const sectionActive = effectiveSettingsSection === section.id
+                              const sectionActive = activeSettingsSection === section.id
                               const linkClassName = `rounded-md px-3 py-1.5 text-sm transition-colors ${
                                 sectionActive
                                   ? 'bg-sidebar-active text-white'
@@ -341,7 +367,7 @@ export function Sidebar({
                               }`
                               return section.href ? (
                                 <Link key={section.id} href={section.href} className={linkClassName}>
-                                  {section.label}
+                                  {t(section.labelKey)}
                                 </Link>
                               ) : (
                                 <a
@@ -349,12 +375,12 @@ export function Sidebar({
                                   href={pathname === '/settings' ? `#${section.id}` : `/settings#${section.id}`}
                                   className={linkClassName}
                                 >
-                                  {section.label}
+                                  {t(section.labelKey)}
                                 </a>
                               )
                             })}
                             {group.sections.length === 0 && (
-                              <div className="px-3 py-1.5 text-sm text-sidebar-muted/70">No options yet</div>
+                              <div className="px-3 py-1.5 text-sm text-sidebar-muted/70">{t('noOptionsYet')}</div>
                             )}
                           </div>
                         )}
@@ -371,7 +397,9 @@ export function Sidebar({
       <div className="flex items-center justify-between gap-2 border-t border-white/10 px-5 py-4 text-sm">
         <div className="min-w-0">
           <div className="truncate font-medium">{userName}</div>
-          <div className="text-xs capitalize text-sidebar-muted">{userRole}</div>
+          <div className="text-xs capitalize text-sidebar-muted">
+            {userRole === 'admin' ? t('roleAdmin') : t('roleMember')}
+          </div>
         </div>
         <LogoutButton />
       </div>

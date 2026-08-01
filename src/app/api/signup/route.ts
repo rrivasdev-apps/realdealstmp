@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 
+import { defaultLocale, isLocale } from '@/i18n/config'
 import countriesData from '@/lib/geography/data/countries.json'
 import { seedCompanyGeography } from '@/lib/geography/seed-company'
 import { createAdminClient } from '@/lib/supabase/admin'
@@ -47,6 +48,7 @@ export async function POST(request: Request) {
   const email = typeof body.email === 'string' ? body.email.trim() : ''
   const password = typeof body.password === 'string' ? body.password : ''
   const homeCountryCode = typeof body.homeCountryCode === 'string' ? body.homeCountryCode.trim().toUpperCase() : ''
+  const locale = isLocale(body.locale) ? body.locale : defaultLocale
 
   if (!companyName || !name || !email || !password) {
     return NextResponse.json({ error: 'All fields are required.' }, { status: 400 })
@@ -59,7 +61,7 @@ export async function POST(request: Request) {
 
   const { data: company, error: companyError } = await admin
     .from('companies')
-    .insert({ name: companyName })
+    .insert({ name: companyName, locale })
     .select('id')
     .single()
 

@@ -660,6 +660,7 @@ export type Database = {
           created_at: string
           default_country_id: string | null
           id: string
+          locale: string
           name: string
           subscription_tier: string
         }
@@ -667,6 +668,7 @@ export type Database = {
           created_at?: string
           default_country_id?: string | null
           id?: string
+          locale?: string
           name: string
           subscription_tier?: string
         }
@@ -674,6 +676,7 @@ export type Database = {
           created_at?: string
           default_country_id?: string | null
           id?: string
+          locale?: string
           name?: string
           subscription_tier?: string
         }

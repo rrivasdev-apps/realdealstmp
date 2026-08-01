@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -172,6 +173,8 @@ export function DealForm({
   expenses: DealExpense[]
 }) {
   const router = useRouter()
+  const t = useTranslations('DealForm')
+  const tNav = useTranslations('Nav')
   const [values, setValues] = useState(initialValues)
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
@@ -315,7 +318,7 @@ export function DealForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex max-w-xl flex-col gap-6">
-      <DealSection id="deal-info" title="Deal Info">
+      <DealSection id="deal-info" title={tNav('dealInfo')}>
       <AddressFields
         value={{
           address: values.address,
@@ -344,11 +347,11 @@ export function DealForm({
       />
 
       <fieldset className="flex flex-col gap-4 rounded border border-border p-4">
-        <legend className="px-1 text-sm font-medium">Property Facts</legend>
+        <legend className="px-1 text-sm font-medium">{t('propertyFacts')}</legend>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <label className="field-label">
-            APN
+            {t('apn')}
             <input
               type="text"
               value={values.apn}
@@ -358,7 +361,7 @@ export function DealForm({
           </label>
 
           <label className="field-label">
-            Lot size (acres)
+            {t('lotSizeAcres')}
             <input
               type="number"
               step="0.01"
@@ -369,7 +372,7 @@ export function DealForm({
           </label>
 
           <label className="field-label sm:col-span-2">
-            Legal description
+            {t('legalDescription')}
             <textarea
               value={values.legal_description}
               onChange={(event) => set('legal_description', event.target.value)}
@@ -379,8 +382,8 @@ export function DealForm({
           </label>
 
           <ContactCompanyField
-            contactLabel="Mortgage company contact"
-            companyLabel="Mortgage company"
+            contactLabel={t('mortgageCompanyContact')}
+            companyLabel={t('mortgageCompany')}
             contacts={mortgageCompanyContacts}
             companies={partnerCompanies}
             contactPartnerCompanies={contactPartnerCompanies}
@@ -393,7 +396,7 @@ export function DealForm({
           />
 
           <label className="field-label">
-            Mortgage principal balance
+            {t('mortgagePrincipalBalance')}
             <CurrencyInput
               value={values.mortgage_principal_balance}
               onChange={(value) => set('mortgage_principal_balance', value)}
@@ -402,7 +405,7 @@ export function DealForm({
           </label>
 
           <label className="field-label">
-            Mortgage rate (%)
+            {t('mortgageRate')}
             <input
               type="number"
               step="0.01"
@@ -413,7 +416,7 @@ export function DealForm({
           </label>
 
           <label className="field-label">
-            Mortgage term (years)
+            {t('mortgageTerm')}
             <input
               type="number"
               step="1"
@@ -424,7 +427,7 @@ export function DealForm({
           </label>
 
           <label className="field-label">
-            Total payoff amount
+            {t('totalPayoffAmount')}
             <CurrencyInput
               value={values.total_payoff_amount}
               onChange={(value) => set('total_payoff_amount', value)}
@@ -433,7 +436,7 @@ export function DealForm({
           </label>
 
           <label className="field-label">
-            Foreclosure date
+            {t('foreclosureDate')}
             <input
               type="date"
               value={values.foreclosure_date}
@@ -450,7 +453,7 @@ export function DealForm({
               checked={values.payoff_ordered}
               onChange={(event) => set('payoff_ordered', event.target.checked)}
             />
-            Payoff ordered
+            {t('payoffOrdered')}
           </label>
 
           <label className="flex items-center gap-1.5 text-sm">
@@ -459,14 +462,14 @@ export function DealForm({
               checked={values.in_foreclosure}
               onChange={(event) => set('in_foreclosure', event.target.checked)}
             />
-            In foreclosure
+            {t('inForeclosure')}
           </label>
         </div>
       </fieldset>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <label className="field-label">
-          Market
+          {t('market')}
           <select
             value={values.market_id}
             onChange={(event) => set('market_id', event.target.value)}
@@ -482,7 +485,7 @@ export function DealForm({
         </label>
 
         <label className="field-label">
-          Property type
+          {t('propertyType')}
           <select
             value={values.property_type_id}
             onChange={(event) => set('property_type_id', event.target.value)}
@@ -498,7 +501,7 @@ export function DealForm({
         </label>
 
         <label className="field-label">
-          Deal type
+          {t('dealType')}
           <select
             value={values.deal_type_id}
             onChange={(event) => set('deal_type_id', event.target.value)}
@@ -514,7 +517,7 @@ export function DealForm({
         </label>
 
         <label className="field-label">
-          Lead source
+          {t('leadSource')}
           <select
             value={values.lead_source_id}
             onChange={(event) => set('lead_source_id', event.target.value)}
@@ -531,7 +534,7 @@ export function DealForm({
 
         {sellingReasons.length > 0 && (
           <div className="field-label sm:col-span-2">
-            <span>Reasons for selling</span>
+            <span>{t('reasonsForSelling')}</span>
             <div className="flex flex-wrap gap-x-4 gap-y-1">
               {sellingReasons.map((reason) => (
                 <label key={reason.id} className="flex items-center gap-1.5 text-sm">
@@ -549,7 +552,7 @@ export function DealForm({
 
         {mode === 'edit' && (
           <label className="field-label">
-            Status
+            {t('status')}
             <select
               value={values.status_id}
               onChange={(event) => set('status_id', event.target.value)}
@@ -567,7 +570,7 @@ export function DealForm({
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <label className="field-label">
-          Contract price
+          {t('contractPrice')}
           <CurrencyInput
             value={values.contract_price}
             onChange={(value) => set('contract_price', value)}
@@ -575,13 +578,13 @@ export function DealForm({
           />
           {values.contract_price_renegotiated_date && (
             <span className="text-xs text-muted-foreground">
-              Renegotiated {values.contract_price_renegotiated_date}
+              {t('renegotiatedOn', { date: values.contract_price_renegotiated_date })}
             </span>
           )}
         </label>
 
         <label className="field-label">
-          Projected sales price
+          {t('projectedSalesPrice')}
           <CurrencyInput
             value={values.projected_sales_price}
             onChange={(value) => set('projected_sales_price', value)}
@@ -590,7 +593,7 @@ export function DealForm({
         </label>
 
         <label className="field-label">
-          Contract date
+          {t('contractDate')}
           <input
             type="date"
             value={values.contract_date}
@@ -600,7 +603,7 @@ export function DealForm({
         </label>
 
         <label className="field-label">
-          Closing date
+          {t('closingDate')}
           <input
             type="date"
             value={values.closing_date}
@@ -610,7 +613,7 @@ export function DealForm({
         </label>
 
         <label className="field-label">
-          Due diligence expiration
+          {t('dueDiligenceExpiration')}
           <input
             type="date"
             value={values.due_diligence_expiration}
@@ -621,7 +624,7 @@ export function DealForm({
 
         {mode === 'edit' && (
           <label className="field-label">
-            Actual closing date
+            {t('actualClosingDate')}
             <input
               type="date"
               value={values.actual_closing_date}
@@ -633,7 +636,7 @@ export function DealForm({
       </div>
 
       <fieldset className="flex flex-col gap-4 rounded border border-border p-4">
-        <legend className="px-1 text-sm font-medium">Deal Facts</legend>
+        <legend className="px-1 text-sm font-medium">{t('dealFacts')}</legend>
 
         <div className="flex flex-wrap gap-4">
           <label className="flex items-center gap-1.5 text-sm">
@@ -642,7 +645,7 @@ export function DealForm({
               checked={values.title_opened}
               onChange={(event) => set('title_opened', event.target.checked)}
             />
-            Title opened
+            {t('titleOpened')}
           </label>
 
           <label className="flex items-center gap-1.5 text-sm">
@@ -651,7 +654,7 @@ export function DealForm({
               checked={values.title_ordered}
               onChange={(event) => set('title_ordered', event.target.checked)}
             />
-            Title ordered
+            {t('titleOrdered')}
           </label>
 
           <label className="flex items-center gap-1.5 text-sm">
@@ -660,7 +663,7 @@ export function DealForm({
               checked={values.title_ready}
               onChange={(event) => set('title_ready', event.target.checked)}
             />
-            Title ready
+            {t('titleReady')}
           </label>
 
           <label className="flex items-center gap-1.5 text-sm">
@@ -669,7 +672,7 @@ export function DealForm({
               checked={values.poa_needed}
               onChange={(event) => set('poa_needed', event.target.checked)}
             />
-            Are we obtaining POA
+            {t('poaNeeded')}
           </label>
 
           <label className="flex items-center gap-1.5 text-sm">
@@ -678,14 +681,14 @@ export function DealForm({
               checked={values.is_listed}
               onChange={(event) => set('is_listed', event.target.checked)}
             />
-            Listed
+            {t('listed')}
           </label>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <ContactCompanyField
-            contactLabel="Title company contact"
-            companyLabel="Title company"
+            contactLabel={t('titleCompanyContact')}
+            companyLabel={t('titleCompany')}
             contacts={titleCompanyContacts}
             companies={partnerCompanies}
             contactPartnerCompanies={contactPartnerCompanies}
@@ -698,7 +701,7 @@ export function DealForm({
           />
 
           <label className="field-label">
-            Seller info
+            {t('sellerInfo')}
             <select
               value={values.seller_contact_id}
               onChange={(event) => set('seller_contact_id', event.target.value)}
@@ -714,7 +717,7 @@ export function DealForm({
           </label>
 
           <label className="field-label">
-            AB-Purchase type
+            {t('abPurchaseType')}
             <select
               value={values.ab_purchase_type_id}
               onChange={(event) => set('ab_purchase_type_id', event.target.value)}
@@ -735,7 +738,7 @@ export function DealForm({
       {mode === 'edit' && (
         <DealSection id="buyer-bc">
         <fieldset className="flex flex-col gap-4 rounded border border-border p-4">
-          <legend className="px-1 text-sm font-medium">Buyer / BC Contract</legend>
+          <legend className="px-1 text-sm font-medium">{t('buyerBcContract')}</legend>
 
           <label className="flex items-center gap-1.5 text-sm">
             <input
@@ -743,13 +746,13 @@ export function DealForm({
               checked={values.buyer_found}
               onChange={(event) => set('buyer_found', event.target.checked)}
             />
-            Buyer found
+            {t('buyerFound')}
           </label>
 
           {values.buyer_found && (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <label className="field-label">
-                Buyer contract price
+                {t('buyerContractPrice')}
                 {initialValues.buyer_contract_price ? (
                   <>
                     <CurrencyInput
@@ -759,7 +762,7 @@ export function DealForm({
                       className="rounded border border-input-border bg-muted px-3 py-2 text-muted-foreground"
                     />
                     <span className="text-xs text-muted-foreground">
-                      Locked once set — use Renegotiated BC price below for updates.
+                      {t('buyerContractPriceLocked')}
                     </span>
                   </>
                 ) : (
@@ -772,7 +775,7 @@ export function DealForm({
               </label>
 
               <label className="field-label">
-                Renegotiated BC price
+                {t('renegotiatedBcPrice')}
                 <CurrencyInput
                   value={values.renegotiated_bc_price}
                   onChange={(value) => set('renegotiated_bc_price', value)}
@@ -780,13 +783,13 @@ export function DealForm({
                 />
                 {values.renegotiated_bc_date && (
                   <span className="text-xs text-muted-foreground">
-                    Renegotiated {values.renegotiated_bc_date}
+                    {t('renegotiatedOn', { date: values.renegotiated_bc_date })}
                   </span>
                 )}
               </label>
 
               <label className="field-label">
-                Buyer contract date
+                {t('buyerContractDate')}
                 <input
                   type="date"
                   value={values.buyer_contract_date}
@@ -796,7 +799,7 @@ export function DealForm({
               </label>
 
               <label className="field-label">
-                BC contract closing date
+                {t('bcContractClosingDate')}
                 <input
                   type="date"
                   value={values.bc_contract_closing_date}
@@ -806,7 +809,7 @@ export function DealForm({
               </label>
 
               <label className="field-label">
-                Buyer inspection deadline
+                {t('buyerInspectionDeadline')}
                 <input
                   type="date"
                   value={values.buyer_inspection_deadline}
@@ -816,7 +819,7 @@ export function DealForm({
               </label>
 
               <label className="field-label">
-                Buyer deposit amount
+                {t('buyerDepositAmount')}
                 <CurrencyInput
                   value={values.buyer_deposit_amount}
                   onChange={(value) => set('buyer_deposit_amount', value)}
@@ -833,7 +836,7 @@ export function DealForm({
                 checked={values.buyer_deposit_received}
                 onChange={(event) => set('buyer_deposit_received', event.target.checked)}
               />
-              Buyer deposit received
+              {t('buyerDepositReceived')}
             </label>
           )}
         </fieldset>
@@ -841,9 +844,9 @@ export function DealForm({
       )}
 
       {mode === 'edit' && (
-        <DealSection id="jv-dispo" title="JV & Dispo">
+        <DealSection id="jv-dispo" title={tNav('jvDispo')}>
         <fieldset className="flex flex-col gap-4 rounded border border-border p-4">
-          <legend className="px-1 text-sm font-medium">JV Deal</legend>
+          <legend className="px-1 text-sm font-medium">{t('jvDeal')}</legend>
 
           <label className="flex items-center gap-1.5 text-sm">
             <input
@@ -851,14 +854,14 @@ export function DealForm({
               checked={values.is_jv_deal}
               onChange={(event) => set('is_jv_deal', event.target.checked)}
             />
-            Is JV deal
+            {t('isJvDeal')}
           </label>
 
           {values.is_jv_deal && (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <ContactCompanyField
-                contactLabel="JV partner"
-                companyLabel="JV partner company"
+                contactLabel={t('jvPartner')}
+                companyLabel={t('jvPartnerCompany')}
                 contacts={investorContacts}
                 companies={partnerCompanies}
                 contactPartnerCompanies={contactPartnerCompanies}
@@ -871,7 +874,7 @@ export function DealForm({
               />
 
               <label className="field-label">
-                Split type
+                {t('splitType')}
                 <select
                   value={values.jv_split_type_id}
                   onChange={(event) => set('jv_split_type_id', event.target.value)}
@@ -887,7 +890,7 @@ export function DealForm({
               </label>
 
               <label className="field-label">
-                Split percent
+                {t('splitPercent')}
                 <input
                   type="number"
                   step="0.01"
@@ -898,7 +901,7 @@ export function DealForm({
               </label>
 
               <label className="field-label">
-                Split amount
+                {t('splitAmount')}
                 <CurrencyInput
                   value={values.split_amount}
                   onChange={(value) => set('split_amount', value)}
@@ -914,11 +917,11 @@ export function DealForm({
       {mode === 'edit' && (
         <DealSection id="financial">
         <fieldset className="flex flex-col gap-4 rounded border border-border p-4">
-          <legend className="px-1 text-sm font-medium">Financial</legend>
+          <legend className="px-1 text-sm font-medium">{t('financial')}</legend>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <label className="field-label">
-              Total commissions
+              {t('totalCommissions')}
               <CurrencyInput
                 value={values.total_commissions}
                 onChange={(value) => set('total_commissions', value)}
@@ -947,17 +950,23 @@ export function DealForm({
                 split_amount: values.split_amount ? Number(values.split_amount) : null,
               })
 
-              const rows: [string, number | null][] = [
-                ['Estimated projected profit', cascade.estimatedProjectedProfit],
-                ['Estimated gross profit', cascade.estimatedGrossProfit],
-                ['Estimated net profit before commissions', cascade.estimatedNetProfitBeforeCommissions],
-                ['Estimated net profit', cascade.estimatedNetProfit],
+              const cascadeLabelKeys = [
+                'estimatedProjectedProfit',
+                'estimatedGrossProfit',
+                'estimatedNetProfitBeforeCommissions',
+                'estimatedNetProfit',
+              ] as const
+              const rows = [
+                cascade.estimatedProjectedProfit,
+                cascade.estimatedGrossProfit,
+                cascade.estimatedNetProfitBeforeCommissions,
+                cascade.estimatedNetProfit,
               ]
 
-              return rows.map(([label, amount]) => (
-                <div key={label} className="flex items-center justify-between">
-                  <span className="text-muted-foreground">{label}</span>
-                  <span className="font-medium">{amount != null ? currency.format(amount) : '—'}</span>
+              return cascadeLabelKeys.map((labelKey, index) => (
+                <div key={labelKey} className="flex items-center justify-between">
+                  <span className="text-muted-foreground">{t(labelKey)}</span>
+                  <span className="font-medium">{rows[index] != null ? currency.format(rows[index]) : '—'}</span>
                 </div>
               ))
             })()}
@@ -969,7 +978,7 @@ export function DealForm({
       {mode === 'edit' && (
         <DealSection id="checklist">
         <fieldset className="flex flex-col gap-4 rounded border border-border p-4">
-          <legend className="px-1 text-sm font-medium">Checklist</legend>
+          <legend className="px-1 text-sm font-medium">{t('checklist')}</legend>
 
           <div className="flex flex-col gap-3">
             <div>
@@ -979,12 +988,12 @@ export function DealForm({
                   checked={values.checklist_post_occupancy}
                   onChange={(event) => set('checklist_post_occupancy', event.target.checked)}
                 />
-                Post occupancy
+                {t('postOccupancy')}
               </label>
               {values.checklist_post_occupancy && (
                 <div className="mt-2 grid grid-cols-1 gap-3 sm:max-w-md sm:grid-cols-2">
                   <label className="field-label">
-                    Hold back dollar amount
+                    {t('holdBackAmount')}
                     <CurrencyInput
                       value={values.post_occupancy_hold_back_amount}
                       onChange={(value) => set('post_occupancy_hold_back_amount', value)}
@@ -992,7 +1001,7 @@ export function DealForm({
                     />
                   </label>
                   <label className="field-label">
-                    Move out date
+                    {t('moveOutDate')}
                     <input
                       type="date"
                       value={values.post_occupancy_move_out_date}
@@ -1011,11 +1020,11 @@ export function DealForm({
                   checked={values.checklist_survey_needed}
                   onChange={(event) => set('checklist_survey_needed', event.target.checked)}
                 />
-                Survey needed
+                {t('surveyNeeded')}
               </label>
               {values.checklist_survey_needed && (
                 <label className="mt-2 max-w-xs field-label">
-                  Survey ordered
+                  {t('surveyOrdered')}
                   <input
                     type="date"
                     value={values.survey_ordered_date}
@@ -1033,12 +1042,12 @@ export function DealForm({
                   checked={values.checklist_initial_photos_needed}
                   onChange={(event) => set('checklist_initial_photos_needed', event.target.checked)}
                 />
-                Initial photos needed
+                {t('initialPhotosNeeded')}
               </label>
               {values.checklist_initial_photos_needed && (
                 <div className="mt-2 grid grid-cols-1 gap-3 sm:max-w-md sm:grid-cols-2">
                   <label className="field-label">
-                    Initial photos ordered
+                    {t('initialPhotosOrdered')}
                     <input
                       type="date"
                       value={values.initial_photos_ordered_date}
@@ -1047,7 +1056,7 @@ export function DealForm({
                     />
                   </label>
                   <label className="field-label">
-                    Initial photos received
+                    {t('initialPhotosReceived')}
                     <input
                       type="date"
                       value={values.initial_photos_received_date}
@@ -1066,7 +1075,7 @@ export function DealForm({
                   checked={values.checklist_seller_info_sheet_needed}
                   onChange={(event) => set('checklist_seller_info_sheet_needed', event.target.checked)}
                 />
-                Seller info sheet needed
+                {t('sellerInfoSheetNeeded')}
               </label>
               {values.checklist_seller_info_sheet_needed && (
                 <div className="mt-2 flex flex-wrap gap-4">
@@ -1076,7 +1085,7 @@ export function DealForm({
                       checked={values.seller_info_sheet_sent}
                       onChange={(event) => set('seller_info_sheet_sent', event.target.checked)}
                     />
-                    Seller info sheet sent
+                    {t('sellerInfoSheetSent')}
                   </label>
                   <label className="flex items-center gap-1.5 text-sm">
                     <input
@@ -1084,7 +1093,7 @@ export function DealForm({
                       checked={values.seller_info_sheet_signed}
                       onChange={(event) => set('seller_info_sheet_signed', event.target.checked)}
                     />
-                    Seller info sheet signed
+                    {t('sellerInfoSheetSigned')}
                   </label>
                 </div>
               )}
@@ -1096,7 +1105,7 @@ export function DealForm({
                 checked={values.checklist_memo}
                 onChange={(event) => set('checklist_memo', event.target.checked)}
               />
-              Memo
+              {t('memo')}
             </label>
 
             <div>
@@ -1106,12 +1115,12 @@ export function DealForm({
                   checked={values.checklist_on_hold}
                   onChange={(event) => set('checklist_on_hold', event.target.checked)}
                 />
-                On hold
+                {t('onHold')}
               </label>
               {values.checklist_on_hold && (
                 <div className="mt-2 flex flex-col gap-3">
                   <label className="max-w-xs field-label">
-                    On hold date
+                    {t('onHoldDate')}
                     <input
                       type="date"
                       value={values.on_hold_date}
@@ -1121,7 +1130,7 @@ export function DealForm({
                   </label>
                   {onHoldReasons.length > 0 && (
                     <div className="flex flex-col gap-1">
-                      <span className="text-sm">On hold reasons</span>
+                      <span className="text-sm">{t('onHoldReasons')}</span>
                       <div className="flex flex-wrap gap-x-4 gap-y-1">
                         {onHoldReasons.map((reason) => (
                           <label key={reason.id} className="flex items-center gap-1.5 text-sm">
@@ -1147,11 +1156,11 @@ export function DealForm({
                   checked={values.checklist_closing_extension}
                   onChange={(event) => set('checklist_closing_extension', event.target.checked)}
                 />
-                Closing extension
+                {t('closingExtension')}
               </label>
               {values.checklist_closing_extension && (
                 <label className="mt-2 max-w-xs field-label">
-                  Extension closing date
+                  {t('extensionClosingDate')}
                   <input
                     type="date"
                     value={values.closing_extension_date}
@@ -1169,11 +1178,11 @@ export function DealForm({
                   checked={values.checklist_due_diligence_extension}
                   onChange={(event) => set('checklist_due_diligence_extension', event.target.checked)}
                 />
-                Due diligence extension
+                {t('dueDiligenceExtension')}
               </label>
               {values.checklist_due_diligence_extension && (
                 <label className="mt-2 max-w-xs field-label">
-                  DD extension date
+                  {t('ddExtensionDate')}
                   <input
                     type="date"
                     value={values.due_diligence_extension_date}
@@ -1191,12 +1200,12 @@ export function DealForm({
                   checked={values.ab_emd_deposit_received}
                   onChange={(event) => set('ab_emd_deposit_received', event.target.checked)}
                 />
-                AB EMD deposit received
+                {t('abEmdDepositReceived')}
               </label>
               {values.ab_emd_deposit_received && (
                 <div className="mt-2 flex flex-wrap items-end gap-4">
                   <label className="max-w-xs field-label">
-                    AB EMD amount
+                    {t('abEmdAmount')}
                     <CurrencyInput
                       value={values.ab_emd_amount}
                       onChange={(value) => set('ab_emd_amount', value)}
@@ -1209,7 +1218,7 @@ export function DealForm({
                       checked={values.ab_emd_refund}
                       onChange={(event) => set('ab_emd_refund', event.target.checked)}
                     />
-                    EMD refund
+                    {t('emdRefund')}
                   </label>
                 </div>
               )}
@@ -1223,14 +1232,17 @@ export function DealForm({
                   disabled
                   className="opacity-50"
                 />
-                BC EMD deposit received
-                <span className="text-xs text-muted-foreground">(edit in Buyer / BC Contract above)</span>
+                {t('bcEmdDepositReceived')}
+                <span className="text-xs text-muted-foreground">{t('editInBuyerBcAbove')}</span>
               </label>
               {values.buyer_deposit_received && (
                 <div className="mt-2 flex flex-wrap items-center gap-4">
                   <p className="text-sm text-muted-foreground">
-                    Amount:{' '}
-                    {values.buyer_deposit_amount ? currency.format(Number(values.buyer_deposit_amount)) : '—'}
+                    {t('amountLabel', {
+                      amount: values.buyer_deposit_amount
+                        ? currency.format(Number(values.buyer_deposit_amount))
+                        : '—',
+                    })}
                   </p>
                   <label className="flex items-center gap-1.5 text-sm">
                     <input
@@ -1238,7 +1250,7 @@ export function DealForm({
                       checked={values.bc_emd_refund}
                       onChange={(event) => set('bc_emd_refund', event.target.checked)}
                     />
-                    EMD refund
+                    {t('emdRefund')}
                   </label>
                 </div>
               )}
@@ -1252,13 +1264,15 @@ export function DealForm({
                   disabled
                   className="opacity-50"
                 />
-                Renegotiation AB
-                <span className="text-xs text-muted-foreground">(edit Contract price above)</span>
+                {t('renegotiationAb')}
+                <span className="text-xs text-muted-foreground">{t('editContractPriceAbove')}</span>
               </label>
               {values.contract_price_renegotiated_date && (
                 <p className="mt-1 text-sm text-muted-foreground">
-                  {values.contract_price ? currency.format(Number(values.contract_price)) : '—'} — renegotiated{' '}
-                  {values.contract_price_renegotiated_date}
+                  {t('renegotiatedAmountOn', {
+                    amount: values.contract_price ? currency.format(Number(values.contract_price)) : '—',
+                    date: values.contract_price_renegotiated_date,
+                  })}
                 </p>
               )}
             </div>
@@ -1271,13 +1285,17 @@ export function DealForm({
                   disabled
                   className="opacity-50"
                 />
-                Renegotiation BC
-                <span className="text-xs text-muted-foreground">(edit Renegotiated BC price above)</span>
+                {t('renegotiationBc')}
+                <span className="text-xs text-muted-foreground">{t('editRenegotiatedBcPriceAbove')}</span>
               </label>
               {values.renegotiated_bc_date && (
                 <p className="mt-1 text-sm text-muted-foreground">
-                  {values.renegotiated_bc_price ? currency.format(Number(values.renegotiated_bc_price)) : '—'} —
-                  renegotiated {values.renegotiated_bc_date}
+                  {t('renegotiatedAmountOn', {
+                    amount: values.renegotiated_bc_price
+                      ? currency.format(Number(values.renegotiated_bc_price))
+                      : '—',
+                    date: values.renegotiated_bc_date,
+                  })}
                 </p>
               )}
             </div>
@@ -1289,13 +1307,13 @@ export function DealForm({
                   checked={values.cancelled_ab}
                   onChange={(event) => set('cancelled_ab', event.target.checked)}
                 />
-                Cancelled — AB
+                {t('cancelledAb')}
               </label>
               {values.cancelled_ab && (
                 <div className="mt-2 flex flex-col gap-3">
                   <div className="grid grid-cols-1 gap-3 sm:max-w-md sm:grid-cols-2">
                     <label className="field-label">
-                      Cancelled date
+                      {t('cancelledDate')}
                       <input
                         type="date"
                         value={values.cancelled_ab_date}
@@ -1304,22 +1322,22 @@ export function DealForm({
                       />
                     </label>
                     <label className="field-label">
-                      Cancelled AB party
+                      {t('cancelledAbParty')}
                       <select
                         value={values.cancelled_ab_party}
                         onChange={(event) => set('cancelled_ab_party', event.target.value)}
                         className="rounded border border-input-border bg-input-background px-3 py-2"
                       >
-                        <option value="">Choose an option…</option>
-                        <option value="seller">Seller</option>
-                        <option value="buyer">Buyer</option>
-                        <option value="us">Us</option>
+                        <option value="">{t('chooseAnOption')}</option>
+                        <option value="seller">{t('partySeller')}</option>
+                        <option value="buyer">{t('partyBuyer')}</option>
+                        <option value="us">{t('partyUs')}</option>
                       </select>
                     </label>
                   </div>
                   {cancelledAbReasons.length > 0 && (
                     <div className="flex flex-col gap-1">
-                      <span className="text-sm">Cancelled-AB reasons</span>
+                      <span className="text-sm">{t('cancelledAbReasons')}</span>
                       <div className="flex flex-wrap gap-x-4 gap-y-1">
                         {cancelledAbReasons.map((reason) => (
                           <label key={reason.id} className="flex items-center gap-1.5 text-sm">
@@ -1345,13 +1363,13 @@ export function DealForm({
                   checked={values.cancelled_bc_ac}
                   onChange={(event) => set('cancelled_bc_ac', event.target.checked)}
                 />
-                Cancelled — BC/AC
+                {t('cancelledBcAc')}
               </label>
               {values.cancelled_bc_ac && (
                 <div className="mt-2 flex flex-col gap-3">
                   <div className="grid grid-cols-1 gap-3 sm:max-w-md sm:grid-cols-2">
                     <label className="field-label">
-                      Cancelled date
+                      {t('cancelledDate')}
                       <input
                         type="date"
                         value={values.cancelled_bc_ac_date}
@@ -1360,22 +1378,22 @@ export function DealForm({
                       />
                     </label>
                     <label className="field-label">
-                      Cancelled BC/AC party
+                      {t('cancelledBcAcParty')}
                       <select
                         value={values.cancelled_bc_ac_party}
                         onChange={(event) => set('cancelled_bc_ac_party', event.target.value)}
                         className="rounded border border-input-border bg-input-background px-3 py-2"
                       >
-                        <option value="">Choose an option…</option>
-                        <option value="seller">Seller</option>
-                        <option value="buyer">Buyer</option>
-                        <option value="us">Us</option>
+                        <option value="">{t('chooseAnOption')}</option>
+                        <option value="seller">{t('partySeller')}</option>
+                        <option value="buyer">{t('partyBuyer')}</option>
+                        <option value="us">{t('partyUs')}</option>
                       </select>
                     </label>
                   </div>
                   {cancelledBcAcReasons.length > 0 && (
                     <div className="flex flex-col gap-1">
-                      <span className="text-sm">Cancelled-BC/AC reasons</span>
+                      <span className="text-sm">{t('cancelledBcAcReasons')}</span>
                       <div className="flex flex-wrap gap-x-4 gap-y-1">
                         {cancelledBcAcReasons.map((reason) => (
                           <label key={reason.id} className="flex items-center gap-1.5 text-sm">
@@ -1406,13 +1424,13 @@ export function DealForm({
         </DealSection>
       )}
 
-      <DealSection id="custom-fields" title="Custom Fields">
+      <DealSection id="custom-fields" title={t('customFields')}>
       <fieldset className="flex flex-col gap-4 rounded border border-border p-4">
-        <legend className="px-1 text-sm font-medium">Custom Fields</legend>
+        <legend className="px-1 text-sm font-medium">{t('customFields')}</legend>
 
         {customFieldDefinitions.length === 0 ? (
           <p className="text-sm text-muted-foreground">
-            No custom fields defined yet. Add some in Settings under Deal → Custom Fields.
+            {t('noCustomFields')}
           </p>
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -1478,10 +1496,10 @@ export function DealForm({
           disabled={submitting}
           className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
         >
-          {submitting ? 'Saving…' : mode === 'create' ? 'Create deal' : 'Save changes'}
+          {submitting ? t('saving') : mode === 'create' ? t('createDeal') : t('saveChanges')}
         </button>
         <Link href="/deals" className="text-sm text-muted-foreground hover:underline">
-          Cancel
+          {t('cancel')}
         </Link>
       </div>
     </form>

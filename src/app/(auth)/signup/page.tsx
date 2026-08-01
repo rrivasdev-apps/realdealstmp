@@ -11,6 +11,7 @@ export default function SignupPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [homeCountryCode, setHomeCountryCode] = useState('US')
+  const [locale, setLocale] = useState('en')
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
@@ -23,7 +24,7 @@ export default function SignupPage() {
     const response = await fetch('/api/signup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ companyName, name, email, password, homeCountryCode }),
+      body: JSON.stringify({ companyName, name, email, password, homeCountryCode, locale }),
     })
     const result = await response.json()
 
@@ -120,6 +121,22 @@ export default function SignupPage() {
         <p className="text-xs text-muted-foreground">
           If it&apos;s the United States, we&apos;ll pre-load every state and city so
           they&apos;re ready to pick from on your deals.
+        </p>
+
+        <label className="field-label">
+          Language
+          <select
+            required
+            value={locale}
+            onChange={(event) => setLocale(event.target.value)}
+            className="rounded border border-input-border bg-input-background px-3 py-2"
+          >
+            <option value="en">English</option>
+            <option value="es">Español</option>
+          </select>
+        </label>
+        <p className="text-xs text-muted-foreground">
+          The whole app will show up in this language for everyone at your company.
         </p>
 
         {error && <p className="text-sm text-danger">{error}</p>}

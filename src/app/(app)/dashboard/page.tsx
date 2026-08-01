@@ -1,3 +1,4 @@
+import { getTranslations } from 'next-intl/server'
 import { redirect } from 'next/navigation'
 
 import { calculateProfit } from '@/lib/deals/profit'
@@ -28,6 +29,7 @@ export default async function DashboardPage() {
     redirect('/login')
   }
 
+  const t = await getTranslations('Dashboard')
   const supabase = await createClient()
 
   const [{ data: dealsData }, { data: offersData }] = await Promise.all([
@@ -75,20 +77,20 @@ export default async function DashboardPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-semibold text-foreground">Dashboard</h1>
+      <h1 className="text-xl font-semibold text-foreground">{t('title')}</h1>
 
       <section className="mt-6">
-        <h2 className="heading-subsection">Pipeline</h2>
+        <h2 className="heading-subsection">{t('pipeline')}</h2>
         <div className="mt-2 grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <PipelineCard label="Open Deals" value={String(openDeals.length)} />
-          <PipelineCard label="Projected Profit" value={currency.format(projectedProfit)} />
-          <PipelineCard label="JV Expenses" value={currency.format(jvExpenses)} />
-          <PipelineCard label="Open Offers" value={String(openOfferCount)} />
+          <PipelineCard label={t('openDeals')} value={String(openDeals.length)} />
+          <PipelineCard label={t('projectedProfit')} value={currency.format(projectedProfit)} />
+          <PipelineCard label={t('jvExpenses')} value={currency.format(jvExpenses)} />
+          <PipelineCard label={t('openOffers')} value={String(openOfferCount)} />
         </div>
       </section>
 
       <section className="mt-8">
-        <h2 className="heading-subsection">Period Performance</h2>
+        <h2 className="heading-subsection">{t('periodPerformance')}</h2>
         <PeriodPerformanceTabs monthly={monthly} quarterly={quarterly} yearly={yearly} />
       </section>
     </div>

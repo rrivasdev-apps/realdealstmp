@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 
 import { requireProfile } from '@/lib/supabase/auth'
 
-import { Sidebar } from './sidebar'
+import { Sidebar, type NavKey } from './sidebar'
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const profile = await requireProfile()
@@ -20,18 +20,19 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const canManageTeam =
     profile.role === 'admin' || Boolean(profile.permissions?.can_manage_team && profile.permissions?.can_manage_settings)
 
+  const navItem = (href: string, labelKey: NavKey) => ({ href, labelKey })
   const navItems = [
-    { href: '/dashboard', label: 'Dashboard' },
-    ...(canViewWhiteboard ? [{ href: '/deals', label: 'Whiteboard' }] : []),
+    navItem('/dashboard', 'dashboard'),
+    ...(canViewWhiteboard ? [navItem('/deals', 'whiteboard')] : []),
     // Contacts and Companies (formerly its own top-level "Investor LLCs"
     // item) are now rendered as a Contact Center sub-menu -- see
     // CONTACT_HUB_LINKS in sidebar.tsx.
-    ...(canViewContacts ? [{ href: '/contacts', label: 'Contact Center' }] : []),
-    ...(canManagePayroll ? [{ href: '/payroll', label: 'Payroll' }] : []),
+    ...(canViewContacts ? [navItem('/contacts', 'contactCenter')] : []),
+    ...(canManagePayroll ? [navItem('/payroll', 'payroll')] : []),
     // Same visibility tier as the Whiteboard -- it's a company-wide
     // operational view, not Settings/configuration.
-    ...(canViewWhiteboard ? [{ href: '/deal-automations', label: 'Deal Automations' }] : []),
-    ...(canManageSettings ? [{ href: '/settings', label: 'Settings' }] : []),
+    ...(canViewWhiteboard ? [navItem('/deal-automations', 'dealAutomations')] : []),
+    ...(canManageSettings ? [navItem('/settings', 'settings')] : []),
   ]
 
   return (

@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 
 import { CurrencyInput } from '@/components/currency-input'
@@ -43,6 +44,7 @@ export function ExpensesPanel({
   expenseCategories: LookupOption[]
   onTotalChange?: (total: number) => void
 }) {
+  const t = useTranslations('Expenses')
   const [expenses, setExpenses] = useState(initialExpenses)
   const [editingId, setEditingId] = useState<string | 'new' | null>(null)
   const [form, setForm] = useState<ExpenseFormState>(EMPTY_FORM)
@@ -79,12 +81,12 @@ export function ExpensesPanel({
 
   async function handleSave() {
     if (!form.category_id) {
-      setError('Category is required.')
+      setError(t('errorCategoryRequired'))
       return
     }
     const amount = Number(form.amount)
     if (!form.amount || !Number.isFinite(amount) || amount <= 0) {
-      setError('Amount must be a positive number.')
+      setError(t('errorAmountPositive'))
       return
     }
     setSubmitting(true)
@@ -106,7 +108,7 @@ export function ExpensesPanel({
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Could not save this expense.')
+      setError(result.error ?? t('errorCouldNotSave'))
       return
     }
 
@@ -138,16 +140,16 @@ export function ExpensesPanel({
   return (
     <div className="flex flex-col gap-3 text-sm">
       <div className="flex items-center justify-between">
-        <span className="font-medium">Expenses</span>
+        <span className="font-medium">{t('expenses')}</span>
         {editingId === null && (
           <button type="button" onClick={startAdd} className="text-xs underline">
-            + Add Expense
+            {t('addExpense')}
           </button>
         )}
       </div>
 
       {expenses.length === 0 && editingId === null && (
-        <p className="text-xs text-muted-foreground">No expenses yet.</p>
+        <p className="text-xs text-muted-foreground">{t('noExpensesYet')}</p>
       )}
 
       <ul className="flex flex-col gap-1">
@@ -167,18 +169,18 @@ export function ExpensesPanel({
           ) : (
             <li key={expense.id} className="flex items-center justify-between rounded border border-border px-2 py-1.5">
               <div>
-                <div className="font-medium">{expense.categoryName ?? 'Uncategorized'}</div>
+                <div className="font-medium">{expense.categoryName ?? t('uncategorized')}</div>
                 <div className="text-xs text-muted-foreground">
-                  {[expense.description, expense.expense_date].filter(Boolean).join(' · ') || 'No details'}
+                  {[expense.description, expense.expense_date].filter(Boolean).join(' · ') || t('noDetails')}
                 </div>
               </div>
               <div className="flex items-center gap-2">
                 <span className="font-medium">{currency.format(expense.amount)}</span>
                 <button type="button" onClick={() => startEdit(expense)} className="text-xs underline">
-                  Edit
+                  {t('edit')}
                 </button>
                 <button type="button" onClick={() => handleDelete(expense.id)} className="text-xs text-danger">
-                  Remove
+                  {t('remove')}
                 </button>
               </div>
             </li>
@@ -201,7 +203,7 @@ export function ExpensesPanel({
 
       {expenses.length > 0 && (
         <div className="flex items-center justify-between border-t border-border pt-2 font-medium">
-          <span>Total expenses</span>
+          <span>{t('totalExpenses')}</span>
           <span>{currency.format(total)}</span>
         </div>
       )}
@@ -226,10 +228,11 @@ function ExpenseForm({
   submitting: boolean
   error: string | null
 }) {
+  const t = useTranslations('Expenses')
   return (
     <div className="flex flex-col gap-2.5">
       <label className="field-label">
-        Category
+        {t('category')}
         <select
           value={form.category_id}
           onChange={(event) => setForm((prev) => ({ ...prev, category_id: event.target.value }))}
@@ -244,7 +247,7 @@ function ExpenseForm({
         </select>
       </label>
       <label className="field-label">
-        Amount
+        {t('amount')}
         <CurrencyInput
           value={form.amount}
           onChange={(value) => setForm((prev) => ({ ...prev, amount: value }))}
@@ -252,7 +255,7 @@ function ExpenseForm({
         />
       </label>
       <label className="field-label">
-        Date
+        {t('date')}
         <input
           type="date"
           value={form.expense_date}
@@ -261,7 +264,7 @@ function ExpenseForm({
         />
       </label>
       <label className="field-label">
-        Description
+        {t('description')}
         <textarea
           value={form.description}
           onChange={(event) => setForm((prev) => ({ ...prev, description: event.target.value }))}
@@ -277,10 +280,10 @@ function ExpenseForm({
           disabled={submitting}
           className="rounded bg-foreground px-3 py-1 text-xs text-background disabled:opacity-50"
         >
-          {submitting ? 'Saving…' : 'Save'}
+          {submitting ? t('saving') : t('save')}
         </button>
         <button type="button" onClick={onCancel} className="text-xs text-muted-foreground underline">
-          Cancel
+          {t('cancel')}
         </button>
       </div>
     </div>

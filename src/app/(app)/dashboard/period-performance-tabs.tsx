@@ -1,17 +1,19 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 
 import type { PeriodPerformanceRow } from '@/lib/deals/kpi'
+import type messages from '@/messages/en.json'
 
 const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
 
 type Granularity = 'monthly' | 'quarterly' | 'yearly'
 
-const TAB_LABELS: Record<Granularity, string> = {
-  monthly: 'Monthly',
-  quarterly: 'Quarterly',
-  yearly: 'Yearly',
+const TAB_LABEL_KEYS: Record<Granularity, keyof (typeof messages)['Dashboard']> = {
+  monthly: 'monthly',
+  quarterly: 'quarterly',
+  yearly: 'yearly',
 }
 
 export function PeriodPerformanceTabs({
@@ -23,13 +25,14 @@ export function PeriodPerformanceTabs({
   quarterly: PeriodPerformanceRow[]
   yearly: PeriodPerformanceRow[]
 }) {
+  const t = useTranslations('Dashboard')
   const [active, setActive] = useState<Granularity>('monthly')
   const rows = { monthly, quarterly, yearly }[active]
 
   return (
     <div className="mt-2">
       <div className="flex gap-1 border-b border-border">
-        {(Object.keys(TAB_LABELS) as Granularity[]).map((granularity) => (
+        {(Object.keys(TAB_LABEL_KEYS) as Granularity[]).map((granularity) => (
           <button
             key={granularity}
             type="button"
@@ -40,7 +43,7 @@ export function PeriodPerformanceTabs({
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            {TAB_LABELS[granularity]}
+            {t(TAB_LABEL_KEYS[granularity])}
           </button>
         ))}
       </div>
@@ -49,14 +52,14 @@ export function PeriodPerformanceTabs({
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-muted-foreground">
-              <th className="px-4 py-2 font-medium">Period</th>
-              <th className="px-4 py-2 font-medium">Deals</th>
-              <th className="px-4 py-2 font-medium">Gross Profit</th>
-              <th className="px-4 py-2 font-medium">Expenses</th>
-              <th className="px-4 py-2 font-medium">Commissions</th>
-              <th className="px-4 py-2 font-medium">Net Profit</th>
-              <th className="px-4 py-2 font-medium">Avg Net Profit / Deal</th>
-              <th className="px-4 py-2 font-medium">Avg Days to Close</th>
+              <th className="px-4 py-2 font-medium">{t('colPeriod')}</th>
+              <th className="px-4 py-2 font-medium">{t('colDeals')}</th>
+              <th className="px-4 py-2 font-medium">{t('colGrossProfit')}</th>
+              <th className="px-4 py-2 font-medium">{t('colExpenses')}</th>
+              <th className="px-4 py-2 font-medium">{t('colCommissions')}</th>
+              <th className="px-4 py-2 font-medium">{t('colNetProfit')}</th>
+              <th className="px-4 py-2 font-medium">{t('colAvgNetProfitPerDeal')}</th>
+              <th className="px-4 py-2 font-medium">{t('colAvgDaysToClose')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -72,7 +75,7 @@ export function PeriodPerformanceTabs({
                   {row.avgNetProfitPerDeal != null ? currency.format(row.avgNetProfitPerDeal) : '—'}
                 </td>
                 <td className="px-4 py-2 text-foreground">
-                  {row.avgDaysToClose != null ? `${Math.round(row.avgDaysToClose)} days` : '—'}
+                  {row.avgDaysToClose != null ? t('days', { count: Math.round(row.avgDaysToClose) }) : '—'}
                 </td>
               </tr>
             ))}

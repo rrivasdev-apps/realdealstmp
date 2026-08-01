@@ -1,3 +1,4 @@
+import { getTranslations } from 'next-intl/server'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
@@ -15,12 +16,14 @@ const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: '
 export default async function EditDealPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
 
+  const t = await getTranslations('DealDetail')
+
   const profile = await requirePermission('view_deal_detail')
   if (!profile) {
     return (
       <div>
-        <h1 className="heading-page">Deal</h1>
-        <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to view this deal.</p>
+        <h1 className="heading-page">{t('dealHeading')}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{t('noPermission')}</p>
       </div>
     )
   }
@@ -138,7 +141,7 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
 
   return (
     <div>
-      <h1 className="heading-page">Edit deal</h1>
+      <h1 className="heading-page">{t('editDeal')}</h1>
       <div className="mt-6">
         <DealForm
           mode="edit"
@@ -273,9 +276,9 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
       <DealSection id="jv-dispo">
       <div className="mt-10">
         <div className="flex items-center justify-between">
-          <h2 className="heading-subsection">Offers</h2>
+          <h2 className="heading-subsection">{t('offers')}</h2>
           <Link href={`/deals/${id}/offers/new`} className="text-xs underline">
-            + Add offer
+            {t('addOffer')}
           </Link>
         </div>
         <ul className="mt-2 divide-y divide-border rounded-lg border border-border bg-background">
@@ -286,28 +289,28 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
                   href={`/deals/${id}/offers/${offer.id}`}
                   className="text-sm font-medium hover:underline"
                 >
-                  {offer.offer_price != null ? currency.format(offer.offer_price) : 'No price set'}
+                  {offer.offer_price != null ? currency.format(offer.offer_price) : t('noPriceSet')}
                 </Link>
                 <div className="text-sm text-muted-foreground">
-                  {[offer.offer_date, offer.purchase_types?.name].filter(Boolean).join(' · ') || 'No details yet'}
+                  {[offer.offer_date, offer.purchase_types?.name].filter(Boolean).join(' · ') || t('noDetailsYet')}
                 </div>
               </div>
               <span className="rounded bg-muted px-2 py-1 text-xs font-medium">
-                {offer.offer_statuses?.name ?? 'Unknown'}
+                {offer.offer_statuses?.name ?? t('unknown')}
               </span>
             </li>
           ))}
           {(offers ?? []).length === 0 && (
-            <li className="px-4 py-3 text-sm text-muted-foreground">No offers yet.</li>
+            <li className="px-4 py-3 text-sm text-muted-foreground">{t('noOffersYet')}</li>
           )}
         </ul>
       </div>
 
       <div className="mt-10">
         <div className="flex items-center justify-between">
-          <h2 className="heading-subsection">Showings</h2>
+          <h2 className="heading-subsection">{t('showings')}</h2>
           <Link href={`/deals/${id}/showings/new`} className="text-xs underline">
-            + Add showing
+            {t('addShowing')}
           </Link>
         </div>
         <ul className="mt-2 divide-y divide-border rounded-lg border border-border bg-background">
@@ -318,19 +321,19 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
                   href={`/deals/${id}/showings/${showing.id}`}
                   className="text-sm font-medium hover:underline"
                 >
-                  {showing.showing_date ?? 'No date set'}
+                  {showing.showing_date ?? t('noDateSet')}
                 </Link>
                 <div className="text-sm text-muted-foreground">
-                  {showing.buyer?.name ?? 'No buyer contact'}
+                  {showing.buyer?.name ?? t('noBuyerContact')}
                 </div>
               </div>
               <span className="rounded bg-muted px-2 py-1 text-xs font-medium">
-                {showing.showing_statuses?.name ?? 'Unknown'}
+                {showing.showing_statuses?.name ?? t('unknown')}
               </span>
             </li>
           ))}
           {(showings ?? []).length === 0 && (
-            <li className="px-4 py-3 text-sm text-muted-foreground">No showings yet.</li>
+            <li className="px-4 py-3 text-sm text-muted-foreground">{t('noShowingsYet')}</li>
           )}
         </ul>
       </div>
@@ -338,7 +341,7 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
 
       <DealSection id="employees">
       <div className="mt-10">
-        <h2 className="heading-subsection">Employees</h2>
+        <h2 className="heading-subsection">{t('employees')}</h2>
         <div className="mt-2">
           <DealEmployeeForm dealId={id} availableProfiles={availableProfiles} />
         </div>
@@ -357,7 +360,7 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
                 key={dealEmployee.id}
                 dealId={id}
                 dealEmployeeId={dealEmployee.id}
-                profileName={dealEmployee.profiles?.name ?? 'Unknown'}
+                profileName={dealEmployee.profiles?.name ?? t('unknown')}
                 configuredRoles={configuredRoles}
                 currentRoleIds={currentRoleIds}
                 payments={employeePayments}
