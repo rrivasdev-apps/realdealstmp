@@ -18,6 +18,23 @@ const DEFAULT_LEAD_SOURCES = [
   'Website/SEO',
   'Other',
 ]
+const DEFAULT_EXPENSE_CATEGORIES = [
+  'Repairs & Rehab',
+  'Closing Costs',
+  'Holding Costs',
+  'Marketing',
+  'Inspection Fees',
+  'Title & Escrow',
+  'Legal Fees',
+  'Financing & Interest',
+  'Property Taxes',
+  'Insurance',
+  'Utilities',
+  'HOA Fees',
+  'Permits',
+  'Staging',
+  'Other',
+]
 
 // Public route — the one intentional exception to "every mutating route
 // calls requireUser()": this route creates the first user. Signing up
@@ -57,6 +74,9 @@ export async function POST(request: Request) {
       admin
         .from('lead_sources')
         .insert(DEFAULT_LEAD_SOURCES.map((name) => ({ company_id: company.id, name }))),
+      admin
+        .from('expense_categories')
+        .insert(DEFAULT_EXPENSE_CATEGORIES.map((name) => ({ company_id: company.id, name }))),
     ]),
     seedCompanyGeography(admin, company.id, homeCountryCode),
   ])

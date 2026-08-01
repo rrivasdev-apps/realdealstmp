@@ -56,6 +56,8 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
     { data: checkedCancelledAbReasons },
     { data: checkedCancelledBcAcReasons },
     { data: customFieldDefinitions },
+    { data: expenseCategories },
+    { data: dealExpenses },
   ] = await Promise.all([
     supabase.from('deals').select('*, countries(name), states(name), cities(name)').eq('id', id).single(),
     supabase.from('countries').select('id, name, iso_code').order('name'),
@@ -100,6 +102,12 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
     supabase.from('deal_cancelled_ab_reasons').select('cancelled_ab_reason_id').eq('deal_id', id),
     supabase.from('deal_cancelled_bc_ac_reasons').select('cancelled_bc_ac_reason_id').eq('deal_id', id),
     supabase.from('custom_field_definitions').select('id, name, field_type, options').order('name'),
+    supabase.from('expense_categories').select('id, name').order('name'),
+    supabase
+      .from('deal_expenses')
+      .select('id, category_id, description, amount, expense_date, expense_categories(name)')
+      .eq('deal_id', id)
+      .order('expense_date', { ascending: false }),
   ])
 
   if (!deal) {
@@ -193,7 +201,6 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
             jv_split_type_id: deal.jv_split_type_id ?? '',
             jv_split_percent: deal.jv_split_percent?.toString() ?? '',
             split_amount: deal.split_amount?.toString() ?? '',
-            total_expenses: deal.total_expenses?.toString() ?? '',
             total_commissions: deal.total_commissions?.toString() ?? '',
             checklist_post_occupancy: deal.checklist_post_occupancy ?? false,
             post_occupancy_hold_back_amount: deal.post_occupancy_hold_back_amount?.toString() ?? '',
@@ -251,6 +258,15 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
           cancelledAbReasons={cancelledAbReasons ?? []}
           cancelledBcAcReasons={cancelledBcAcReasons ?? []}
           customFieldDefinitions={customFieldDefinitions ?? []}
+          expenseCategories={expenseCategories ?? []}
+          expenses={(dealExpenses ?? []).map((expense) => ({
+            id: expense.id,
+            category_id: expense.category_id,
+            categoryName: expense.expense_categories?.name ?? null,
+            description: expense.description,
+            amount: expense.amount,
+            expense_date: expense.expense_date,
+          }))}
         />
       </div>
 

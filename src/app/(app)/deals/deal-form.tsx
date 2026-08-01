@@ -11,6 +11,7 @@ import { DealSection } from '@/components/deal-section'
 import { calculateProfitCascade } from '@/lib/deals/profit'
 
 import { CustomChecklistItems } from './custom-checklist-items'
+import { ExpensesPanel, type DealExpense } from './expenses-panel'
 
 const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
 
@@ -82,7 +83,6 @@ export type DealFormValues = {
   jv_split_type_id: string
   jv_split_percent: string
   split_amount: string
-  total_expenses: string
   total_commissions: string
   checklist_post_occupancy: boolean
   post_occupancy_hold_back_amount: string
@@ -142,6 +142,8 @@ export function DealForm({
   cancelledAbReasons,
   cancelledBcAcReasons,
   customFieldDefinitions,
+  expenseCategories,
+  expenses,
 }: {
   mode: 'create' | 'edit'
   initialValues: DealFormValues
@@ -166,11 +168,16 @@ export function DealForm({
   cancelledAbReasons: LookupOption[]
   cancelledBcAcReasons: LookupOption[]
   customFieldDefinitions: CustomFieldDefinition[]
+  expenseCategories: LookupOption[]
+  expenses: DealExpense[]
 }) {
   const router = useRouter()
   const [values, setValues] = useState(initialValues)
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const [expensesTotal, setExpensesTotal] = useState(() =>
+    expenses.reduce((sum, expense) => sum + expense.amount, 0)
+  )
 
   function set<K extends keyof DealFormValues>(key: K, value: DealFormValues[K]) {
     setValues((prev) => ({ ...prev, [key]: value }))
@@ -251,7 +258,6 @@ export function DealForm({
       jv_split_type_id: values.jv_split_type_id || null,
       jv_split_percent: values.jv_split_percent ? Number(values.jv_split_percent) : null,
       split_amount: values.split_amount ? Number(values.split_amount) : null,
-      total_expenses: values.total_expenses ? Number(values.total_expenses) : null,
       total_commissions: values.total_commissions ? Number(values.total_commissions) : null,
       checklist_post_occupancy: values.checklist_post_occupancy,
       post_occupancy_hold_back_amount: values.post_occupancy_hold_back_amount
@@ -912,15 +918,6 @@ export function DealForm({
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <label className="field-label">
-              Total expenses
-              <CurrencyInput
-                value={values.total_expenses}
-                onChange={(value) => set('total_expenses', value)}
-                className="rounded border border-input-border bg-input-background px-3 py-2"
-              />
-            </label>
-
-            <label className="field-label">
               Total commissions
               <CurrencyInput
                 value={values.total_commissions}
@@ -930,6 +927,13 @@ export function DealForm({
             </label>
           </div>
 
+          <ExpensesPanel
+            dealId={values.id as string}
+            initialExpenses={expenses}
+            expenseCategories={expenseCategories}
+            onTotalChange={setExpensesTotal}
+          />
+
           <div className="flex flex-col gap-1 rounded bg-muted px-3 py-2 text-sm">
             {(() => {
               const cascade = calculateProfitCascade({
@@ -937,7 +941,7 @@ export function DealForm({
                 renegotiated_bc_price: values.renegotiated_bc_price ? Number(values.renegotiated_bc_price) : null,
                 buyer_contract_price: values.buyer_contract_price ? Number(values.buyer_contract_price) : null,
                 projected_sales_price: values.projected_sales_price ? Number(values.projected_sales_price) : null,
-                total_expenses: values.total_expenses ? Number(values.total_expenses) : null,
+                total_expenses: expensesTotal,
                 total_commissions: values.total_commissions ? Number(values.total_commissions) : null,
                 is_jv_deal: values.is_jv_deal,
                 split_amount: values.split_amount ? Number(values.split_amount) : null,

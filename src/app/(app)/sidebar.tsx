@@ -54,6 +54,7 @@ const SETTINGS_GROUPS: { label: string; sections: { id: string; label: string; h
       { id: 'default-country', label: 'Default Country' },
       { id: 'deal-types', label: 'Deal Types' },
       { id: 'lead-sources', label: 'Lead Sources' },
+      { id: 'expense-categories', label: 'Expense Categories' },
       { id: 'custom-fields', label: 'Custom Fields' },
       { id: 'on-hold-reasons', label: 'On Hold Reasons' },
       { id: 'cancelled-ab-reasons', label: 'Cancelled — AB Reasons' },

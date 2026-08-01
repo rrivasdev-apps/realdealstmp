@@ -87,7 +87,6 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     jv_split_type_id: body.jv_split_type_id || null,
     jv_split_percent: body.jv_split_percent ?? null,
     split_amount: body.split_amount ?? null,
-    total_expenses: body.total_expenses ?? null,
     total_commissions: body.total_commissions ?? null,
     checklist_post_occupancy: Boolean(body.checklist_post_occupancy),
     post_occupancy_hold_back_amount: body.post_occupancy_hold_back_amount ?? null,

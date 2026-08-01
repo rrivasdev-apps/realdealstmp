@@ -1546,6 +1546,51 @@ export type Database = {
           },
         ]
       }
+      deal_expenses: {
+        Row: {
+          amount: number
+          category_id: string
+          created_at: string
+          deal_id: string
+          description: string | null
+          expense_date: string | null
+          id: string
+        }
+        Insert: {
+          amount: number
+          category_id: string
+          created_at?: string
+          deal_id: string
+          description?: string | null
+          expense_date?: string | null
+          id?: string
+        }
+        Update: {
+          amount?: number
+          category_id?: string
+          created_at?: string
+          deal_id?: string
+          description?: string | null
+          expense_date?: string | null
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deal_expenses_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "expense_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deal_expenses_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "deals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       deal_on_hold_reasons: {
         Row: {
           deal_id: string
@@ -2183,6 +2228,32 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "employee_roles_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      expense_categories: {
+        Row: {
+          company_id: string
+          id: string
+          name: string
+        }
+        Insert: {
+          company_id: string
+          id?: string
+          name: string
+        }
+        Update: {
+          company_id?: string
+          id?: string
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expense_categories_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"

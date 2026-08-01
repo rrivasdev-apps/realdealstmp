@@ -61,6 +61,7 @@ export default async function SettingsPage() {
     { data: markets },
     { data: dealTypes },
     { data: leadSources },
+    { data: expenseCategories },
     { data: customFieldDefinitions },
     { data: payPeriods },
     { data: countries },
@@ -79,6 +80,7 @@ export default async function SettingsPage() {
     supabase.from('markets').select('id, name').order('name'),
     supabase.from('deal_types').select('id, name').order('name'),
     supabase.from('lead_sources').select('id, name').order('name'),
+    supabase.from('expense_categories').select('id, name').order('name'),
     supabase.from('custom_field_definitions').select('id, name, field_type, options').order('name'),
     supabase
       .from('pay_periods')
@@ -189,6 +191,25 @@ export default async function SettingsPage() {
             ))}
             {leadSources?.length === 0 && (
               <li className="py-2 text-sm text-muted-foreground">No lead sources yet.</li>
+            )}
+          </ul>
+        </SettingsSection>
+
+        <SettingsSection id="expense-categories" title="Expense Categories">
+          <p className="text-sm text-muted-foreground">
+            Categories available when adding an expense line item to a deal (Repairs & Rehab, Closing Costs, etc.).
+          </p>
+          <div className="max-w-md">
+            <SimpleListForm endpoint="/api/expense-categories" placeholder="e.g. Contractor Draws" />
+          </div>
+          <ul className="max-w-md divide-y divide-border">
+            {expenseCategories?.map((expenseCategory) => (
+              <li key={expenseCategory.id} className="py-2 text-sm">
+                {expenseCategory.name}
+              </li>
+            ))}
+            {expenseCategories?.length === 0 && (
+              <li className="py-2 text-sm text-muted-foreground">No expense categories yet.</li>
             )}
           </ul>
         </SettingsSection>
