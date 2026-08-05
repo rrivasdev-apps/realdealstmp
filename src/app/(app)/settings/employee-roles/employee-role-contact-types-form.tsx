@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -17,6 +18,7 @@ export function EmployeeRoleContactTypesForm({
   initialContactTypeIds: string[]
   contactTypes: LookupOption[]
 }) {
+  const t = useTranslations('Settings')
   const router = useRouter()
   const [contactTypeIds, setContactTypeIds] = useState<string[]>(initialContactTypeIds)
   const [error, setError] = useState<string | null>(null)
@@ -41,7 +43,7 @@ export function EmployeeRoleContactTypesForm({
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('genericError'))
       return
     }
 
@@ -51,7 +53,7 @@ export function EmployeeRoleContactTypesForm({
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3 rounded border border-border p-4">
       <fieldset className="flex flex-col gap-2">
-        <legend className="px-1 text-sm font-medium">Contact Center visibility</legend>
+        <legend className="px-1 text-sm font-medium">{t('contactCenterVisibilityLegend')}</legend>
         {contactTypes.map((option) => (
           <label key={option.id} className="flex items-center gap-1.5 text-sm">
             <input type="checkbox" checked={contactTypeIds.includes(option.id)} onChange={() => toggle(option.id)} />
@@ -67,7 +69,7 @@ export function EmployeeRoleContactTypesForm({
         disabled={submitting}
         className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
       >
-        {submitting ? 'Saving…' : 'Save contact types'}
+        {submitting ? t('savingButton') : t('saveContactTypesButton')}
       </button>
     </form>
   )

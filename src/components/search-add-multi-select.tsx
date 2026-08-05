@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useRef, useState } from 'react'
 
 type Option = { id: string; name: string }
@@ -24,6 +25,7 @@ export function SearchAddMultiSelect({
   onSearch: (query: string) => Promise<Option[]>
   onCreate?: (query: string) => Promise<Option>
 }) {
+  const t = useTranslations('Contacts')
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<Option[]>([])
   const [showResults, setShowResults] = useState(false)
@@ -74,7 +76,7 @@ export function SearchAddMultiSelect({
           onChange={(event) => handleQueryChange(event.target.value)}
           onFocus={() => setShowResults(true)}
           onBlur={() => setTimeout(() => setShowResults(false), 150)}
-          placeholder={`Search ${label.toLowerCase()}…`}
+          placeholder={t('searchPlaceholder', { label: label.toLowerCase() })}
           className="w-full rounded border border-input-border bg-input-background px-2 py-1"
         />
         {showResults && (results.length > 0 || (onCreate && trimmedQuery && !exactMatch)) && (
@@ -98,7 +100,7 @@ export function SearchAddMultiSelect({
                   disabled={creating}
                   className="block w-full px-2 py-1 text-left text-brand-600 hover:bg-muted disabled:opacity-50"
                 >
-                  {creating ? 'Adding…' : `+ Add "${trimmedQuery}"`}
+                  {creating ? t('addingButton') : t('addQuotedButton', { query: trimmedQuery })}
                 </button>
               </li>
             )}

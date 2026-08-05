@@ -1,9 +1,11 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 export function CountryForm() {
+  const t = useTranslations('Settings')
   const router = useRouter()
   const [name, setName] = useState('')
   const [isoCode, setIsoCode] = useState('')
@@ -13,6 +15,12 @@ export function CountryForm() {
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
     setError(null)
+
+    if (!name.trim() || !isoCode.trim()) {
+      setError(t('nameAndCodeRequiredError'))
+      return
+    }
+
     setSubmitting(true)
 
     const response = await fetch('/api/countries', {
@@ -25,7 +33,7 @@ export function CountryForm() {
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('genericError'))
       return
     }
 
@@ -37,25 +45,25 @@ export function CountryForm() {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-end">
       <label className="flex-1 field-label">
-        Name
+        {t('nameLabel')}
         <input
           type="text"
           required
           value={name}
           onChange={(event) => setName(event.target.value)}
-          placeholder="e.g. Canada"
+          placeholder={t('countryNamePlaceholder')}
           className="rounded border border-input-border bg-input-background px-3 py-2"
         />
       </label>
       <label className="w-24 field-label">
-        Code
+        {t('codeLabel')}
         <input
           type="text"
           required
           maxLength={2}
           value={isoCode}
           onChange={(event) => setIsoCode(event.target.value.toUpperCase())}
-          placeholder="CA"
+          placeholder={t('countryCodePlaceholder')}
           className="rounded border border-input-border bg-input-background px-3 py-2 uppercase"
         />
       </label>
@@ -64,7 +72,7 @@ export function CountryForm() {
         disabled={submitting}
         className="rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
       >
-        {submitting ? 'Adding…' : 'Add'}
+        {submitting ? t('addingButton') : t('addButton')}
       </button>
       {error && <p className="text-sm text-danger">{error}</p>}
     </form>

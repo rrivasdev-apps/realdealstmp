@@ -1,9 +1,11 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 export function NewRunForm() {
+  const t = useTranslations('Payroll')
   const router = useRouter()
   const [payPeriodStart, setPayPeriodStart] = useState('')
   const [payPeriodEnd, setPayPeriodEnd] = useState('')
@@ -25,7 +27,7 @@ export function NewRunForm() {
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('genericError'))
       return
     }
 
@@ -36,7 +38,7 @@ export function NewRunForm() {
     <form onSubmit={handleSubmit} className="flex flex-col gap-3 rounded border border-border p-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <label className="field-label">
-          Pay period start
+          {t('payPeriodStartLabel')}
           <input
             type="date"
             required
@@ -46,7 +48,7 @@ export function NewRunForm() {
           />
         </label>
         <label className="field-label">
-          Pay period end
+          {t('payPeriodEndLabel')}
           <input
             type="date"
             required
@@ -64,7 +66,7 @@ export function NewRunForm() {
         disabled={submitting}
         className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
       >
-        {submitting ? 'Creating…' : 'New run'}
+        {submitting ? t('creatingButton') : t('newRunButton')}
       </button>
     </form>
   )

@@ -1,3 +1,7 @@
+import type messages from '@/messages/en.json'
+
+export type SettingsKey = keyof (typeof messages)['Settings']
+
 // Shared shape for anything that renders/edits the 9 capability flags --
 // both employee_roles' own template editor (Settings > Employee Roles) and
 // the per-employee override editor (Team > employee detail) render the same
@@ -14,25 +18,30 @@ export type Capabilities = {
   can_view_financials: boolean
 }
 
-export const CAPABILITY_GROUPS: { label: string; keys: (keyof Capabilities)[] }[] = [
+// id (stable) + labelKey (translated at render time via each consumer's own
+// useTranslations('Settings')) -- not a translated label directly, per the
+// i18n rule that display labels can't double as identifiers/comparison keys.
+export const CAPABILITY_GROUPS: { id: string; labelKey: SettingsKey; keys: (keyof Capabilities)[] }[] = [
   {
-    label: 'RealDeal features',
+    id: 'realdeal-features',
+    labelKey: 'groupRealDealFeatures',
     keys: ['view_whiteboard', 'view_deal_detail', 'edit_deal_detail', 'view_contacts', 'edit_contacts', 'can_manage_settings'],
   },
   {
-    label: 'Employee Center features',
+    id: 'employee-center-features',
+    labelKey: 'groupEmployeeCenterFeatures',
     keys: ['can_manage_team', 'can_manage_payroll', 'can_view_financials'],
   },
 ]
 
-export const CAPABILITY_LABELS: Record<keyof Capabilities, string> = {
-  view_whiteboard: 'View the deal whiteboard',
-  view_deal_detail: 'View a deal’s detail page',
-  edit_deal_detail: 'Edit a deal (including offers, showings, checklist, employees)',
-  view_contacts: 'View Contact Center',
-  edit_contacts: 'Create/edit contacts',
-  can_manage_settings: 'Manage settings (lookups, commission types)',
-  can_manage_team: 'Manage team (invite, edit roles, pay rates)',
-  can_manage_payroll: 'Process payroll (record payments, run payroll)',
-  can_view_financials: "View the whole company's financials on the dashboard",
+export const CAPABILITY_LABEL_KEYS: Record<keyof Capabilities, SettingsKey> = {
+  view_whiteboard: 'capViewWhiteboard',
+  view_deal_detail: 'capViewDealDetail',
+  edit_deal_detail: 'capEditDealDetail',
+  view_contacts: 'capViewContacts',
+  edit_contacts: 'capEditContacts',
+  can_manage_settings: 'capManageSettings',
+  can_manage_team: 'capManageTeam',
+  can_manage_payroll: 'capManagePayroll',
+  can_view_financials: 'capViewFinancials',
 }

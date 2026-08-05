@@ -1,9 +1,11 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 export function EmployeeRoleForm() {
+  const t = useTranslations('Settings')
   const router = useRouter()
   const [name, setName] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -12,6 +14,12 @@ export function EmployeeRoleForm() {
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
     setError(null)
+
+    if (!name.trim()) {
+      setError(t('nameRequiredError'))
+      return
+    }
+
     setSubmitting(true)
 
     const response = await fetch('/api/employee-roles', {
@@ -24,7 +32,7 @@ export function EmployeeRoleForm() {
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('genericError'))
       return
     }
 
@@ -35,13 +43,13 @@ export function EmployeeRoleForm() {
   return (
     <form onSubmit={handleSubmit} className="flex items-end gap-3">
       <label className="flex-1 field-label">
-        Name
+        {t('nameLabel')}
         <input
           type="text"
           required
           value={name}
           onChange={(event) => setName(event.target.value)}
-          placeholder="e.g. Acquisitions Manager"
+          placeholder={t('employeeRoleNamePlaceholder')}
           className="rounded border border-input-border bg-input-background px-3 py-2"
         />
       </label>
@@ -50,7 +58,7 @@ export function EmployeeRoleForm() {
         disabled={submitting}
         className="rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
       >
-        {submitting ? 'Adding…' : 'Add'}
+        {submitting ? t('addingButton') : t('addButton')}
       </button>
       {error && <p className="text-sm text-danger">{error}</p>}
     </form>

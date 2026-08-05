@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 
 import { CurrencyInput } from '@/components/currency-input'
@@ -42,6 +43,7 @@ export function ListingsPanel({
   initialListings: Listing[]
   listingStatuses: LookupOption[]
 }) {
+  const t = useTranslations('Contacts')
   const [listings, setListings] = useState(initialListings)
   const [editingId, setEditingId] = useState<string | 'new' | null>(null)
   const [form, setForm] = useState<ListingFormState>(EMPTY_FORM)
@@ -75,7 +77,7 @@ export function ListingsPanel({
   async function handleSave() {
     if (!contactId) return
     if (!form.address.trim()) {
-      setError('Address is required.')
+      setError(t('listingAddressRequiredError'))
       return
     }
     setSubmitting(true)
@@ -98,7 +100,7 @@ export function ListingsPanel({
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Could not save this listing.')
+      setError(result.error ?? t('listingSaveError'))
       return
     }
 
@@ -128,22 +130,22 @@ export function ListingsPanel({
   }
 
   if (!contactId) {
-    return <p className="text-sm text-muted-foreground">Save this contact first to add listings.</p>
+    return <p className="text-sm text-muted-foreground">{t('saveContactFirstForListings')}</p>
   }
 
   return (
     <div className="flex flex-col gap-3 text-sm">
       <div className="flex items-center justify-between">
-        <span className="font-medium">Listings</span>
+        <span className="font-medium">{t('listingsHeading')}</span>
         {editingId === null && (
           <button type="button" onClick={startAdd} className="text-xs underline">
-            + Add Listing
+            {t('addListingButton')}
           </button>
         )}
       </div>
 
       {listings.length === 0 && editingId === null && (
-        <p className="text-xs text-muted-foreground">No listings yet.</p>
+        <p className="text-xs text-muted-foreground">{t('noListingsYet')}</p>
       )}
 
       <ul className="flex flex-col gap-1">
@@ -167,15 +169,15 @@ export function ListingsPanel({
                 <div className="text-xs text-muted-foreground">
                   {[listing.list_price != null ? currency.format(listing.list_price) : null, listing.statusName]
                     .filter(Boolean)
-                    .join(' · ') || 'No details yet'}
+                    .join(' · ') || t('noDetailsYet')}
                 </div>
               </div>
               <div className="flex gap-2">
                 <button type="button" onClick={() => startEdit(listing)} className="text-xs underline">
-                  Edit
+                  {t('editButton')}
                 </button>
                 <button type="button" onClick={() => handleDelete(listing.id)} className="text-xs text-danger">
-                  Remove
+                  {t('removeButton')}
                 </button>
               </div>
             </li>
@@ -216,10 +218,11 @@ function ListingForm({
   submitting: boolean
   error: string | null
 }) {
+  const t = useTranslations('Contacts')
   return (
     <div className="flex flex-col gap-2.5">
       <label className="field-label">
-        Address
+        {t('addressLabel')}
         <input
           type="text"
           value={form.address}
@@ -228,7 +231,7 @@ function ListingForm({
         />
       </label>
       <label className="field-label">
-        List price
+        {t('listPriceLabel')}
         <CurrencyInput
           value={form.list_price}
           onChange={(value) => setForm((prev) => ({ ...prev, list_price: value }))}
@@ -236,7 +239,7 @@ function ListingForm({
         />
       </label>
       <label className="field-label">
-        Status
+        {t('statusLabel')}
         <select
           value={form.status_id}
           onChange={(event) => setForm((prev) => ({ ...prev, status_id: event.target.value }))}
@@ -251,7 +254,7 @@ function ListingForm({
         </select>
       </label>
       <label className="field-label">
-        Listing date
+        {t('listingDateLabel')}
         <input
           type="date"
           value={form.listing_date}
@@ -260,7 +263,7 @@ function ListingForm({
         />
       </label>
       <label className="field-label">
-        Notes
+        {t('notesLabel')}
         <textarea
           value={form.notes}
           onChange={(event) => setForm((prev) => ({ ...prev, notes: event.target.value }))}
@@ -276,10 +279,10 @@ function ListingForm({
           disabled={submitting}
           className="rounded bg-foreground px-3 py-1 text-xs text-background disabled:opacity-50"
         >
-          {submitting ? 'Saving…' : 'Save'}
+          {submitting ? t('savingButton') : t('saveButton')}
         </button>
         <button type="button" onClick={onCancel} className="text-xs text-muted-foreground underline">
-          Cancel
+          {t('cancelButton')}
         </button>
       </div>
     </div>

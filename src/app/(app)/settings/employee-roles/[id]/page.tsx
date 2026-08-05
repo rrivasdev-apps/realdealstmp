@@ -1,3 +1,4 @@
+import { getTranslations } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 
 import { requireProfile } from '@/lib/supabase/auth'
@@ -9,13 +10,14 @@ import { EmployeeRoleContactTypesForm } from '../employee-role-contact-types-for
 
 export default async function EmployeeRolePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
+  const t = await getTranslations('Settings')
   const profile = await requireProfile()
 
   if (!profile || profile.role !== 'admin') {
     return (
       <div>
-        <h1 className="heading-page">Employee role</h1>
-        <p className="mt-2 text-sm text-muted-foreground">Only admins can manage settings.</p>
+        <h1 className="heading-page">{t('employeeRoleFallbackTitle')}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{t('onlyAdminsMessage')}</p>
       </div>
     )
   }
@@ -48,9 +50,7 @@ export default async function EmployeeRolePage({ params }: { params: Promise<{ i
   return (
     <div>
       <h1 className="heading-page">{employeeRole.name}</h1>
-      <p className="mt-1 text-sm text-muted-foreground">
-        Commission types checked here apply to every employee with this role.
-      </p>
+      <p className="mt-1 text-sm text-muted-foreground">{t('roleCommissionHint')}</p>
 
       <div className="mt-6">
         <EmployeeRoleCapabilitiesForm

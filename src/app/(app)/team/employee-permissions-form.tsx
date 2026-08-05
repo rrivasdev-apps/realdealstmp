@@ -1,9 +1,10 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
-import { CAPABILITY_GROUPS, CAPABILITY_LABELS, type Capabilities } from '@/lib/employee-permissions/labels'
+import { CAPABILITY_GROUPS, CAPABILITY_LABEL_KEYS, type Capabilities } from '@/lib/employee-permissions/labels'
 
 // Direct override of one employee's own permission snapshot -- independent
 // of whatever role(s) they hold (assigning/removing a role, or a role
@@ -16,6 +17,7 @@ export function EmployeePermissionsForm({
   profileId: string
   initialCapabilities: Capabilities
 }) {
+  const t = useTranslations('Settings')
   const router = useRouter()
   const [capabilities, setCapabilities] = useState(initialCapabilities)
   const [error, setError] = useState<string | null>(null)
@@ -54,12 +56,12 @@ export function EmployeePermissionsForm({
         settings -- editing them here overrides that until their roles change again.
       </p>
       {CAPABILITY_GROUPS.map((group) => (
-        <fieldset key={group.label} className="flex flex-col gap-2">
-          <legend className="px-1 text-sm font-medium">{group.label}</legend>
+        <fieldset key={group.id} className="flex flex-col gap-2">
+          <legend className="px-1 text-sm font-medium">{t(group.labelKey)}</legend>
           {group.keys.map((key) => (
             <label key={key} className="flex items-center gap-1.5 text-sm">
               <input type="checkbox" checked={capabilities[key]} onChange={() => toggle(key)} />
-              {CAPABILITY_LABELS[key]}
+              {t(CAPABILITY_LABEL_KEYS[key])}
             </label>
           ))}
         </fieldset>

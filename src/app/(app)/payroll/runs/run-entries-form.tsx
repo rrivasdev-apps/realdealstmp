@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -24,6 +25,7 @@ export function RunEntriesForm({
   initialEntries: Entry[]
   isDraft: boolean
 }) {
+  const t = useTranslations('Payroll')
   const router = useRouter()
   const [hours, setHours] = useState<Record<string, string>>(
     Object.fromEntries(initialEntries.map((entry) => [entry.id, entry.hours_worked?.toString() ?? '']))
@@ -51,7 +53,7 @@ export function RunEntriesForm({
 
     if (!response.ok) {
       const result = await response.json()
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('genericError'))
       return
     }
 
@@ -68,7 +70,7 @@ export function RunEntriesForm({
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('genericError'))
       return
     }
 
@@ -84,12 +86,14 @@ export function RunEntriesForm({
               <div>
                 <span className="font-medium">{entry.profile_name}</span>
                 <div className="text-muted-foreground">
-                  {entry.pay_type === 'hourly' ? `${currency.format(entry.pay_rate ?? 0)}/hr` : 'Salary'}
+                  {entry.pay_type === 'hourly'
+                    ? t('hourlyRateSuffix', { amount: currency.format(entry.pay_rate ?? 0) })
+                    : t('salaryLabel')}
                 </div>
               </div>
               {entry.pay_type === 'hourly' && isDraft ? (
                 <label className="flex items-center gap-2 text-sm">
-                  Hours
+                  {t('hoursLabel')}
                   <input
                     type="number"
                     step="0.01"
@@ -110,9 +114,7 @@ export function RunEntriesForm({
             </li>
           ))}
           {initialEntries.length === 0 && (
-            <li className="px-4 py-3 text-sm text-muted-foreground">
-              No employees with a pay rate set yet — add one on the Team page.
-            </li>
+            <li className="px-4 py-3 text-sm text-muted-foreground">{t('noEntriesYet')}</li>
           )}
         </ul>
 
@@ -125,7 +127,7 @@ export function RunEntriesForm({
               disabled={submitting}
               className="w-fit rounded border border-border px-4 py-2 text-sm disabled:opacity-50"
             >
-              {submitting ? 'Saving…' : 'Save hours'}
+              {submitting ? t('savingButton') : t('saveHoursButton')}
             </button>
             <button
               type="button"
@@ -133,7 +135,7 @@ export function RunEntriesForm({
               disabled={submitting}
               className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
             >
-              {submitting ? 'Finalizing…' : 'Finalize run'}
+              {submitting ? t('finalizingButton') : t('finalizeRunButton')}
             </button>
           </div>
         )}

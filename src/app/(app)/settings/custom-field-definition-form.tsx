@@ -1,17 +1,18 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
-const FIELD_TYPE_LABELS: Record<string, string> = {
-  text: 'Text',
-  number: 'Number',
-  date: 'Date',
-  checkbox: 'Checkbox',
-  select: 'Dropdown',
-}
-
 export function CustomFieldDefinitionForm() {
+  const t = useTranslations('Settings')
+  const FIELD_TYPE_LABELS: Record<string, string> = {
+    text: t('fieldTypeText'),
+    number: t('fieldTypeNumber'),
+    date: t('fieldTypeDate'),
+    checkbox: t('fieldTypeCheckbox'),
+    select: t('fieldTypeSelect'),
+  }
   const router = useRouter()
   const [name, setName] = useState('')
   const [fieldType, setFieldType] = useState('text')
@@ -22,6 +23,12 @@ export function CustomFieldDefinitionForm() {
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
     setError(null)
+
+    if (!name.trim()) {
+      setError(t('nameRequiredError'))
+      return
+    }
+
     setSubmitting(true)
 
     const options = optionsText
@@ -43,7 +50,7 @@ export function CustomFieldDefinitionForm() {
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('genericError'))
       return
     }
 
@@ -57,19 +64,19 @@ export function CustomFieldDefinitionForm() {
     <form onSubmit={handleSubmit} className="flex flex-col gap-3 rounded border border-border p-4">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <label className="field-label">
-          Name
+          {t('nameLabel')}
           <input
             type="text"
             required
             value={name}
             onChange={(event) => setName(event.target.value)}
-            placeholder="e.g. HOA Name"
+            placeholder={t('customFieldNamePlaceholder')}
             className="rounded border border-input-border bg-input-background px-3 py-2"
           />
         </label>
 
         <label className="field-label">
-          Type
+          {t('typeLabel')}
           <select
             value={fieldType}
             onChange={(event) => setFieldType(event.target.value)}
@@ -86,12 +93,12 @@ export function CustomFieldDefinitionForm() {
 
       {fieldType === 'select' && (
         <label className="field-label">
-          Options (one per line)
+          {t('optionsLabel')}
           <textarea
             value={optionsText}
             onChange={(event) => setOptionsText(event.target.value)}
             rows={3}
-            placeholder={'Option A\nOption B'}
+            placeholder={t('optionsPlaceholder')}
             className="rounded border border-input-border bg-input-background px-3 py-2"
           />
         </label>
@@ -104,7 +111,7 @@ export function CustomFieldDefinitionForm() {
         disabled={submitting}
         className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
       >
-        {submitting ? 'Adding…' : 'Add custom field'}
+        {submitting ? t('addingButton') : t('addCustomFieldButton')}
       </button>
     </form>
   )

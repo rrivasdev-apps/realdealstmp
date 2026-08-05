@@ -1,3 +1,4 @@
+import { getTranslations } from 'next-intl/server'
 import Link from 'next/link'
 
 import { requirePermission } from '@/lib/supabase/auth'
@@ -9,15 +10,21 @@ import { PayrollPaymentForm } from './payroll-payment-form'
 const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
 
 export default async function PayrollPage() {
+  const t = await getTranslations('Payroll')
   const profile = await requirePermission('can_manage_payroll')
 
   if (!profile || !profile.company_id) {
     return (
       <div>
-        <h1 className="heading-page">Payroll</h1>
-        <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to manage payroll.</p>
+        <h1 className="heading-page">{t('title')}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{t('noPermission')}</p>
       </div>
     )
+  }
+
+  const STATUS_LABELS: Record<string, string> = {
+    draft: t('statusDraft'),
+    finalized: t('statusFinalized'),
   }
 
   const supabase = await createClient()
@@ -39,17 +46,17 @@ export default async function PayrollPage() {
 
   return (
     <div>
-      <h1 className="heading-page">Payroll</h1>
+      <h1 className="heading-page">{t('title')}</h1>
 
       <section className="mt-6">
-        <h2 className="heading-subsection">Record a payroll payment</h2>
+        <h2 className="heading-subsection">{t('recordPaymentHeading')}</h2>
         <div className="mt-2 max-w-xl">
           <PayrollPaymentForm employees={employees ?? []} />
         </div>
       </section>
 
       <section className="mt-8">
-        <h2 className="heading-subsection">Payroll history</h2>
+        <h2 className="heading-subsection">{t('historyHeading')}</h2>
         <ul className="mt-2 divide-y divide-border rounded-lg border border-border bg-background">
           {(payments ?? []).map((payment) => (
             <li
@@ -57,7 +64,7 @@ export default async function PayrollPage() {
               className="flex flex-col gap-1 px-4 py-3 text-sm sm:flex-row sm:items-center sm:justify-between"
             >
               <div>
-                <span className="font-medium">{payment.profiles?.name ?? 'Unknown'}</span>
+                <span className="font-medium">{payment.profiles?.name ?? t('unknownEmployee')}</span>
                 <div className="text-muted-foreground">
                   {payment.pay_period_start} – {payment.pay_period_end}
                 </div>
@@ -66,13 +73,13 @@ export default async function PayrollPage() {
             </li>
           ))}
           {(payments ?? []).length === 0 && (
-            <li className="px-4 py-3 text-sm text-muted-foreground">No payroll payments recorded yet.</li>
+            <li className="px-4 py-3 text-sm text-muted-foreground">{t('noPaymentsYet')}</li>
           )}
         </ul>
       </section>
 
       <section className="mt-8">
-        <h2 className="heading-subsection">Payroll runs</h2>
+        <h2 className="heading-subsection">{t('runsHeading')}</h2>
         {hasEmployeeCenter ? (
           <>
             <div className="mt-2 max-w-xl">
@@ -84,19 +91,18 @@ export default async function PayrollPage() {
                   <Link href={`/payroll/runs/${run.id}`} className="font-medium hover:underline">
                     {run.pay_period_start} – {run.pay_period_end}
                   </Link>
-                  <span className="rounded bg-muted px-2 py-1 text-xs font-medium capitalize">{run.status}</span>
+                  <span className="rounded bg-muted px-2 py-1 text-xs font-medium">
+                    {STATUS_LABELS[run.status] ?? run.status}
+                  </span>
                 </li>
               ))}
               {(runs ?? []).length === 0 && (
-                <li className="px-4 py-3 text-sm text-muted-foreground">No payroll runs yet.</li>
+                <li className="px-4 py-3 text-sm text-muted-foreground">{t('noRunsYet')}</li>
               )}
             </ul>
           </>
         ) : (
-          <p className="mt-2 text-sm text-muted-foreground">
-            Full payroll runs (batch pay periods, hours entry, one-click finalize) are available on the Employee
-            Center plan.
-          </p>
+          <p className="mt-2 text-sm text-muted-foreground">{t('employeeCenterOnlyMessage')}</p>
         )}
       </section>
     </div>

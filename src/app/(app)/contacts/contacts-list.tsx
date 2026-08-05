@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
 
@@ -18,6 +19,7 @@ type Contact = {
 }
 
 export function ContactsList({ contacts, contactTypes }: { contacts: Contact[]; contactTypes: ContactType[] }) {
+  const t = useTranslations('Contacts')
   const [activeTypeId, setActiveTypeId] = useState<string>('all')
   const [query, setQuery] = useState('')
 
@@ -56,7 +58,7 @@ export function ContactsList({ contacts, contactTypes }: { contacts: Contact[]; 
             activeTypeId === 'all' ? 'border-brand-600 bg-brand-600/5' : 'border-border bg-background hover:bg-muted/50'
           }`}
         >
-          <div className="text-xs font-medium uppercase tracking-wide text-foreground">All</div>
+          <div className="text-xs font-medium uppercase tracking-wide text-foreground">{t('allFilter')}</div>
           <div className="mt-1 text-xl font-semibold text-foreground">{contacts.length}</div>
         </button>
         {contactTypes.map((type) => {
@@ -82,7 +84,7 @@ export function ContactsList({ contacts, contactTypes }: { contacts: Contact[]; 
         type="search"
         value={query}
         onChange={(event) => setQuery(event.target.value)}
-        placeholder="Filter by name, type, phone, or email…"
+        placeholder={t('filterPlaceholder')}
         className="mt-4 w-full max-w-md rounded border border-input-border bg-input-background px-3 py-2 text-sm"
       />
 
@@ -94,13 +96,13 @@ export function ContactsList({ contacts, contactTypes }: { contacts: Contact[]; 
             </Link>
             <div className="text-xs text-muted-foreground">
               {[contact.typeNames.join(', '), contact.phones[0], contact.emails[0]].filter(Boolean).join(' · ') ||
-                'No details yet'}
+                t('noDetailsYet')}
             </div>
           </li>
         ))}
         {filtered.length === 0 && (
           <li className="px-4 py-1.5 text-sm text-muted-foreground">
-            {contacts.length === 0 ? 'No contacts yet.' : 'No contacts match this filter.'}
+            {contacts.length === 0 ? t('noContactsYet') : t('noContactsMatchFilter')}
           </li>
         )}
       </ul>

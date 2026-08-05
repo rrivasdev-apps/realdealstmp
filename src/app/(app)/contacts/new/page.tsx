@@ -1,15 +1,18 @@
+import { getTranslations } from 'next-intl/server'
+
 import { requirePermission } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
 import { ContactForm } from '../contact-form'
 
 export default async function NewContactPage() {
+  const t = await getTranslations('Contacts')
   const profile = await requirePermission('edit_contacts')
   if (!profile) {
     return (
       <div>
-        <h1 className="heading-page">New contact</h1>
-        <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to create contacts.</p>
+        <h1 className="heading-page">{t('newContactTitle')}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{t('noPermissionCreate')}</p>
       </div>
     )
   }
@@ -51,7 +54,7 @@ export default async function NewContactPage() {
 
   return (
     <div>
-      <h1 className="heading-page">New contact</h1>
+      <h1 className="heading-page">{t('newContactTitle')}</h1>
       <div className="mt-6">
         <ContactForm
           mode="create"

@@ -1,3 +1,4 @@
+import { getTranslations } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 
 import { requirePermission } from '@/lib/supabase/auth'
@@ -7,13 +8,14 @@ import { ContactForm } from '../contact-form'
 
 export default async function EditContactPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
+  const t = await getTranslations('Contacts')
 
   const profile = await requirePermission('view_contacts')
   if (!profile) {
     return (
       <div>
-        <h1 className="heading-page">Contact</h1>
-        <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to view this contact.</p>
+        <h1 className="heading-page">{t('contactFallbackTitle')}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{t('noPermissionViewOne')}</p>
       </div>
     )
   }
@@ -99,7 +101,7 @@ export default async function EditContactPage({ params }: { params: Promise<{ id
 
   return (
     <div>
-      <h1 className="heading-page">Edit contact</h1>
+      <h1 className="heading-page">{t('editContactTitle')}</h1>
       <div className="mt-6">
         <ContactForm
           mode="edit"
@@ -146,7 +148,7 @@ export default async function EditContactPage({ params }: { params: Promise<{ id
           offers={(offers ?? []).map((offer) => ({
             id: offer.id,
             dealId: offer.deal_id,
-            dealAddress: offer.deals?.address ?? 'Unknown deal',
+            dealAddress: offer.deals?.address ?? t('unknownDeal'),
             offerPrice: offer.offer_price,
             statusName: offer.offer_statuses?.name ?? null,
           }))}

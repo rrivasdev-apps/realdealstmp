@@ -1,19 +1,9 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 
 import { CommissionTypeForm } from './commission-type-form'
-
-const BASIS_LABELS: Record<string, string> = {
-  contract_price: 'Contract price',
-  gross_profit: 'Gross profit',
-  current_selling_price: 'Current selling price',
-}
-
-const CATEGORY_LABELS: Record<string, string> = {
-  flat: 'Flat fee',
-  percentage: 'Percentage',
-}
 
 type CommissionType = {
   id: string
@@ -25,6 +15,16 @@ type CommissionType = {
 }
 
 export function CommissionTypeListItem({ commissionType }: { commissionType: CommissionType }) {
+  const t = useTranslations('Settings')
+  const BASIS_LABELS: Record<string, string> = {
+    contract_price: t('basisContractPrice'),
+    gross_profit: t('basisGrossProfit'),
+    current_selling_price: t('basisCurrentSellingPrice'),
+  }
+  const CATEGORY_LABELS: Record<string, string> = {
+    flat: t('categoryFlat'),
+    percentage: t('categoryPercentage'),
+  }
   const [editing, setEditing] = useState(false)
 
   if (editing) {
@@ -60,7 +60,7 @@ export function CommissionTypeListItem({ commissionType }: { commissionType: Com
             {CATEGORY_LABELS[commissionType.category] ?? commissionType.category}
           </span>
           <button type="button" onClick={() => setEditing(true)} className="text-xs underline">
-            Edit
+            {t('editButton')}
           </button>
         </span>
       </div>

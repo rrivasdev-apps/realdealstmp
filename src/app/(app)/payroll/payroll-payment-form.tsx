@@ -1,11 +1,13 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 type Employee = { id: string; name: string }
 
 export function PayrollPaymentForm({ employees }: { employees: Employee[] }) {
+  const t = useTranslations('Payroll')
   const router = useRouter()
   const [profileId, setProfileId] = useState('')
   const [amount, setAmount] = useState('')
@@ -34,7 +36,7 @@ export function PayrollPaymentForm({ employees }: { employees: Employee[] }) {
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('genericError'))
       return
     }
 
@@ -49,14 +51,14 @@ export function PayrollPaymentForm({ employees }: { employees: Employee[] }) {
     <form onSubmit={handleSubmit} className="flex flex-col gap-3 rounded border border-border p-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <label className="field-label">
-          Employee
+          {t('employeeLabel')}
           <select
             required
             value={profileId}
             onChange={(event) => setProfileId(event.target.value)}
             className="rounded border border-input-border bg-input-background px-3 py-2"
           >
-            <option value="">Choose an employee…</option>
+            <option value="">{t('chooseEmployeePlaceholder')}</option>
             {employees.map((employee) => (
               <option key={employee.id} value={employee.id}>
                 {employee.name}
@@ -66,7 +68,7 @@ export function PayrollPaymentForm({ employees }: { employees: Employee[] }) {
         </label>
 
         <label className="field-label">
-          Amount
+          {t('amountLabel')}
           <input
             type="number"
             step="0.01"
@@ -78,7 +80,7 @@ export function PayrollPaymentForm({ employees }: { employees: Employee[] }) {
         </label>
 
         <label className="field-label">
-          Pay period start
+          {t('payPeriodStartLabel')}
           <input
             type="date"
             required
@@ -89,7 +91,7 @@ export function PayrollPaymentForm({ employees }: { employees: Employee[] }) {
         </label>
 
         <label className="field-label">
-          Pay period end
+          {t('payPeriodEndLabel')}
           <input
             type="date"
             required
@@ -107,7 +109,7 @@ export function PayrollPaymentForm({ employees }: { employees: Employee[] }) {
         disabled={submitting}
         className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
       >
-        {submitting ? 'Recording…' : 'Record payment'}
+        {submitting ? t('recordingButton') : t('recordPaymentButton')}
       </button>
     </form>
   )

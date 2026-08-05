@@ -1,14 +1,10 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
-import {
-  COMMISSION_PAY_FREQUENCY_LABELS,
-  PAYMENT_TYPE_LABELS,
-  SALARY_PAY_FREQUENCY_LABELS,
-  SALARY_TYPE_LABELS,
-} from '@/lib/pay-periods/labels'
+import { getPayPeriodLabels } from '@/lib/pay-periods/labels'
 
 export type PayPeriodFormValues = {
   id?: string
@@ -34,6 +30,9 @@ export function PayPeriodForm({
   mode: 'create' | 'edit'
   initialValues: PayPeriodFormValues
 }) {
+  const t = useTranslations('Settings')
+  const { PAYMENT_TYPE_LABELS, SALARY_PAY_FREQUENCY_LABELS, SALARY_TYPE_LABELS, COMMISSION_PAY_FREQUENCY_LABELS } =
+    getPayPeriodLabels(t)
   const router = useRouter()
   const [values, setValues] = useState(initialValues)
   const [error, setError] = useState<string | null>(null)
@@ -49,6 +48,12 @@ export function PayPeriodForm({
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
     setError(null)
+
+    if (!values.name.trim()) {
+      setError(t('nameRequiredError'))
+      return
+    }
+
     setSubmitting(true)
 
     const body = {
@@ -71,7 +76,7 @@ export function PayPeriodForm({
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('genericError'))
       return
     }
 
@@ -85,19 +90,19 @@ export function PayPeriodForm({
     <form onSubmit={handleSubmit} className="flex max-w-xl flex-col gap-4 rounded border border-border p-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <label className="field-label">
-          Pay period name
+          {t('payPeriodNameLabel')}
           <input
             type="text"
             required
             value={values.name}
             onChange={(event) => set('name', event.target.value)}
-            placeholder="e.g. Weekly Salary"
+            placeholder={t('payPeriodNamePlaceholder')}
             className="rounded border border-input-border bg-input-background px-3 py-2"
           />
         </label>
 
         <label className="field-label">
-          Payment type
+          {t('paymentTypeLabel')}
           <select
             required
             value={values.paymentType}
@@ -116,7 +121,7 @@ export function PayPeriodForm({
         {needsSalary && (
           <>
             <label className="field-label">
-              Salary pay frequency
+              {t('salaryPayFrequencyLabel')}
               <select
                 required
                 value={values.salaryPayFrequency}
@@ -133,7 +138,7 @@ export function PayPeriodForm({
             </label>
 
             <label className="field-label">
-              Salary type
+              {t('salaryTypeLabel')}
               <select
                 required
                 value={values.salaryType}
@@ -147,16 +152,14 @@ export function PayPeriodForm({
                   </option>
                 ))}
               </select>
-              <span className="text-xs text-muted-foreground">
-                Fixed looks up the employee&apos;s salary; hourly looks up their hourly rate.
-              </span>
+              <span className="text-xs text-muted-foreground">{t('salaryTypeHint')}</span>
             </label>
           </>
         )}
 
         {needsCommission && (
           <label className="field-label">
-            Commission pay frequency
+            {t('commissionPayFrequencyLabel')}
             <select
               required
               value={values.commissionPayFrequency}
@@ -175,7 +178,7 @@ export function PayPeriodForm({
 
         {mode === 'create' ? (
           <label className="field-label">
-            First payday
+            {t('firstPaydayLabel')}
             <input
               type="date"
               required
@@ -187,17 +190,17 @@ export function PayPeriodForm({
         ) : (
           <>
             <label className="field-label">
-              First payday
+              {t('firstPaydayLabel')}
               <input
                 type="date"
                 disabled
                 value={values.firstPayday}
                 className="rounded border border-input-border bg-muted px-3 py-2 text-muted-foreground"
               />
-              <span className="text-xs text-muted-foreground">Set once at creation, not editable.</span>
+              <span className="text-xs text-muted-foreground">{t('firstPaydayHint')}</span>
             </label>
             <label className="field-label">
-              Next payday
+              {t('nextPaydayLabel')}
               <input
                 type="date"
                 required
@@ -211,7 +214,7 @@ export function PayPeriodForm({
       </div>
 
       <label className="field-label">
-        Comments / observations
+        {t('commentsLabel')}
         <textarea
           required
           value={values.comments}
@@ -228,7 +231,7 @@ export function PayPeriodForm({
         disabled={submitting}
         className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
       >
-        {submitting ? 'Saving…' : mode === 'create' ? 'Create pay period' : 'Save changes'}
+        {submitting ? t('savingButton') : mode === 'create' ? t('createPayPeriodButton') : t('saveChangesButton')}
       </button>
     </form>
   )

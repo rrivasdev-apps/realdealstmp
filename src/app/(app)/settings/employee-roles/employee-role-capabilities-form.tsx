@@ -1,9 +1,10 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
-import { CAPABILITY_GROUPS, CAPABILITY_LABELS, type Capabilities } from '@/lib/employee-permissions/labels'
+import { CAPABILITY_GROUPS, CAPABILITY_LABEL_KEYS, type Capabilities } from '@/lib/employee-permissions/labels'
 
 // Admin-only, same as the route this posts to -- CLAUDE.md/requirePermission
 // deliberately keeps employee_roles' own capability flags off the
@@ -16,6 +17,7 @@ export function EmployeeRoleCapabilitiesForm({
   employeeRoleId: string
   initialCapabilities: Capabilities
 }) {
+  const t = useTranslations('Settings')
   const router = useRouter()
   const [capabilities, setCapabilities] = useState(initialCapabilities)
   const [error, setError] = useState<string | null>(null)
@@ -34,7 +36,7 @@ export function EmployeeRoleCapabilitiesForm({
     const result = await response.json()
 
     if (!response.ok) {
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('genericError'))
       return
     }
 
@@ -43,9 +45,7 @@ export function EmployeeRoleCapabilitiesForm({
     // employee currently assigned it -- overwriting their individually-tuned
     // permissions is a real, hard-to-notice side effect otherwise.
     if (result.needsConfirmation) {
-      const proceed = window.confirm(
-        `This role is assigned to ${result.affectedCount} employee${result.affectedCount === 1 ? '' : 's'}. Saving will overwrite their individual permissions with these new settings. Continue?`
-      )
+      const proceed = window.confirm(t('confirmOverwriteMessage', { count: result.affectedCount }))
       if (proceed) {
         await submit(true)
       }
@@ -66,12 +66,12 @@ export function EmployeeRoleCapabilitiesForm({
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4 rounded border border-border p-4">
       {CAPABILITY_GROUPS.map((group) => (
-        <fieldset key={group.label} className="flex flex-col gap-2">
-          <legend className="px-1 text-sm font-medium">{group.label}</legend>
+        <fieldset key={group.id} className="flex flex-col gap-2">
+          <legend className="px-1 text-sm font-medium">{t(group.labelKey)}</legend>
           {group.keys.map((key) => (
             <label key={key} className="flex items-center gap-1.5 text-sm">
               <input type="checkbox" checked={capabilities[key]} onChange={() => toggle(key)} />
-              {CAPABILITY_LABELS[key]}
+              {t(CAPABILITY_LABEL_KEYS[key])}
             </label>
           ))}
         </fieldset>
@@ -84,7 +84,7 @@ export function EmployeeRoleCapabilitiesForm({
         disabled={submitting}
         className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
       >
-        {submitting ? 'Saving…' : 'Save capabilities'}
+        {submitting ? t('savingButton') : t('saveCapabilitiesButton')}
       </button>
     </form>
   )

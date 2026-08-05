@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
@@ -14,6 +15,7 @@ type City = { id: string; name: string }
 // Markets does (would bloat the page). Search-driven instead, same debounced-query
 // pattern as the deal-form's city combobox and the Places autocomplete dropdown.
 export function CitiesSection({ countries, defaultCountryId }: { countries: Country[]; defaultCountryId: string | null }) {
+  const t = useTranslations('Settings')
   const router = useRouter()
   const [countryId, setCountryId] = useState(defaultCountryId ?? countries[0]?.id ?? '')
   const [states, setStates] = useState<State[]>([])
@@ -82,6 +84,12 @@ export function CitiesSection({ countries, defaultCountryId }: { countries: Coun
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
     setError(null)
+
+    if (!name.trim()) {
+      setError(t('nameRequiredError'))
+      return
+    }
+
     setSubmitting(true)
 
     const response = await fetch('/api/cities', {
@@ -93,7 +101,7 @@ export function CitiesSection({ countries, defaultCountryId }: { countries: Coun
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('genericError'))
       return
     }
 
@@ -106,13 +114,13 @@ export function CitiesSection({ countries, defaultCountryId }: { countries: Coun
     <div className="flex flex-col gap-4">
       <div className="grid max-w-md grid-cols-1 gap-3 sm:grid-cols-2">
         <label className="field-label">
-          Country
+          {t('countryLabel')}
           <select
             value={countryId}
             onChange={(event) => setCountryId(event.target.value)}
             className="rounded border border-input-border bg-input-background px-3 py-2"
           >
-            {countries.length === 0 && <option value="">No countries yet</option>}
+            {countries.length === 0 && <option value="">{t('noCountriesYetOption')}</option>}
             {countries.map((country) => (
               <option key={country.id} value={country.id}>
                 {country.name}
@@ -121,14 +129,14 @@ export function CitiesSection({ countries, defaultCountryId }: { countries: Coun
           </select>
         </label>
         <label className="field-label">
-          State
+          {t('stateLabel')}
           <select
             value={stateId}
             onChange={(event) => setStateId(event.target.value)}
             disabled={!countryId}
             className="rounded border border-input-border bg-input-background px-3 py-2 disabled:opacity-50"
           >
-            <option value="">{statesLoading ? 'Loading…' : 'Select…'}</option>
+            <option value="">{statesLoading ? t('loadingLabel') : t('selectPlaceholder')}</option>
             {states.map((state) => (
               <option key={state.id} value={state.id}>
                 {state.name}
@@ -140,14 +148,14 @@ export function CitiesSection({ countries, defaultCountryId }: { countries: Coun
 
       <form onSubmit={handleSubmit} className="flex max-w-md flex-col items-stretch gap-3 sm:flex-row sm:items-end">
         <label className="flex-1 field-label">
-          Add a city
+          {t('addCityLabel')}
           <input
             type="text"
             required
             disabled={!stateId}
             value={name}
             onChange={(event) => setName(event.target.value)}
-            placeholder="e.g. Plano"
+            placeholder={t('cityPlaceholder')}
             className="rounded border border-input-border bg-input-background px-3 py-2 disabled:opacity-50"
           />
         </label>
@@ -156,7 +164,7 @@ export function CitiesSection({ countries, defaultCountryId }: { countries: Coun
           disabled={submitting || !stateId}
           className="rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
         >
-          {submitting ? 'Adding…' : 'Add'}
+          {submitting ? t('addingButton') : t('addButton')}
         </button>
       </form>
       {error && <p className="text-sm text-danger">{error}</p>}
@@ -166,8 +174,8 @@ export function CitiesSection({ countries, defaultCountryId }: { countries: Coun
           <ListImportForm
             endpoint="/api/cities/import"
             extraBody={{ state_id: stateId }}
-            placeholder={'Plano\nFrisco\nMcKinney'}
-            hint="One city name per line."
+            placeholder={t('citiesImportPlaceholder')}
+            hint={t('citiesImportHint')}
             onImported={() => runSearch(stateId, query)}
           />
         </div>
@@ -175,20 +183,20 @@ export function CitiesSection({ countries, defaultCountryId }: { countries: Coun
 
       {stateId && (
         <label className="max-w-md field-label">
-          Search this state&apos;s cities
+          {t('searchCitiesLabel')}
           <input
             type="text"
             value={query}
             onChange={(event) => handleQueryChange(event.target.value)}
-            placeholder="Start typing a city name…"
+            placeholder={t('searchCitiesPlaceholder')}
             className="rounded border border-input-border bg-input-background px-3 py-2"
           />
         </label>
       )}
 
       <ul className="max-w-md divide-y divide-border">
-        {!stateId && <li className="py-2 text-sm text-muted-foreground">Choose a state to see its cities.</li>}
-        {stateId && searching && <li className="py-2 text-sm text-muted-foreground">Searching…</li>}
+        {!stateId && <li className="py-2 text-sm text-muted-foreground">{t('chooseStateFirst')}</li>}
+        {stateId && searching && <li className="py-2 text-sm text-muted-foreground">{t('searchingLabel')}</li>}
         {stateId &&
           !searching &&
           results.map((city) => (
@@ -198,7 +206,7 @@ export function CitiesSection({ countries, defaultCountryId }: { countries: Coun
           ))}
         {stateId && !searching && results.length === 0 && (
           <li className="py-2 text-sm text-muted-foreground">
-            {query.trim() ? 'No matching cities.' : 'No cities yet -- add one above.'}
+            {query.trim() ? t('noMatchingCities') : t('noCitiesYetAddOne')}
           </li>
         )}
       </ul>

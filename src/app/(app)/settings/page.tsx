@@ -1,9 +1,10 @@
+import { getTranslations } from 'next-intl/server'
 import Link from 'next/link'
 
 import { ListImportForm } from '@/components/list-import-form'
 import { SettingsSection } from '@/components/settings-section'
 import { SimpleListForm } from '@/components/simple-list-form'
-import { COMMISSION_PAY_FREQUENCY_LABELS, SALARY_PAY_FREQUENCY_LABELS } from '@/lib/pay-periods/labels'
+import { getPayPeriodLabels } from '@/lib/pay-periods/labels'
 import { requirePermission } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
@@ -18,14 +19,6 @@ import { EmployeeRoleForm } from './employee-role-form'
 import { PayPeriodForm, type PayPeriodFormValues } from './pay-period-form'
 import { StatesSection } from './states-section'
 
-const FIELD_TYPE_LABELS: Record<string, string> = {
-  text: 'Text',
-  number: 'Number',
-  date: 'Date',
-  checkbox: 'Checkbox',
-  select: 'Dropdown',
-}
-
 const EMPTY_PAY_PERIOD: PayPeriodFormValues = {
   name: '',
   paymentType: '',
@@ -38,16 +31,26 @@ const EMPTY_PAY_PERIOD: PayPeriodFormValues = {
 }
 
 export default async function SettingsPage() {
+  const t = await getTranslations('Settings')
   const profile = await requirePermission('can_manage_settings')
 
   if (!profile) {
     return (
       <div>
-        <h1 className="heading-page">Settings</h1>
-        <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to manage settings.</p>
+        <h1 className="heading-page">{t('title')}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{t('noPermission')}</p>
       </div>
     )
   }
+
+  const FIELD_TYPE_LABELS: Record<string, string> = {
+    text: t('fieldTypeText'),
+    number: t('fieldTypeNumber'),
+    date: t('fieldTypeDate'),
+    checkbox: t('fieldTypeCheckbox'),
+    select: t('fieldTypeSelect'),
+  }
+  const { SALARY_PAY_FREQUENCY_LABELS, COMMISSION_PAY_FREQUENCY_LABELS } = getPayPeriodLabels(t)
 
   const supabase = await createClient()
   const [
@@ -92,15 +95,13 @@ export default async function SettingsPage() {
 
   return (
     <div>
-      <h1 className="heading-page">Settings</h1>
+      <h1 className="heading-page">{t('title')}</h1>
 
       <div className="mt-6">
-        <SettingsSection id="markets" title="Markets">
-          <p className="text-sm text-muted-foreground">
-            The markets deals can be assigned to. Seeded with a default market at signup.
-          </p>
+        <SettingsSection id="markets" title={t('marketsTitle')}>
+          <p className="text-sm text-muted-foreground">{t('marketsDescription')}</p>
           <div className="max-w-md">
-            <SimpleListForm endpoint="/api/markets" placeholder="e.g. Dallas-Fort Worth" />
+            <SimpleListForm endpoint="/api/markets" placeholder={t('marketsPlaceholder')} />
           </div>
           <ul className="max-w-md divide-y divide-border">
             {markets?.map((market) => (
@@ -108,23 +109,20 @@ export default async function SettingsPage() {
                 {market.name}
               </li>
             ))}
-            {markets?.length === 0 && <li className="py-2 text-sm text-muted-foreground">No markets yet.</li>}
+            {markets?.length === 0 && <li className="py-2 text-sm text-muted-foreground">{t('noMarketsYet')}</li>}
           </ul>
         </SettingsSection>
 
-        <SettingsSection id="countries" title="Countries">
-          <p className="text-sm text-muted-foreground">
-            Standardized country list used for deal addresses, so state/city segmentation and reporting stay
-            consistent instead of relying on free text. Seeded automatically at signup.
-          </p>
+        <SettingsSection id="countries" title={t('countriesTitle')}>
+          <p className="text-sm text-muted-foreground">{t('countriesDescription')}</p>
           <div className="max-w-md">
             <CountryForm />
           </div>
           <div className="max-w-md">
             <ListImportForm
               endpoint="/api/countries/import"
-              placeholder={'Mexico,MX\nCanada,CA'}
-              hint='One "Name,Code" pair per line.'
+              placeholder={t('countriesImportPlaceholder')}
+              hint={t('countriesImportHint')}
             />
           </div>
           <ul className="max-w-md divide-y divide-border">
@@ -134,39 +132,29 @@ export default async function SettingsPage() {
                 <span className="ml-2 text-xs text-muted-foreground">{country.iso_code}</span>
               </li>
             ))}
-            {countries?.length === 0 && <li className="py-2 text-sm text-muted-foreground">No countries yet.</li>}
+            {countries?.length === 0 && <li className="py-2 text-sm text-muted-foreground">{t('noCountriesYet')}</li>}
           </ul>
         </SettingsSection>
 
-        <SettingsSection id="states" title="States">
-          <p className="text-sm text-muted-foreground">
-            States/provinces for each country above. Every US company is pre-loaded with all 50 states + DC.
-          </p>
+        <SettingsSection id="states" title={t('statesTitle')}>
+          <p className="text-sm text-muted-foreground">{t('statesDescription')}</p>
           <StatesSection countries={countries ?? []} defaultCountryId={company?.default_country_id ?? null} />
         </SettingsSection>
 
-        <SettingsSection id="cities" title="Cities">
-          <p className="text-sm text-muted-foreground">
-            Cities within each state above. US companies are pre-loaded with a real dataset of US cities/towns
-            (US Census Gazetteer) -- search below rather than a full list, since there can be thousands.
-          </p>
+        <SettingsSection id="cities" title={t('citiesTitle')}>
+          <p className="text-sm text-muted-foreground">{t('citiesDescription')}</p>
           <CitiesSection countries={countries ?? []} defaultCountryId={company?.default_country_id ?? null} />
         </SettingsSection>
 
-        <SettingsSection id="default-country" title="Default Country">
-          <p className="text-sm text-muted-foreground">
-            The country pre-selected when starting a new deal&apos;s address. Set from your home country at
-            signup -- change it here if that ever needs to change.
-          </p>
+        <SettingsSection id="default-country" title={t('defaultCountryTitle')}>
+          <p className="text-sm text-muted-foreground">{t('defaultCountryDescription')}</p>
           <DefaultCountryForm countries={countries ?? []} defaultCountryId={company?.default_country_id ?? null} />
         </SettingsSection>
 
-        <SettingsSection id="deal-types" title="Deal Types">
-          <p className="text-sm text-muted-foreground">
-            The deal type options shown on the Deal Info section (Wholesale, Flip, etc.).
-          </p>
+        <SettingsSection id="deal-types" title={t('dealTypesTitle')}>
+          <p className="text-sm text-muted-foreground">{t('dealTypesDescription')}</p>
           <div className="max-w-md">
-            <SimpleListForm endpoint="/api/deal-types" placeholder="e.g. Novation" />
+            <SimpleListForm endpoint="/api/deal-types" placeholder={t('dealTypesPlaceholder')} />
           </div>
           <ul className="max-w-md divide-y divide-border">
             {dealTypes?.map((dealType) => (
@@ -174,14 +162,14 @@ export default async function SettingsPage() {
                 {dealType.name}
               </li>
             ))}
-            {dealTypes?.length === 0 && <li className="py-2 text-sm text-muted-foreground">No deal types yet.</li>}
+            {dealTypes?.length === 0 && <li className="py-2 text-sm text-muted-foreground">{t('noDealTypesYet')}</li>}
           </ul>
         </SettingsSection>
 
-        <SettingsSection id="lead-sources" title="Lead Sources">
-          <p className="text-sm text-muted-foreground">Where deals are attributed as coming from.</p>
+        <SettingsSection id="lead-sources" title={t('leadSourcesTitle')}>
+          <p className="text-sm text-muted-foreground">{t('leadSourcesDescription')}</p>
           <div className="max-w-md">
-            <SimpleListForm endpoint="/api/lead-sources" placeholder="e.g. Facebook Ads" />
+            <SimpleListForm endpoint="/api/lead-sources" placeholder={t('leadSourcesPlaceholder')} />
           </div>
           <ul className="max-w-md divide-y divide-border">
             {leadSources?.map((leadSource) => (
@@ -190,17 +178,15 @@ export default async function SettingsPage() {
               </li>
             ))}
             {leadSources?.length === 0 && (
-              <li className="py-2 text-sm text-muted-foreground">No lead sources yet.</li>
+              <li className="py-2 text-sm text-muted-foreground">{t('noLeadSourcesYet')}</li>
             )}
           </ul>
         </SettingsSection>
 
-        <SettingsSection id="expense-categories" title="Expense Categories">
-          <p className="text-sm text-muted-foreground">
-            Categories available when adding an expense line item to a deal (Repairs & Rehab, Closing Costs, etc.).
-          </p>
+        <SettingsSection id="expense-categories" title={t('expenseCategoriesTitle')}>
+          <p className="text-sm text-muted-foreground">{t('expenseCategoriesDescription')}</p>
           <div className="max-w-md">
-            <SimpleListForm endpoint="/api/expense-categories" placeholder="e.g. Contractor Draws" />
+            <SimpleListForm endpoint="/api/expense-categories" placeholder={t('expenseCategoriesPlaceholder')} />
           </div>
           <ul className="max-w-md divide-y divide-border">
             {expenseCategories?.map((expenseCategory) => (
@@ -209,15 +195,13 @@ export default async function SettingsPage() {
               </li>
             ))}
             {expenseCategories?.length === 0 && (
-              <li className="py-2 text-sm text-muted-foreground">No expense categories yet.</li>
+              <li className="py-2 text-sm text-muted-foreground">{t('noExpenseCategoriesYet')}</li>
             )}
           </ul>
         </SettingsSection>
 
-        <SettingsSection id="custom-fields" title="Custom Fields">
-          <p className="text-sm text-muted-foreground">
-            Extra fields shown on every deal&apos;s Custom Fields tab, in addition to the built-in ones.
-          </p>
+        <SettingsSection id="custom-fields" title={t('customFieldsTitle')}>
+          <p className="text-sm text-muted-foreground">{t('customFieldsDescription')}</p>
           <div className="max-w-md">
             <CustomFieldDefinitionForm />
           </div>
@@ -234,17 +218,15 @@ export default async function SettingsPage() {
               </li>
             ))}
             {customFieldDefinitions?.length === 0 && (
-              <li className="py-2 text-sm text-muted-foreground">No custom fields yet.</li>
+              <li className="py-2 text-sm text-muted-foreground">{t('noCustomFieldsYet')}</li>
             )}
           </ul>
         </SettingsSection>
 
-        <SettingsSection id="on-hold-reasons" title="On Hold Reasons">
-          <p className="text-sm text-muted-foreground">
-            Options shown when a deal is checked &ldquo;On hold&rdquo; in its checklist.
-          </p>
+        <SettingsSection id="on-hold-reasons" title={t('onHoldReasonsTitle')}>
+          <p className="text-sm text-muted-foreground">{t('onHoldReasonsDescription')}</p>
           <div className="max-w-md">
-            <SimpleListForm endpoint="/api/on-hold-reasons" placeholder="e.g. Waiting on lender" />
+            <SimpleListForm endpoint="/api/on-hold-reasons" placeholder={t('onHoldReasonsPlaceholder')} />
           </div>
           <ul className="max-w-md divide-y divide-border">
             {onHoldReasons?.map((reason) => (
@@ -253,15 +235,15 @@ export default async function SettingsPage() {
               </li>
             ))}
             {onHoldReasons?.length === 0 && (
-              <li className="py-2 text-sm text-muted-foreground">No on hold reasons yet.</li>
+              <li className="py-2 text-sm text-muted-foreground">{t('noOnHoldReasonsYet')}</li>
             )}
           </ul>
         </SettingsSection>
 
-        <SettingsSection id="selling-reasons" title="Selling Reasons">
-          <p className="text-sm text-muted-foreground">Options shown for &ldquo;Reasons for selling&rdquo; on Deal Info.</p>
+        <SettingsSection id="selling-reasons" title={t('sellingReasonsTitle')}>
+          <p className="text-sm text-muted-foreground">{t('sellingReasonsDescription')}</p>
           <div className="max-w-md">
-            <SimpleListForm endpoint="/api/selling-reasons" placeholder="e.g. Relocating" />
+            <SimpleListForm endpoint="/api/selling-reasons" placeholder={t('sellingReasonsPlaceholder')} />
           </div>
           <ul className="max-w-md divide-y divide-border">
             {sellingReasons?.map((reason) => (
@@ -270,17 +252,15 @@ export default async function SettingsPage() {
               </li>
             ))}
             {sellingReasons?.length === 0 && (
-              <li className="py-2 text-sm text-muted-foreground">No selling reasons yet.</li>
+              <li className="py-2 text-sm text-muted-foreground">{t('noSellingReasonsYet')}</li>
             )}
           </ul>
         </SettingsSection>
 
-        <SettingsSection id="cancelled-ab-reasons" title="Cancelled — AB Reasons">
-          <p className="text-sm text-muted-foreground">
-            Options shown when a deal is checked &ldquo;Cancelled — AB&rdquo; in its checklist.
-          </p>
+        <SettingsSection id="cancelled-ab-reasons" title={t('cancelledAbReasonsTitle')}>
+          <p className="text-sm text-muted-foreground">{t('cancelledAbReasonsDescription')}</p>
           <div className="max-w-md">
-            <SimpleListForm endpoint="/api/cancelled-ab-reasons" placeholder="e.g. Seller found another buyer" />
+            <SimpleListForm endpoint="/api/cancelled-ab-reasons" placeholder={t('cancelledAbReasonsPlaceholder')} />
           </div>
           <ul className="max-w-md divide-y divide-border">
             {cancelledAbReasons?.map((reason) => (
@@ -289,19 +269,17 @@ export default async function SettingsPage() {
               </li>
             ))}
             {cancelledAbReasons?.length === 0 && (
-              <li className="py-2 text-sm text-muted-foreground">No cancelled AB reasons yet.</li>
+              <li className="py-2 text-sm text-muted-foreground">{t('noCancelledAbReasonsYet')}</li>
             )}
           </ul>
         </SettingsSection>
 
-        <SettingsSection id="cancelled-bc-ac-reasons" title="Cancelled — BC/AC Reasons">
-          <p className="text-sm text-muted-foreground">
-            Options shown when a deal is checked &ldquo;Cancelled — BC/AC&rdquo; in its checklist.
-          </p>
+        <SettingsSection id="cancelled-bc-ac-reasons" title={t('cancelledBcAcReasonsTitle')}>
+          <p className="text-sm text-muted-foreground">{t('cancelledBcAcReasonsDescription')}</p>
           <div className="max-w-md">
             <SimpleListForm
               endpoint="/api/cancelled-bc-ac-reasons"
-              placeholder="e.g. Buyer's financing fell through"
+              placeholder={t('cancelledBcAcReasonsPlaceholder')}
             />
           </div>
           <ul className="max-w-md divide-y divide-border">
@@ -311,16 +289,13 @@ export default async function SettingsPage() {
               </li>
             ))}
             {cancelledBcAcReasons?.length === 0 && (
-              <li className="py-2 text-sm text-muted-foreground">No cancelled BC/AC reasons yet.</li>
+              <li className="py-2 text-sm text-muted-foreground">{t('noCancelledBcAcReasonsYet')}</li>
             )}
           </ul>
         </SettingsSection>
 
-        <SettingsSection id="checklist-items" title="Checklist Items">
-          <p className="text-sm text-muted-foreground">
-            Custom checklist items available on every deal, in addition to the built-in ones. Plain checkboxes
-            — no associated fields.
-          </p>
+        <SettingsSection id="checklist-items" title={t('checklistItemsTitle')}>
+          <p className="text-sm text-muted-foreground">{t('checklistItemsDescription')}</p>
           <div className="max-w-md">
             <ChecklistItemForm />
           </div>
@@ -331,16 +306,13 @@ export default async function SettingsPage() {
               </li>
             ))}
             {checklistItems?.length === 0 && (
-              <li className="py-2 text-sm text-muted-foreground">No custom checklist items yet.</li>
+              <li className="py-2 text-sm text-muted-foreground">{t('noChecklistItemsYet')}</li>
             )}
           </ul>
         </SettingsSection>
 
-        <SettingsSection id="commission-types" title="Commission Types">
-          <p className="text-sm text-muted-foreground">
-            Commission types available to assign to employees or roles. Applied automatically when an
-            employee is added to a deal.
-          </p>
+        <SettingsSection id="commission-types" title={t('commissionTypesTitle')}>
+          <p className="text-sm text-muted-foreground">{t('commissionTypesDescription')}</p>
           <div className="max-w-xl">
             <CommissionTypeForm />
           </div>
@@ -349,16 +321,13 @@ export default async function SettingsPage() {
               <CommissionTypeListItem key={commissionType.id} commissionType={commissionType} />
             ))}
             {commissionTypes?.length === 0 && (
-              <li className="py-2 text-sm text-muted-foreground">No commission types yet.</li>
+              <li className="py-2 text-sm text-muted-foreground">{t('noCommissionTypesYet')}</li>
             )}
           </ul>
         </SettingsSection>
 
-        <SettingsSection id="employee-roles" title="Employee Roles">
-          <p className="text-sm text-muted-foreground">
-            Org-wide job titles. Assign one to a team member on their profile to apply any commission types
-            assigned to that role.
-          </p>
+        <SettingsSection id="employee-roles" title={t('employeeRolesTitle')}>
+          <p className="text-sm text-muted-foreground">{t('employeeRolesDescription')}</p>
           <div className="max-w-md">
             <EmployeeRoleForm />
           </div>
@@ -368,29 +337,26 @@ export default async function SettingsPage() {
                 <Link href={`/settings/employee-roles/${role.id}`} className="hover:underline">
                   {role.name}
                 </Link>
-                <span className="ml-2 text-xs text-muted-foreground">manage commission types</span>
+                <span className="ml-2 text-xs text-muted-foreground">{t('manageCommissionTypesHint')}</span>
               </li>
             ))}
             {employeeRoles?.length === 0 && (
-              <li className="py-2 text-sm text-muted-foreground">No employee roles yet.</li>
+              <li className="py-2 text-sm text-muted-foreground">{t('noEmployeeRolesYet')}</li>
             )}
           </ul>
         </SettingsSection>
 
-        <SettingsSection id="pay-periods" title="Pay Periods">
-          <p className="text-sm text-muted-foreground">
-            Payroll schedules (e.g. Weekly Salary, Monthly Commissions) an employee can be tagged with — more than
-            one can apply to the same employee.
-          </p>
+        <SettingsSection id="pay-periods" title={t('payPeriodsTitle')}>
+          <p className="text-sm text-muted-foreground">{t('payPeriodsDescription')}</p>
           <PayPeriodForm mode="create" initialValues={EMPTY_PAY_PERIOD} />
           <div className="max-w-2xl overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead>
                 <tr className="border-b border-border text-xs text-muted-foreground">
-                  <th className="py-2 pr-4 font-medium">Pay Period Name</th>
-                  <th className="py-2 pr-4 font-medium">Salary Pay Frequency</th>
-                  <th className="py-2 pr-4 font-medium">Commission Pay Frequency</th>
-                  <th className="py-2 font-medium">Next Pay Day</th>
+                  <th className="py-2 pr-4 font-medium">{t('payPeriodNameHeader')}</th>
+                  <th className="py-2 pr-4 font-medium">{t('salaryPayFrequencyHeader')}</th>
+                  <th className="py-2 pr-4 font-medium">{t('commissionPayFrequencyHeader')}</th>
+                  <th className="py-2 font-medium">{t('nextPayDayHeader')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -415,7 +381,7 @@ export default async function SettingsPage() {
                 {payPeriods?.length === 0 && (
                   <tr>
                     <td colSpan={4} className="py-2 text-sm text-muted-foreground">
-                      No pay periods yet.
+                      {t('noPayPeriodsYet')}
                     </td>
                   </tr>
                 )}

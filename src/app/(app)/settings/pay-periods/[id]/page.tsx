@@ -1,3 +1,4 @@
+import { getTranslations } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 
 import { requirePermission } from '@/lib/supabase/auth'
@@ -7,13 +8,14 @@ import { PayPeriodForm } from '../../pay-period-form'
 
 export default async function PayPeriodPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
+  const t = await getTranslations('Settings')
   const profile = await requirePermission('can_manage_settings')
 
   if (!profile) {
     return (
       <div>
-        <h1 className="heading-page">Pay period</h1>
-        <p className="mt-2 text-sm text-muted-foreground">Only managers can manage settings.</p>
+        <h1 className="heading-page">{t('payPeriodFallbackTitle')}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{t('onlyManagersMessage')}</p>
       </div>
     )
   }

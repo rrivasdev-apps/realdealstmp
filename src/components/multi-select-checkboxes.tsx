@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 
 type LookupOption = { id: string; name: string }
@@ -27,6 +28,7 @@ export function MultiSelectCheckboxes({
   onToggle: (id: string) => void
   onCreate?: (name: string) => Promise<LookupOption>
 }) {
+  const t = useTranslations('Contacts')
   const [createdOptions, setCreatedOptions] = useState<LookupOption[]>([])
   const [draftName, setDraftName] = useState('')
   const [creating, setCreating] = useState(false)
@@ -47,7 +49,7 @@ export function MultiSelectCheckboxes({
       onToggle(created.id)
       setDraftName('')
     } catch (err) {
-      setCreateError(err instanceof Error ? err.message : 'Could not add that.')
+      setCreateError(err instanceof Error ? err.message : t('couldNotAddError'))
     } finally {
       setCreating(false)
     }
@@ -57,7 +59,7 @@ export function MultiSelectCheckboxes({
     <fieldset className="flex flex-col gap-2 text-sm">
       <legend className="mb-1 font-medium">{label}</legend>
       {allOptions.length === 0 ? (
-        <p className="text-xs text-muted-foreground">None configured yet.</p>
+        <p className="text-xs text-muted-foreground">{t('noneConfiguredYet')}</p>
       ) : (
         <div className="flex flex-wrap gap-3">
           {allOptions.map((option) => (
@@ -78,7 +80,7 @@ export function MultiSelectCheckboxes({
             type="text"
             value={draftName}
             onChange={(event) => setDraftName(event.target.value)}
-            placeholder={`Add a new ${label.toLowerCase()}…`}
+            placeholder={t('addNewOptionPlaceholder', { label: label.toLowerCase() })}
             className="flex-1 rounded border border-input-border bg-input-background px-2 py-1"
           />
           <button
@@ -87,7 +89,7 @@ export function MultiSelectCheckboxes({
             disabled={creating || !draftName.trim()}
             className="rounded border border-input-border px-3 py-1 text-xs disabled:opacity-50"
           >
-            {creating ? 'Adding…' : '+ Add'}
+            {creating ? t('addingButton') : t('addButton')}
           </button>
         </div>
       )}

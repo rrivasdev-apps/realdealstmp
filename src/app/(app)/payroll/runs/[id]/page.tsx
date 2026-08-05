@@ -1,3 +1,4 @@
+import { getTranslations } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 
 import { requirePermission } from '@/lib/supabase/auth'
@@ -7,15 +8,21 @@ import { RunEntriesForm } from '../run-entries-form'
 
 export default async function PayrollRunPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
+  const t = await getTranslations('Payroll')
   const profile = await requirePermission('can_manage_payroll')
 
   if (!profile) {
     return (
       <div>
-        <h1 className="heading-page">Payroll run</h1>
-        <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to manage payroll.</p>
+        <h1 className="heading-page">{t('runFallbackTitle')}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{t('noPermission')}</p>
       </div>
     )
+  }
+
+  const STATUS_LABELS: Record<string, string> = {
+    draft: t('statusDraft'),
+    finalized: t('statusFinalized'),
   }
 
   const supabase = await createClient()
@@ -34,9 +41,9 @@ export default async function PayrollRunPage({ params }: { params: Promise<{ id:
   return (
     <div>
       <h1 className="heading-page">
-        Payroll run: {run.pay_period_start} – {run.pay_period_end}
+        {t('runHeading', { start: run.pay_period_start, end: run.pay_period_end })}
       </h1>
-      <p className="mt-1 text-sm text-muted-foreground capitalize">{run.status}</p>
+      <p className="mt-1 text-sm text-muted-foreground">{STATUS_LABELS[run.status] ?? run.status}</p>
 
       <div className="mt-6">
         <RunEntriesForm
@@ -45,7 +52,7 @@ export default async function PayrollRunPage({ params }: { params: Promise<{ id:
           initialEntries={(entries ?? []).map((entry) => ({
             id: entry.id,
             profile_id: entry.profile_id,
-            profile_name: entry.profiles?.name ?? 'Unknown',
+            profile_name: entry.profiles?.name ?? t('unknownEmployee'),
             pay_type: entry.profiles?.pay_type ?? null,
             pay_rate: entry.profiles?.pay_rate ?? null,
             hours_worked: entry.hours_worked,

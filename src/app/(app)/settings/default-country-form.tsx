@@ -1,11 +1,13 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 type Country = { id: string; name: string; iso_code: string }
 
 export function DefaultCountryForm({ countries, defaultCountryId }: { countries: Country[]; defaultCountryId: string | null }) {
+  const t = useTranslations('Settings')
   const router = useRouter()
   const [countryId, setCountryId] = useState(defaultCountryId ?? '')
   const [error, setError] = useState<string | null>(null)
@@ -27,25 +29,25 @@ export function DefaultCountryForm({ countries, defaultCountryId }: { countries:
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('genericError'))
       return
     }
 
-    setStatus('Saved.')
+    setStatus(t('savedStatus'))
     router.refresh()
   }
 
   return (
     <form onSubmit={handleSubmit} className="flex max-w-sm flex-col items-stretch gap-3 sm:flex-row sm:items-end">
       <label className="flex-1 field-label">
-        Default country
+        {t('defaultCountryLabel')}
         <select
           value={countryId}
           onChange={(event) => setCountryId(event.target.value)}
           className="rounded border border-input-border bg-input-background px-3 py-2"
         >
           <option value="" disabled>
-            Select…
+            {t('selectPlaceholder')}
           </option>
           {countries.map((country) => (
             <option key={country.id} value={country.id}>
@@ -59,7 +61,7 @@ export function DefaultCountryForm({ countries, defaultCountryId }: { countries:
         disabled={submitting || !countryId}
         className="rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
       >
-        {submitting ? 'Saving…' : 'Save'}
+        {submitting ? t('savingButton') : t('saveButton')}
       </button>
       {status && <p className="text-sm text-success">{status}</p>}
       {error && <p className="text-sm text-danger">{error}</p>}

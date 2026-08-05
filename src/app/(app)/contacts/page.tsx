@@ -1,3 +1,4 @@
+import { getTranslations } from 'next-intl/server'
 import Link from 'next/link'
 
 import { requirePermission } from '@/lib/supabase/auth'
@@ -6,12 +7,13 @@ import { createClient } from '@/lib/supabase/server'
 import { ContactsList } from './contacts-list'
 
 export default async function ContactsPage() {
+  const t = await getTranslations('Contacts')
   const profile = await requirePermission('view_contacts')
   if (!profile) {
     return (
       <div>
-        <h1 className="heading-page">Contacts</h1>
-        <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to view contacts.</p>
+        <h1 className="heading-page">{t('title')}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{t('noPermissionView')}</p>
       </div>
     )
   }
@@ -43,9 +45,9 @@ export default async function ContactsPage() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="heading-page">Contacts</h1>
+        <h1 className="heading-page">{t('title')}</h1>
         <Link href="/contacts/new" className="rounded bg-foreground px-4 py-2 text-sm text-background">
-          New contact
+          {t('newContactButton')}
         </Link>
       </div>
 

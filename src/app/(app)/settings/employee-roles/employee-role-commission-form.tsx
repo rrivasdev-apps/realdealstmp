@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -15,6 +16,7 @@ export function EmployeeRoleCommissionForm({
   initialCommissionTypeIds: string[]
   commissionTypes: LookupOption[]
 }) {
+  const t = useTranslations('Settings')
   const router = useRouter()
   const [commissionTypeIds, setCommissionTypeIds] = useState<string[]>(initialCommissionTypeIds)
   const [error, setError] = useState<string | null>(null)
@@ -39,7 +41,7 @@ export function EmployeeRoleCommissionForm({
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('genericError'))
       return
     }
 
@@ -50,7 +52,7 @@ export function EmployeeRoleCommissionForm({
   return (
     <form onSubmit={handleSubmit} className="flex max-w-xl flex-col gap-6">
       <fieldset className="flex flex-col gap-2 rounded border border-border p-4">
-        <legend className="px-1 text-sm font-medium">Commission types</legend>
+        <legend className="px-1 text-sm font-medium">{t('commissionTypesLegend')}</legend>
         {commissionTypes.map((option) => (
           <label key={option.id} className="flex items-center gap-1.5 text-sm">
             <input type="checkbox" checked={commissionTypeIds.includes(option.id)} onChange={() => toggle(option.id)} />
@@ -58,7 +60,7 @@ export function EmployeeRoleCommissionForm({
           </label>
         ))}
         {commissionTypes.length === 0 && (
-          <p className="text-sm text-muted-foreground">No commission types yet — add some above.</p>
+          <p className="text-sm text-muted-foreground">{t('noCommissionTypesAddAbove')}</p>
         )}
       </fieldset>
 
@@ -70,10 +72,10 @@ export function EmployeeRoleCommissionForm({
           disabled={submitting}
           className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
         >
-          {submitting ? 'Saving…' : 'Save changes'}
+          {submitting ? t('savingButton') : t('saveChangesButton')}
         </button>
         <Link href="/settings" className="text-sm text-muted-foreground hover:underline">
-          Cancel
+          {t('cancelButton')}
         </Link>
       </div>
     </form>

@@ -1,13 +1,8 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-
-const BASIS_LABELS: Record<string, string> = {
-  contract_price: 'Contract price',
-  gross_profit: 'Gross profit',
-  current_selling_price: 'Current selling price',
-}
 
 export type CommissionTypeFormValues = {
   id?: string
@@ -37,6 +32,12 @@ export function CommissionTypeForm({
   onSaved?: () => void
   onCancel?: () => void
 }) {
+  const t = useTranslations('Settings')
+  const BASIS_LABELS: Record<string, string> = {
+    contract_price: t('basisContractPrice'),
+    gross_profit: t('basisGrossProfit'),
+    current_selling_price: t('basisCurrentSellingPrice'),
+  }
   const router = useRouter()
   const [values, setValues] = useState<CommissionTypeFormValues>(initialValues ?? BLANK_VALUES)
   const [error, setError] = useState<string | null>(null)
@@ -45,6 +46,12 @@ export function CommissionTypeForm({
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
     setError(null)
+
+    if (!values.name.trim()) {
+      setError(t('nameRequiredError'))
+      return
+    }
+
     setSubmitting(true)
 
     const url = mode === 'edit' ? `/api/commission-types/${values.id}` : '/api/commission-types'
@@ -66,7 +73,7 @@ export function CommissionTypeForm({
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('genericError'))
       return
     }
 
@@ -81,19 +88,19 @@ export function CommissionTypeForm({
     <form onSubmit={handleSubmit} className="flex flex-col gap-3 rounded border border-border p-4">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <label className="field-label">
-          Name
+          {t('nameLabel')}
           <input
             type="text"
             required
             value={values.name}
             onChange={(event) => setValues((prev) => ({ ...prev, name: event.target.value }))}
-            placeholder="e.g. Closer commission"
+            placeholder={t('commissionNamePlaceholder')}
             className="rounded border border-input-border bg-input-background px-3 py-2"
           />
         </label>
 
         <label className="field-label">
-          Category
+          {t('categoryLabel')}
           <select
             value={values.category}
             onChange={(event) =>
@@ -101,14 +108,14 @@ export function CommissionTypeForm({
             }
             className="rounded border border-input-border bg-input-background px-3 py-2"
           >
-            <option value="flat">Flat fee</option>
-            <option value="percentage">Percentage</option>
+            <option value="flat">{t('categoryFlat')}</option>
+            <option value="percentage">{t('categoryPercentage')}</option>
           </select>
         </label>
 
         {values.category === 'percentage' && (
           <label className="field-label">
-            Basis
+            {t('basisLabel')}
             <select
               value={values.basis}
               onChange={(event) => setValues((prev) => ({ ...prev, basis: event.target.value }))}
@@ -124,7 +131,7 @@ export function CommissionTypeForm({
         )}
 
         <label className="field-label">
-          {values.category === 'flat' ? 'Amount' : 'Percent'}
+          {values.category === 'flat' ? t('amountLabel') : t('percentLabel')}
           <input
             type="number"
             step="0.01"
@@ -137,12 +144,12 @@ export function CommissionTypeForm({
       </div>
 
       <label className="field-label">
-        Description
+        {t('descriptionLabel')}
         <textarea
           value={values.description}
           onChange={(event) => setValues((prev) => ({ ...prev, description: event.target.value }))}
           rows={2}
-          placeholder="Use case, who this applies to, why it exists"
+          placeholder={t('descriptionPlaceholder')}
           className="rounded border border-input-border bg-input-background px-3 py-2"
         />
       </label>
@@ -155,7 +162,7 @@ export function CommissionTypeForm({
           disabled={submitting}
           className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
         >
-          {submitting ? 'Saving…' : mode === 'edit' ? 'Save changes' : 'Add commission type'}
+          {submitting ? t('savingButton') : mode === 'edit' ? t('saveChangesButton') : t('addCommissionTypeButton')}
         </button>
         {mode === 'edit' && (
           <button
@@ -163,7 +170,7 @@ export function CommissionTypeForm({
             onClick={onCancel}
             className="w-fit rounded border border-input-border px-4 py-2 text-sm"
           >
-            Cancel
+            {t('cancelButton')}
           </button>
         )}
       </div>
