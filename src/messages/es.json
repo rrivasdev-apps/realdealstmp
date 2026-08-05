@@ -770,6 +770,7 @@
     "nameRequiredError": "El nombre es obligatorio.",
     "titleRequiredError": "Este paso necesita un título.",
     "and": "y",
-    "assigneeRequiredError": "Asigna este paso a exactamente un rol o un usuario específico."
+    "assigneeRequiredError": "Asigna este paso a exactamente un rol o un usuario específico.",
+    "selectFieldRequiredError": "Selecciona al menos un campo del negocio o un campo personalizado para actualizar."
   }
 }

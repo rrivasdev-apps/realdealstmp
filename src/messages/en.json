@@ -770,6 +770,7 @@
     "nameRequiredError": "Name is required.",
     "titleRequiredError": "This step needs a title.",
     "and": "and",
-    "assigneeRequiredError": "Assign this step to exactly one of a role or a specific user."
+    "assigneeRequiredError": "Assign this step to exactly one of a role or a specific user.",
+    "selectFieldRequiredError": "Select at least one deal field or custom field to update."
   }
 }

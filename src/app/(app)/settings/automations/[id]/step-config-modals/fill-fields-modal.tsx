@@ -121,6 +121,10 @@ export function FillFieldsModal({
       setError(t('assigneeRequiredError'))
       return
     }
+    if (dealFieldKeys.length === 0 && customFieldIds.length === 0) {
+      setError(t('selectFieldRequiredError'))
+      return
+    }
     setError(null)
     setSubmitting(true)
 
