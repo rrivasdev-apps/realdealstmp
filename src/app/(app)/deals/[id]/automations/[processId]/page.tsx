@@ -1,22 +1,12 @@
+import { getTranslations } from 'next-intl/server'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-import { DEAL_FIELDS } from '@/lib/automations/deal-fields'
+import { getDealFields, getStepTypeLabels } from '@/lib/automations/labels'
 import { requirePermission } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
 import { StepAction } from './step-action'
-
-const STEP_TYPE_LABELS: Record<string, string> = {
-  fill_fields: 'Fill Fields',
-  conditional_statement: 'Conditional Statement',
-  email_task: 'Email Task',
-  call_task: 'Call Task',
-  generic_task: 'Generic Task',
-  show_text: 'Show Text',
-  option_list: 'Option List',
-  trigger: 'Trigger',
-}
 
 export default async function AutomationProcessPage({
   params,
@@ -24,12 +14,13 @@ export default async function AutomationProcessPage({
   params: Promise<{ id: string; processId: string }>
 }) {
   const { id, processId } = await params
+  const t = await getTranslations('Automations')
   const profile = await requirePermission('view_deal_detail')
   if (!profile || !profile.company_id) {
     return (
       <div>
-        <h1 className="heading-page">Automation</h1>
-        <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to view this deal.</p>
+        <h1 className="heading-page">{t('automationFallback')}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{t('noPermissionDeal')}</p>
       </div>
     )
   }
@@ -72,7 +63,7 @@ export default async function AutomationProcessPage({
       .select('name, step_type')
       .eq('id', templateStep.next_step_id)
       .single()
-    if (nextStep) nextStepPreview = { name: nextStep.name ?? 'Untitled step', type: STEP_TYPE_LABELS[nextStep.step_type ?? ''] ?? '' }
+    if (nextStep) nextStepPreview = { name: nextStep.name ?? t('untitledStep'), type: getStepTypeLabels(t)[nextStep.step_type ?? ''] ?? '' }
   }
 
   const { data: activityLog } = await supabase
@@ -91,26 +82,26 @@ export default async function AutomationProcessPage({
     <div className="flex flex-col gap-6 lg:flex-row">
       <div className="flex-1">
         <Link href={`/deals/${id}/automations`} className="text-sm underline">
-          &larr; All of deal&apos;s processes
+          &larr; {t('backToProcesses')}
         </Link>
 
-        <h1 className="mt-2 text-xl font-semibold">{template?.name ?? 'Automation'}</h1>
+        <h1 className="mt-2 text-xl font-semibold">{template?.name ?? t('automationFallback')}</h1>
         <p className="text-sm text-muted-foreground">{deal.address}</p>
 
         {process.status === 'completed' ? (
           <p className="mt-6 rounded-lg border border-success/30 bg-success/10 px-4 py-3 text-sm text-success">
-            This automation is complete.
+            {t('automationCompleteMessage')}
           </p>
         ) : !currentStep || !templateStep ? (
           <p className="mt-6 rounded-lg border border-border bg-background px-4 py-3 text-sm text-muted-foreground">
-            Waiting to start.
+            {t('waitingToStart')}
           </p>
         ) : (
           <StepAction
             processId={processId}
             step={currentStep}
             templateStep={templateStep}
-            dealFields={DEAL_FIELDS}
+            dealFields={getDealFields(t)}
             customFieldDefinitions={customFieldDefinitions ?? []}
             dealValues={deal as unknown as Record<string, unknown>}
             dealCustomFieldValues={(deal.custom_fields ?? {}) as Record<string, unknown>}
@@ -120,18 +111,18 @@ export default async function AutomationProcessPage({
       </div>
 
       <div className="w-full shrink-0 lg:w-80">
-        <h2 className="heading-subsection">Activity log</h2>
+        <h2 className="heading-subsection">{t('activityLogTitle')}</h2>
         <ul className="mt-2 flex flex-col gap-2 rounded-lg border border-border bg-background p-3">
           {(activityLog ?? []).map((entry) => (
             <li key={entry.id} className="text-xs">
               <div className="font-medium text-foreground">{entry.event_type.replace(/_/g, ' ')}</div>
               <div className="text-muted-foreground">
                 {new Date(entry.created_at).toLocaleString()}
-                {entry.actor_profile_id ? ` — ${actorNameById.get(entry.actor_profile_id) ?? 'Someone'}` : ''}
+                {entry.actor_profile_id ? ` — ${actorNameById.get(entry.actor_profile_id) ?? t('someoneFallback')}` : ''}
               </div>
             </li>
           ))}
-          {(activityLog ?? []).length === 0 && <li className="text-xs text-muted-foreground">No activity yet.</li>}
+          {(activityLog ?? []).length === 0 && <li className="text-xs text-muted-foreground">{t('noActivityYet')}</li>}
         </ul>
       </div>
     </div>

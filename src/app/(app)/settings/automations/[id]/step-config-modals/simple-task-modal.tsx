@@ -1,16 +1,24 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+
+import { getStepTypeLabels, type AutomationsTranslator } from '@/lib/automations/labels'
 
 import type { AutomationStep, LookupOption, StepTrigger } from '../types'
 import { AssigneeFields, initialAssigneeValue, initialNextStepValue, Modal, NextStepFields, TriggerAutomationFields } from './shared'
 
-const KIND_LABELS: Record<string, { title: string; blurb: string }> = {
-  email_task: { title: 'Email Task', blurb: 'This action creates a task due to an assignee at a specific time. It shows up as an Email task.' },
-  call_task: { title: 'Call Task', blurb: 'This action creates a task due to an assignee at a specific time. It shows up as a Call task.' },
-  generic_task: { title: 'Generic Task', blurb: 'This action creates a task due to an assignee at a specific time.' },
-  show_text: { title: 'Show Text', blurb: 'This action shows a reminder to the assignee — no email or call semantics, just a to-do.' },
+function getKind(t: AutomationsTranslator, stepType: string | null) {
+  const stepTypeLabels = getStepTypeLabels(t)
+  const blurbs: Record<string, string> = {
+    email_task: t('emailTaskBlurb'),
+    call_task: t('callTaskBlurb'),
+    generic_task: t('genericTaskBlurb'),
+    show_text: t('showTextBlurb'),
+  }
+  const key = stepType && blurbs[stepType] ? stepType : 'generic_task'
+  return { title: stepTypeLabels[key], blurb: blurbs[key] }
 }
 
 export function SimpleTaskModal({
@@ -32,8 +40,9 @@ export function SimpleTaskModal({
   triggers: StepTrigger[]
   onClose: () => void
 }) {
+  const t = useTranslations('Automations')
   const router = useRouter()
-  const kind = KIND_LABELS[step.step_type ?? ''] ?? KIND_LABELS.generic_task
+  const kind = getKind(t, step.step_type)
   const availableSteps = allSteps.filter((other) => other.id !== step.id)
 
   const [name, setName] = useState(step.name ?? '')
@@ -54,6 +63,14 @@ export function SimpleTaskModal({
 
   async function handleSave(event: React.FormEvent) {
     event.preventDefault()
+    if (!name.trim()) {
+      setError(t('titleRequiredError'))
+      return
+    }
+    if (!assignee.assigned_role_id && !assignee.assigned_profile_id) {
+      setError(t('assigneeRequiredError'))
+      return
+    }
     setError(null)
     setSubmitting(true)
 
@@ -73,7 +90,7 @@ export function SimpleTaskModal({
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('genericError'))
       return
     }
 
@@ -87,7 +104,7 @@ export function SimpleTaskModal({
         <p className="text-sm text-muted-foreground">{kind.blurb}</p>
 
         <label className="field-label">
-          Task title
+          {t('taskTitleLabel')}
           <input
             type="text"
             required
@@ -98,7 +115,7 @@ export function SimpleTaskModal({
         </label>
 
         <label className="field-label">
-          Task description
+          {t('taskDescriptionLabel')}
           <textarea
             value={description}
             onChange={(event) => setDescription(event.target.value)}
@@ -118,7 +135,7 @@ export function SimpleTaskModal({
           disabled={submitting}
           className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
         >
-          {submitting ? 'Saving…' : 'Create'}
+          {submitting ? t('saving') : t('create')}
         </button>
       </form>
     </Modal>

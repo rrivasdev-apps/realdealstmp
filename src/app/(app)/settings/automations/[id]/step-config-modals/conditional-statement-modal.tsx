@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -29,6 +30,7 @@ export function ConditionalStatementModal({
   triggers: StepTrigger[]
   onClose: () => void
 }) {
+  const t = useTranslations('Automations')
   const router = useRouter()
   const availableSteps = allSteps.filter((other) => other.id !== step.id)
   const existingConfig = (step.config ?? {}) as Partial<ConditionalStatementConfig>
@@ -47,6 +49,14 @@ export function ConditionalStatementModal({
 
   async function handleSave(event: React.FormEvent) {
     event.preventDefault()
+    if (!question.trim()) {
+      setError(t('titleRequiredError'))
+      return
+    }
+    if (!assignee.assigned_role_id && !assignee.assigned_profile_id) {
+      setError(t('assigneeRequiredError'))
+      return
+    }
     setError(null)
     setSubmitting(true)
 
@@ -67,7 +77,7 @@ export function ConditionalStatementModal({
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('genericError'))
       return
     }
 
@@ -76,12 +86,12 @@ export function ConditionalStatementModal({
   }
 
   return (
-    <Modal title="Conditional Statement" onClose={onClose}>
+    <Modal title={t('stepTypeConditionalStatement')} onClose={onClose}>
       <form onSubmit={handleSave} className="flex flex-col gap-4">
         <AssigneeFields value={assignee} onChange={setAssignee} employeeRoles={employeeRoles} profiles={profiles} />
 
         <label className="field-label">
-          Question
+          {t('questionLabel')}
           <textarea
             required
             value={question}
@@ -92,9 +102,9 @@ export function ConditionalStatementModal({
         </label>
 
         <fieldset className="flex flex-col gap-3 rounded border border-border p-3">
-          <legend className="px-1 text-sm font-medium">Option 1</legend>
+          <legend className="px-1 text-sm font-medium">{t('optionNumber', { number: 1 })}</legend>
           <label className="field-label">
-            Answer
+            {t('answerLabel')}
             <input
               type="text"
               required
@@ -107,20 +117,20 @@ export function ConditionalStatementModal({
             value={option1}
             onChange={(value) => setOption1({ ...option1, ...value })}
             availableSteps={availableSteps}
-            label="Choose Option 1 functionality"
+            label={t('chooseOptionFunctionality', { number: 1 })}
           />
           <TriggerAutomationFields
             targetIds={targets1}
             onChange={setTargets1}
             otherTemplates={otherTemplates}
-            label="If Option 1 is selected, trigger another automation:"
+            label={t('triggerIfOptionSelected', { number: 1 })}
           />
         </fieldset>
 
         <fieldset className="flex flex-col gap-3 rounded border border-border p-3">
-          <legend className="px-1 text-sm font-medium">Option 2</legend>
+          <legend className="px-1 text-sm font-medium">{t('optionNumber', { number: 2 })}</legend>
           <label className="field-label">
-            Answer
+            {t('answerLabel')}
             <input
               type="text"
               required
@@ -133,13 +143,13 @@ export function ConditionalStatementModal({
             value={option2}
             onChange={(value) => setOption2({ ...option2, ...value })}
             availableSteps={availableSteps}
-            label="Choose Option 2 functionality"
+            label={t('chooseOptionFunctionality', { number: 2 })}
           />
           <TriggerAutomationFields
             targetIds={targets2}
             onChange={setTargets2}
             otherTemplates={otherTemplates}
-            label="If Option 2 is selected, trigger another automation:"
+            label={t('triggerIfOptionSelected', { number: 2 })}
           />
         </fieldset>
 
@@ -150,7 +160,7 @@ export function ConditionalStatementModal({
           disabled={submitting}
           className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
         >
-          {submitting ? 'Saving…' : 'Create'}
+          {submitting ? t('saving') : t('create')}
         </button>
       </form>
     </Modal>

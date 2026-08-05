@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -39,16 +40,17 @@ function OptionRow({
   onRemove: () => void
   otherTemplates: LookupOption[]
 }) {
+  const t = useTranslations('Automations')
   return (
     <fieldset className="flex flex-col gap-3 rounded border border-border p-3">
       <div className="flex items-center justify-between">
-        <legend className="px-1 text-sm font-medium">Option {index + 1}</legend>
+        <legend className="px-1 text-sm font-medium">{t('optionNumber', { number: index + 1 })}</legend>
         <button type="button" onClick={onRemove} className="text-xs text-danger hover:underline">
-          Remove
+          {t('remove')}
         </button>
       </div>
       <label className="field-label">
-        Option name
+        {t('optionNameLabel')}
         <input
           type="text"
           required
@@ -66,7 +68,7 @@ function OptionRow({
         targetIds={targetIds}
         onChange={onChangeTargets}
         otherTemplates={otherTemplates}
-        label={`If this option is selected, trigger another automation:`}
+        label={t('triggerIfOptionSelectedGeneric')}
       />
     </fieldset>
   )
@@ -91,6 +93,7 @@ export function OptionListModal({
   triggers: StepTrigger[]
   onClose: () => void
 }) {
+  const t = useTranslations('Automations')
   const router = useRouter()
   const availableSteps = allSteps.filter((other) => other.id !== step.id)
   const existingConfig = (step.config ?? {}) as Partial<OptionListConfig>
@@ -147,6 +150,14 @@ export function OptionListModal({
 
   async function handleSave(event: React.FormEvent) {
     event.preventDefault()
+    if (!name.trim()) {
+      setError(t('titleRequiredError'))
+      return
+    }
+    if (!assignee.assigned_role_id && !assignee.assigned_profile_id) {
+      setError(t('assigneeRequiredError'))
+      return
+    }
     setError(null)
     setSubmitting(true)
 
@@ -178,7 +189,7 @@ export function OptionListModal({
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('genericError'))
       return
     }
 
@@ -187,11 +198,9 @@ export function OptionListModal({
   }
 
   return (
-    <Modal title="Options Task" onClose={onClose}>
+    <Modal title={t('optionsTaskTitle')} onClose={onClose}>
       <form onSubmit={handleSave} className="flex flex-col gap-4">
-        <p className="text-sm text-muted-foreground">
-          Lets the user pick from a list of options — one option (single choice) or several (multiple choice).
-        </p>
+        <p className="text-sm text-muted-foreground">{t('optionsTaskBlurb')}</p>
 
         <div className="flex w-fit overflow-hidden rounded border border-input-border">
           <button
@@ -199,21 +208,21 @@ export function OptionListModal({
             onClick={() => setChoiceMode('single')}
             className={`px-3 py-1.5 text-sm ${choiceMode === 'single' ? 'bg-foreground text-background' : ''}`}
           >
-            Single choice
+            {t('singleChoice')}
           </button>
           <button
             type="button"
             onClick={() => setChoiceMode('multiple')}
             className={`px-3 py-1.5 text-sm ${choiceMode === 'multiple' ? 'bg-foreground text-background' : ''}`}
           >
-            Multiple choice
+            {t('multipleChoice')}
           </button>
         </div>
 
         <AssigneeFields value={assignee} onChange={setAssignee} employeeRoles={employeeRoles} profiles={profiles} />
 
         <label className="field-label">
-          Option task title/description
+          {t('optionTaskTitleLabel')}
           <textarea
             required
             value={name}
@@ -225,8 +234,10 @@ export function OptionListModal({
 
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
-            <span className="text-sm">Options list</span>
-            <span className="text-xs text-muted-foreground">There is a limit of {MAX_OPTIONS} options, you have {MAX_OPTIONS - options.length} left</span>
+            <span className="text-sm">{t('optionsListLabel')}</span>
+            <span className="text-xs text-muted-foreground">
+              {t('optionsLimit', { max: MAX_OPTIONS, remaining: MAX_OPTIONS - options.length })}
+            </span>
           </div>
           {options.map((option, index) => (
             <OptionRow
@@ -248,7 +259,7 @@ export function OptionListModal({
             disabled={options.length >= MAX_OPTIONS}
             className="w-fit rounded border border-input-border px-3 py-1.5 text-sm disabled:opacity-50"
           >
-            Add option
+            {t('addOption')}
           </button>
         </div>
 
@@ -258,13 +269,13 @@ export function OptionListModal({
               value={stepNextStep}
               onChange={setStepNextStep}
               availableSteps={availableSteps}
-              label="Choose step completion functionality"
+              label={t('chooseStepCompletionFunctionality')}
             />
             <TriggerAutomationFields
               targetIds={stepTargetIds}
               onChange={setStepTargetIds}
               otherTemplates={otherTemplates}
-              label="If you want step completion to trigger another automation regardless of option, select it below:"
+              label={t('triggerOnStepCompletion')}
             />
           </>
         )}
@@ -276,7 +287,7 @@ export function OptionListModal({
           disabled={submitting}
           className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
         >
-          {submitting ? 'Saving…' : 'Create'}
+          {submitting ? t('saving') : t('create')}
         </button>
       </form>
     </Modal>

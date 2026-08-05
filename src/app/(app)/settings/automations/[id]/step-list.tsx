@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -31,6 +32,7 @@ export function StepList({
   openStepId: string | null
   onOpenStep: (stepId: string | null) => void
 }) {
+  const t = useTranslations('Automations')
   const router = useRouter()
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
@@ -44,7 +46,7 @@ export function StepList({
     const result = await response.json()
     setBusy(false)
     if (!response.ok) {
-      setError(result.error ?? 'Could not add step.')
+      setError(result.error ?? t('addStepError'))
       return
     }
     onOpenStep(result.id)
@@ -69,7 +71,7 @@ export function StepList({
     setBusy(false)
     if (!response.ok) {
       const result = await response.json()
-      setError(result.error ?? 'Could not reorder steps.')
+      setError(result.error ?? t('reorderError'))
       return
     }
     router.refresh()
@@ -77,7 +79,7 @@ export function StepList({
 
   return (
     <div className="flex flex-col gap-3 rounded-lg border border-border bg-background p-4">
-      <h2 className="heading-subsection">Steps</h2>
+      <h2 className="heading-subsection">{t('stepsTitle')}</h2>
 
       {ordered.map((step, index) => (
         <StepCard
@@ -101,7 +103,7 @@ export function StepList({
         />
       ))}
 
-      {ordered.length === 0 && <p className="text-sm text-muted-foreground">No steps yet.</p>}
+      {ordered.length === 0 && <p className="text-sm text-muted-foreground">{t('noSteps')}</p>}
 
       {error && <p className="text-sm text-danger">{error}</p>}
 
@@ -111,7 +113,7 @@ export function StepList({
         disabled={busy}
         className="w-fit rounded border border-input-border px-4 py-2 text-sm disabled:opacity-50"
       >
-        Add step
+        {t('addStep')}
       </button>
     </div>
   )

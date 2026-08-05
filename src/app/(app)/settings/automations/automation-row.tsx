@@ -1,18 +1,13 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
-import type { AutomationListItem, FolderOption } from './types'
+import { getTriggerLabels } from '@/lib/automations/labels'
 
-const TRIGGER_LABELS: Record<string, string> = {
-  deal_created: 'Any deal is created',
-  field_changed: 'A field value changes',
-  custom_field_changed: 'A custom field value changes',
-  step_completed: 'Another automation finishes a step',
-  date_based: 'A date field is reached',
-}
+import type { AutomationListItem, FolderOption } from './types'
 
 export function AutomationRow({
   template,
@@ -24,9 +19,11 @@ export function AutomationRow({
   // When set, shows which folder this automation lives in -- used in flat search results.
   folderLabel?: string
 }) {
+  const t = useTranslations('Automations')
   const router = useRouter()
   const [moving, setMoving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const triggerLabels = getTriggerLabels(t)
 
   async function handleMove(event: React.ChangeEvent<HTMLSelectElement>) {
     const folderId = event.target.value || null
@@ -42,7 +39,7 @@ export function AutomationRow({
     setMoving(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Could not move this automation.')
+      setError(result.error ?? t('moveFolderError'))
       return
     }
 
@@ -56,7 +53,7 @@ export function AutomationRow({
           {template.name}
         </Link>
         <p className="text-xs text-muted-foreground">
-          {TRIGGER_LABELS[template.trigger_type] ?? template.trigger_type}
+          {triggerLabels[template.trigger_type] ?? template.trigger_type}
           {template.deal_types ? ` — ${template.deal_types.name}` : ''}
           {folderLabel ? ` · ${folderLabel}` : ''}
         </p>
@@ -68,10 +65,10 @@ export function AutomationRow({
             template.is_functional ? 'bg-success/15 text-success' : 'bg-muted text-muted-foreground'
           }`}
         >
-          {template.is_functional ? 'Functional' : 'Not functional'}
+          {template.is_functional ? t('functional') : t('notFunctional')}
         </span>
         <select
-          aria-label={`Move ${template.name} to folder`}
+          aria-label={t('moveToFolderAria', { name: template.name })}
           value={template.folder_id ?? ''}
           onChange={handleMove}
           disabled={moving}

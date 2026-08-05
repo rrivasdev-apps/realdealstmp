@@ -1,11 +1,13 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 // Inline "type a name, hit Add" control for creating a folder. parentFolderId is null
 // for a top-level folder, or a top-level folder's id for a subfolder underneath it.
 export function NewFolderButton({ parentFolderId, label }: { parentFolderId: string | null; label: string }) {
+  const t = useTranslations('Automations')
   const router = useRouter()
   const [creating, setCreating] = useState(false)
   const [submitting, setSubmitting] = useState(false)
@@ -28,7 +30,7 @@ export function NewFolderButton({ parentFolderId, label }: { parentFolderId: str
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Could not create folder.')
+      setError(result.error ?? t('createFolderError'))
       return
     }
 
@@ -51,14 +53,14 @@ export function NewFolderButton({ parentFolderId, label }: { parentFolderId: str
         autoFocus
         value={name}
         onChange={(event) => setName(event.target.value)}
-        placeholder="Folder name"
+        placeholder={t('folderNamePlaceholder')}
         className="rounded border border-input-border bg-input-background px-2 py-1 text-sm"
       />
       <button type="submit" disabled={submitting} className="text-xs font-medium text-foreground underline">
-        Add
+        {t('add')}
       </button>
       <button type="button" onClick={() => setCreating(false)} className="text-xs text-muted-foreground underline">
-        Cancel
+        {t('cancel')}
       </button>
       {error && <p className="text-xs text-danger">{error}</p>}
     </form>

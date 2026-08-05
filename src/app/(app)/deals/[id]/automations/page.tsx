@@ -1,3 +1,4 @@
+import { getTranslations } from 'next-intl/server'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
@@ -9,12 +10,13 @@ import { StartAutomationButton } from './start-automation-button'
 
 export default async function DealAutomationsListPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
+  const t = await getTranslations('Automations')
   const profile = await requirePermission('view_deal_detail')
   if (!profile || !profile.company_id) {
     return (
       <div>
-        <h1 className="heading-page">Deal automations</h1>
-        <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to view this deal.</p>
+        <h1 className="heading-page">{t('dealAutomationsListTitle')}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{t('noPermissionDeal')}</p>
       </div>
     )
   }
@@ -75,11 +77,12 @@ export default async function DealAutomationsListPage({ params }: { params: Prom
       <li key={process.id} className="flex items-center justify-between gap-4 px-4 py-3">
         <div>
           <Link href={`/deals/${id}/automations/${process.id}`} className="text-sm font-medium hover:underline">
-            {templateNameById.get(process.template_id) ?? 'Automation'}
+            {templateNameById.get(process.template_id) ?? t('automationFallback')}
           </Link>
           {currentStep && (
             <p className="text-xs text-muted-foreground">
-              {templateStepNameById.get(currentStep.template_step_id) ?? 'Untitled step'} — due {currentStep.due_at}
+              {templateStepNameById.get(currentStep.template_step_id) ?? t('untitledStep')} —{' '}
+              {t('dueDateLower', { date: currentStep.due_at })}
             </p>
           )}
         </div>
@@ -97,11 +100,11 @@ export default async function DealAutomationsListPage({ params }: { params: Prom
     <div>
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="heading-page">Deal automations</h1>
+          <h1 className="heading-page">{t('dealAutomationsListTitle')}</h1>
           <p className="mt-1 text-sm text-muted-foreground">{deal.address}</p>
         </div>
         <Link href={`/deals/${id}`} className="text-sm underline">
-          Go to deal
+          {t('goToDeal')}
         </Link>
       </div>
 
@@ -110,18 +113,18 @@ export default async function DealAutomationsListPage({ params }: { params: Prom
       </div>
 
       <div className="mt-6">
-        <h2 className="heading-subsection">{running.length} running process(es)</h2>
+        <h2 className="heading-subsection">{t('runningProcesses', { count: running.length })}</h2>
         <ul className="mt-2 divide-y divide-border rounded-lg border border-border bg-background">
           {running.map(renderProcessRow)}
-          {running.length === 0 && <li className="px-4 py-3 text-sm text-muted-foreground">No processes running.</li>}
+          {running.length === 0 && <li className="px-4 py-3 text-sm text-muted-foreground">{t('noProcessesRunning')}</li>}
         </ul>
       </div>
 
       <div className="mt-6">
-        <h2 className="heading-subsection">{completed.length} completed process(es)</h2>
+        <h2 className="heading-subsection">{t('completedProcesses', { count: completed.length })}</h2>
         <ul className="mt-2 divide-y divide-border rounded-lg border border-border bg-background">
           {completed.map(renderProcessRow)}
-          {completed.length === 0 && <li className="px-4 py-3 text-sm text-muted-foreground">No completed processes yet.</li>}
+          {completed.length === 0 && <li className="px-4 py-3 text-sm text-muted-foreground">{t('noCompletedProcesses')}</li>}
         </ul>
       </div>
     </div>

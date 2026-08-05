@@ -1,14 +1,17 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
+
 import type { AutomationStep, LookupOption } from '../types'
 
 export function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
+  const t = useTranslations('Automations')
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="flex max-h-[90vh] w-full max-w-lg flex-col overflow-y-auto rounded-lg border border-border bg-background p-5">
         <div className="mb-4 flex items-center justify-between gap-4">
           <h3 className="text-sm font-semibold">{title}</h3>
-          <button type="button" onClick={onClose} aria-label="Close" className="text-muted-foreground hover:text-foreground">
+          <button type="button" onClick={onClose} aria-label={t('closeAria')} className="text-muted-foreground hover:text-foreground">
             ✕
           </button>
         </div>
@@ -46,11 +49,12 @@ export function AssigneeFields({
   employeeRoles: LookupOption[]
   profiles: LookupOption[]
 }) {
+  const t = useTranslations('Automations')
   const mode = value.assigned_profile_id ? 'user' : 'role'
 
   return (
     <div className="field-label">
-      <span>Task assignee</span>
+      <span>{t('taskAssignee')}</span>
       <div className="flex items-center gap-2">
         <div className="flex overflow-hidden rounded border border-input-border">
           <button
@@ -58,14 +62,14 @@ export function AssigneeFields({
             onClick={() => onChange({ assigned_role_id: employeeRoles[0]?.id ?? null, assigned_profile_id: null })}
             className={`px-3 py-1.5 text-sm ${mode === 'role' ? 'bg-foreground text-background' : ''}`}
           >
-            Assign to role
+            {t('assignToRole')}
           </button>
           <button
             type="button"
             onClick={() => onChange({ assigned_role_id: null, assigned_profile_id: profiles[0]?.id ?? null })}
             className={`px-3 py-1.5 text-sm ${mode === 'user' ? 'bg-foreground text-background' : ''}`}
           >
-            Specific user
+            {t('specificUser')}
           </button>
         </div>
 
@@ -121,18 +125,19 @@ export function NextStepFields({
   value,
   onChange,
   availableSteps,
-  label = 'Then',
+  label,
 }: {
   value: NextStepValue
   onChange: (value: NextStepValue) => void
   availableSteps: AutomationStep[]
   label?: string
 }) {
+  const t = useTranslations('Automations')
   const goesToStep = Boolean(value.next_step_id)
 
   return (
     <div className="flex flex-col gap-2 text-sm">
-      <span>{label}</span>
+      <span>{label ?? t('thenLabel')}</span>
       <div className="flex overflow-hidden rounded border border-input-border w-fit">
         <button
           type="button"
@@ -146,21 +151,21 @@ export function NextStepFields({
           disabled={availableSteps.length === 0}
           className={`px-3 py-1.5 text-sm disabled:opacity-50 ${goesToStep ? 'bg-foreground text-background' : ''}`}
         >
-          Go to another step
+          {t('goToAnotherStep')}
         </button>
         <button
           type="button"
           onClick={() => onChange({ next_step_id: null, completes_automator: true, next_step_due_delay_days: null })}
           className={`px-3 py-1.5 text-sm ${!goesToStep ? 'bg-foreground text-background' : ''}`}
         >
-          Complete the automation
+          {t('completeAutomation')}
         </button>
       </div>
 
       {goesToStep && (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <label className="field-label">
-            Next step
+            {t('nextStepLabel')}
             <select
               value={value.next_step_id ?? ''}
               onChange={(event) =>
@@ -170,14 +175,14 @@ export function NextStepFields({
             >
               {availableSteps.map((step) => (
                 <option key={step.id} value={step.id}>
-                  Step {step.step_number}
+                  {t('stepNumber', { number: step.step_number })}
                   {step.name ? ` — ${step.name}` : ''}
                 </option>
               ))}
             </select>
           </label>
           <label className="field-label">
-            Days until due
+            {t('daysUntilDue')}
             <input
               type="number"
               min={0}
@@ -196,22 +201,23 @@ export function TriggerAutomationFields({
   targetIds,
   onChange,
   otherTemplates,
-  label = 'If you want this step, when completed, to trigger another automation, select it below.',
+  label,
 }: {
   targetIds: string[]
   onChange: (targetIds: string[]) => void
   otherTemplates: LookupOption[]
   label?: string
 }) {
+  const t = useTranslations('Automations')
   function toggle(id: string) {
     onChange(targetIds.includes(id) ? targetIds.filter((existing) => existing !== id) : [...targetIds, id])
   }
 
   return (
     <div className="field-label">
-      <span className="text-muted-foreground">{label}</span>
+      <span className="text-muted-foreground">{label ?? t('triggerAnotherDefaultLabel')}</span>
       {otherTemplates.length === 0 ? (
-        <span className="text-muted-foreground">No other automations to trigger yet.</span>
+        <span className="text-muted-foreground">{t('noOtherAutomations')}</span>
       ) : (
         <div className="flex flex-wrap gap-x-4 gap-y-1">
           {otherTemplates.map((template) => (

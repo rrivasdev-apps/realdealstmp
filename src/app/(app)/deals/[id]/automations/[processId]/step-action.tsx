@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -36,6 +37,7 @@ export function StepAction({
   dealCustomFieldValues: Record<string, unknown>
   nextStepPreview: { name: string; type: string } | null
 }) {
+  const t = useTranslations('Automations')
   const router = useRouter()
   const config = (templateStep.config ?? {}) as Record<string, unknown>
   const dealFieldKeys = Array.isArray(config.deal_fields) ? (config.deal_fields as string[]) : []
@@ -62,7 +64,7 @@ export function StepAction({
       body.field_values = fieldValues
     } else if (templateStep.step_type === 'conditional_statement' || isSingleChoice) {
       if (!selectedOptionKey) {
-        setError('Choose an option.')
+        setError(t('chooseOptionError'))
         return
       }
       body.selected_option_key = selectedOptionKey
@@ -80,7 +82,7 @@ export function StepAction({
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('genericError'))
       return
     }
     router.refresh()
@@ -91,7 +93,7 @@ export function StepAction({
       <div>
         <h2 className="text-sm font-medium">{templateStep.name}</h2>
         {templateStep.description && <p className="mt-1 text-sm text-muted-foreground">{templateStep.description}</p>}
-        <p className="mt-1 text-xs text-muted-foreground">Due {step.due_at}</p>
+        <p className="mt-1 text-xs text-muted-foreground">{t('dueDate', { date: step.due_at })}</p>
       </div>
 
       {templateStep.step_type === 'fill_fields' && (
@@ -209,9 +211,13 @@ export function StepAction({
         </div>
       )}
 
-      {nextStepPreview && <p className="text-xs text-muted-foreground">Next step: {nextStepPreview.name} — {nextStepPreview.type}</p>}
+      {nextStepPreview && (
+        <p className="text-xs text-muted-foreground">
+          {t('nextStepPreview', { name: nextStepPreview.name, type: nextStepPreview.type })}
+        </p>
+      )}
       {!nextStepPreview && templateStep.completes_automator && (
-        <p className="text-xs text-muted-foreground">Completing this step finishes the automation.</p>
+        <p className="text-xs text-muted-foreground">{t('completingFinishes')}</p>
       )}
 
       {error && <p className="text-sm text-danger">{error}</p>}
@@ -223,10 +229,10 @@ export function StepAction({
           disabled={submitting}
           className="rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
         >
-          {submitting ? 'Saving…' : 'This has been completed'}
+          {submitting ? t('saving') : t('completedButton')}
         </button>
         <button type="button" onClick={() => router.back()} className="rounded border border-input-border px-4 py-2 text-sm">
-          This hasn&apos;t been completed
+          {t('notCompletedButton')}
         </button>
       </div>
     </div>

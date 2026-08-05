@@ -1,17 +1,20 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
-const STEP_TYPE_LABELS: { value: string; label: string }[] = [
-  { value: 'fill_fields', label: 'Fill Fields' },
-  { value: 'conditional_statement', label: 'Conditional Statement' },
-  { value: 'email_task', label: 'Email Task' },
-  { value: 'call_task', label: 'Call Task' },
-  { value: 'generic_task', label: 'Generic Task' },
-  { value: 'trigger', label: 'Trigger' },
-  { value: 'option_list', label: 'Option List' },
-  { value: 'show_text', label: 'Show Text' },
+import { getStepTypeLabels } from '@/lib/automations/labels'
+
+const STEP_TYPE_ORDER = [
+  'fill_fields',
+  'conditional_statement',
+  'email_task',
+  'call_task',
+  'generic_task',
+  'trigger',
+  'option_list',
+  'show_text',
 ]
 
 export function StepTypePicker({
@@ -23,9 +26,11 @@ export function StepTypePicker({
   stepId: string
   onPicked: () => void
 }) {
+  const t = useTranslations('Automations')
   const router = useRouter()
   const [error, setError] = useState<string | null>(null)
   const [pending, setPending] = useState<string | null>(null)
+  const stepTypeLabels = getStepTypeLabels(t)
 
   async function handlePick(stepType: string) {
     setPending(stepType)
@@ -38,7 +43,7 @@ export function StepTypePicker({
     const result = await response.json()
     setPending(null)
     if (!response.ok) {
-      setError(result.error ?? 'Could not set this step’s type.')
+      setError(result.error ?? t('pickTypeError'))
       return
     }
     router.refresh()
@@ -47,17 +52,17 @@ export function StepTypePicker({
 
   return (
     <div className="flex flex-col gap-2 rounded border border-dashed border-input-border p-4">
-      <p className="text-sm text-muted-foreground">Select the action type for this step</p>
+      <p className="text-sm text-muted-foreground">{t('pickerPrompt')}</p>
       <div className="flex flex-wrap gap-2">
-        {STEP_TYPE_LABELS.map((option) => (
+        {STEP_TYPE_ORDER.map((value) => (
           <button
-            key={option.value}
+            key={value}
             type="button"
             disabled={pending !== null}
-            onClick={() => handlePick(option.value)}
+            onClick={() => handlePick(value)}
             className="rounded border border-input-border px-3 py-1.5 text-sm disabled:opacity-50"
           >
-            {pending === option.value ? 'Setting…' : option.label}
+            {pending === value ? t('settingEllipsis') : stepTypeLabels[value]}
           </button>
         ))}
       </div>

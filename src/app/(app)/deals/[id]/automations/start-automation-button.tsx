@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -10,6 +11,7 @@ export function StartAutomationButton({
   dealId: string
   availableTemplates: { id: string; name: string }[]
 }) {
+  const t = useTranslations('Automations')
   const router = useRouter()
   const [templateId, setTemplateId] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -27,7 +29,7 @@ export function StartAutomationButton({
     const result = await response.json()
     setSubmitting(false)
     if (!response.ok) {
-      setError(result.error ?? 'Could not start this automation.')
+      setError(result.error ?? t('startAutomationError'))
       return
     }
     setTemplateId('')
@@ -42,7 +44,7 @@ export function StartAutomationButton({
           onChange={(event) => setTemplateId(event.target.value)}
           className="rounded border border-input-border bg-input-background px-3 py-2 text-sm"
         >
-          <option value="">Choose an automation to start…</option>
+          <option value="">{t('chooseAutomationPlaceholder')}</option>
           {availableTemplates.map((template) => (
             <option key={template.id} value={template.id}>
               {template.name}
@@ -55,7 +57,7 @@ export function StartAutomationButton({
           disabled={submitting || !templateId}
           className="rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
         >
-          {submitting ? 'Starting…' : 'Start an automator manually for this deal'}
+          {submitting ? t('starting') : t('startManually')}
         </button>
       </div>
       {error && <p className="text-sm text-danger">{error}</p>}

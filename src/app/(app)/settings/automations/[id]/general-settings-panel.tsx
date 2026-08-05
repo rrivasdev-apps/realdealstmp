@@ -1,21 +1,17 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 import type { DealField } from '@/lib/automations/deal-fields'
+import { getTriggerLabels } from '@/lib/automations/labels'
 
 import { buildFolderOptions, type AutomationFolder } from '../types'
 import type { AutomationTemplate, CustomFieldOption, LookupOption, OtherStepOption } from './types'
 
-const TRIGGER_OPTIONS: { value: string; label: string }[] = [
-  { value: 'deal_created', label: 'Any deal is created' },
-  { value: 'field_changed', label: 'A field value changes' },
-  { value: 'custom_field_changed', label: 'A custom field value changes' },
-  { value: 'step_completed', label: 'A step of another automation finishes' },
-  { value: 'date_based', label: 'A date field is reached' },
-]
+const TRIGGER_ORDER = ['deal_created', 'field_changed', 'custom_field_changed', 'step_completed', 'date_based']
 
 export function GeneralSettingsPanel({
   template,
@@ -36,7 +32,10 @@ export function GeneralSettingsPanel({
   dealDateFields: DealField[]
   folders: AutomationFolder[]
 }) {
+  const t = useTranslations('Automations')
   const router = useRouter()
+  const triggerLabels = getTriggerLabels(t)
+  const triggerOptions = TRIGGER_ORDER.map((value) => ({ value, label: triggerLabels[value] }))
   const [name, setName] = useState(template.name)
   const [folderId, setFolderId] = useState(template.folder_id ?? '')
   const [triggerType, setTriggerType] = useState(template.trigger_type)
@@ -57,6 +56,10 @@ export function GeneralSettingsPanel({
 
   async function handleSave(event: React.FormEvent) {
     event.preventDefault()
+    if (!name.trim()) {
+      setError(t('nameRequiredError'))
+      return
+    }
     setError(null)
     setSubmitting(true)
 
@@ -82,7 +85,7 @@ export function GeneralSettingsPanel({
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('genericError'))
       return
     }
 
@@ -95,20 +98,20 @@ export function GeneralSettingsPanel({
     const result = await response.json()
     setSubmitting(false)
     if (!response.ok) {
-      setError(result.error ?? 'Could not duplicate this automation.')
+      setError(result.error ?? t('duplicateError'))
       return
     }
     router.push(`/settings/automations/${result.id}`)
   }
 
   async function handleDelete() {
-    if (!confirm(`Delete "${template.name}"? This can't be undone.`)) return
+    if (!confirm(t('deleteTemplateConfirm', { name: template.name }))) return
     setSubmitting(true)
     const response = await fetch(`/api/automations/${template.id}`, { method: 'DELETE' })
     const result = await response.json()
     setSubmitting(false)
     if (!response.ok) {
-      setError(result.error ?? 'Could not delete this automation.')
+      setError(result.error ?? t('deleteTemplateError'))
       return
     }
     router.push('/settings/automations')
@@ -119,18 +122,18 @@ export function GeneralSettingsPanel({
   return (
     <form onSubmit={handleSave} className="flex flex-col gap-4 rounded-lg border border-border bg-background p-4">
       <div className="flex items-center justify-between gap-4">
-        <h2 className="heading-subsection">Automation general settings</h2>
+        <h2 className="heading-subsection">{t('generalSettingsTitle')}</h2>
         <span
           className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
             template.is_functional ? 'bg-success/15 text-success' : 'bg-muted text-muted-foreground'
           }`}
         >
-          {template.is_functional ? 'Automation Functional' : 'Automation Not Functional'}
+          {template.is_functional ? t('functionalBadge') : t('notFunctionalBadge')}
         </span>
       </div>
 
       <label className="field-label">
-        Name
+        {t('nameLabel')}
         <input
           type="text"
           required
@@ -141,13 +144,13 @@ export function GeneralSettingsPanel({
       </label>
 
       <label className="field-label">
-        Folder
+        {t('folderLabel')}
         <select
           value={folderId}
           onChange={(event) => setFolderId(event.target.value)}
           className="rounded border border-input-border bg-input-background px-3 py-2"
         >
-          {buildFolderOptions(folders).map((option) => (
+          {buildFolderOptions(folders, t('uncategorized')).map((option) => (
             <option key={option.id ?? 'uncategorized'} value={option.id ?? ''}>
               {option.label}
             </option>
@@ -156,13 +159,13 @@ export function GeneralSettingsPanel({
       </label>
 
       <label className="field-label">
-        Choose when this automation starts
+        {t('chooseTriggerLabel')}
         <select
           value={triggerType}
           onChange={(event) => setTriggerType(event.target.value)}
           className="rounded border border-input-border bg-input-background px-3 py-2"
         >
-          {TRIGGER_OPTIONS.map((option) => (
+          {triggerOptions.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
             </option>
@@ -172,13 +175,13 @@ export function GeneralSettingsPanel({
 
       {triggerType === 'deal_created' && (
         <label className="field-label">
-          Deal type (leave blank for any type)
+          {t('dealTypeLabel')}
           <select
             value={triggerDealTypeId}
             onChange={(event) => setTriggerDealTypeId(event.target.value)}
             className="rounded border border-input-border bg-input-background px-3 py-2"
           >
-            <option value="">Any type</option>
+            <option value="">{t('anyType')}</option>
             {dealTypes.map((option) => (
               <option key={option.id} value={option.id}>
                 {option.name}
@@ -190,13 +193,13 @@ export function GeneralSettingsPanel({
 
       {triggerType === 'field_changed' && (
         <label className="field-label">
-          Deal field
+          {t('dealFieldLabel')}
           <select
             value={triggerDealField}
             onChange={(event) => setTriggerDealField(event.target.value)}
             className="rounded border border-input-border bg-input-background px-3 py-2"
           >
-            <option value="">Select a field…</option>
+            <option value="">{t('selectFieldPlaceholder')}</option>
             {dealFields.map((field) => (
               <option key={field.key} value={field.key}>
                 {field.label}
@@ -208,13 +211,13 @@ export function GeneralSettingsPanel({
 
       {triggerType === 'custom_field_changed' && (
         <label className="field-label">
-          Custom field
+          {t('customFieldLabel')}
           <select
             value={triggerCustomFieldId}
             onChange={(event) => setTriggerCustomFieldId(event.target.value)}
             className="rounded border border-input-border bg-input-background px-3 py-2"
           >
-            <option value="">Select a custom field…</option>
+            <option value="">{t('selectCustomFieldPlaceholder')}</option>
             {customFieldDefinitions.map((field) => (
               <option key={field.id} value={field.id}>
                 {field.name}
@@ -227,7 +230,7 @@ export function GeneralSettingsPanel({
       {triggerType === 'step_completed' && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <label className="field-label">
-            Automation
+            {t('automationFallback')}
             <select
               value={triggerSourceTemplateId}
               onChange={(event) => {
@@ -236,7 +239,7 @@ export function GeneralSettingsPanel({
               }}
               className="rounded border border-input-border bg-input-background px-3 py-2"
             >
-              <option value="">Select an automation…</option>
+              <option value="">{t('selectAutomationPlaceholder')}</option>
               {otherTemplates.map((option) => (
                 <option key={option.id} value={option.id}>
                   {option.name}
@@ -246,17 +249,17 @@ export function GeneralSettingsPanel({
           </label>
 
           <label className="field-label">
-            Step
+            {t('stepLabel')}
             <select
               value={triggerSourceStepId}
               onChange={(event) => setTriggerSourceStepId(event.target.value)}
               disabled={!triggerSourceTemplateId}
               className="rounded border border-input-border bg-input-background px-3 py-2 disabled:opacity-50"
             >
-              <option value="">Select a step…</option>
+              <option value="">{t('selectStepPlaceholder')}</option>
               {stepsForSourceTemplate.map((option) => (
                 <option key={option.id} value={option.id}>
-                  {option.name ?? 'Untitled step'}
+                  {option.name ?? t('untitledStep')}
                 </option>
               ))}
             </select>
@@ -267,13 +270,13 @@ export function GeneralSettingsPanel({
       {triggerType === 'date_based' && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <label className="field-label">
-            Date field
+            {t('dateFieldLabel')}
             <select
               value={triggerDateField}
               onChange={(event) => setTriggerDateField(event.target.value)}
               className="rounded border border-input-border bg-input-background px-3 py-2"
             >
-              <option value="">Select a date field…</option>
+              <option value="">{t('selectDateFieldPlaceholder')}</option>
               {dealDateFields.map((field) => (
                 <option key={field.key} value={field.key}>
                   {field.label}
@@ -283,20 +286,20 @@ export function GeneralSettingsPanel({
           </label>
 
           <label className="field-label">
-            When
+            {t('whenLabel')}
             <select
               value={triggerDateDirection}
               onChange={(event) => setTriggerDateDirection(event.target.value)}
               className="rounded border border-input-border bg-input-background px-3 py-2"
             >
-              <option value="on">On the date</option>
-              <option value="before">Days before</option>
-              <option value="after">Days after</option>
+              <option value="on">{t('onTheDate')}</option>
+              <option value="before">{t('daysBefore')}</option>
+              <option value="after">{t('daysAfter')}</option>
             </select>
           </label>
 
           <label className="field-label">
-            Days {triggerDateDirection === 'on' ? '(n/a)' : ''}
+            {t('daysLabel')} {triggerDateDirection === 'on' ? t('naSuffix') : ''}
             <input
               type="number"
               min={0}
@@ -311,7 +314,7 @@ export function GeneralSettingsPanel({
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <label className="field-label">
-          <span className="flex min-h-[2.5rem] items-start">Days after triggered until the automation starts and is visible to users</span>
+          <span className="flex min-h-[2.5rem] items-start">{t('startDelayLabel')}</span>
           <input
             type="number"
             min={0}
@@ -322,7 +325,7 @@ export function GeneralSettingsPanel({
         </label>
 
         <label className="field-label">
-          <span className="flex min-h-[2.5rem] items-start">Days after starting until the first step is due</span>
+          <span className="flex min-h-[2.5rem] items-start">{t('firstStepDelayLabel')}</span>
           <input
             type="number"
             min={0}
@@ -334,15 +337,15 @@ export function GeneralSettingsPanel({
       </div>
 
       <div className="flex items-center gap-3 text-xs text-muted-foreground">
-        <span>Triggered</span>
+        <span>{t('triggeredLabel')}</span>
         <span className="h-px flex-1 bg-border" />
         <span>{startDelayDays || 0}d</span>
         <span className="h-px flex-1 bg-border" />
-        <span>Starts and visible</span>
+        <span>{t('startsVisibleLabel')}</span>
         <span className="h-px flex-1 bg-border" />
         <span>{firstStepDueDelayDays || 0}d</span>
         <span className="h-px flex-1 bg-border" />
-        <span>First step due</span>
+        <span>{t('firstStepDueLabel')}</span>
       </div>
 
       {error && <p className="text-sm text-danger">{error}</p>}
@@ -353,7 +356,7 @@ export function GeneralSettingsPanel({
           disabled={submitting}
           className="rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
         >
-          Save automation
+          {t('saveAutomation')}
         </button>
         <button
           type="button"
@@ -361,7 +364,7 @@ export function GeneralSettingsPanel({
           disabled={submitting}
           className="rounded border border-input-border px-4 py-2 text-sm disabled:opacity-50"
         >
-          Duplicate
+          {t('duplicate')}
         </button>
         <button
           type="button"
@@ -369,10 +372,10 @@ export function GeneralSettingsPanel({
           disabled={submitting}
           className="rounded border border-danger px-4 py-2 text-sm text-danger disabled:opacity-50"
         >
-          Delete
+          {t('delete')}
         </button>
         <Link href="/settings/automations" className="ml-auto text-sm underline">
-          Done
+          {t('done')}
         </Link>
       </div>
     </form>

@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -19,6 +20,7 @@ function FieldPickerList<T extends { key: string; label: string }>({
   selectedKeys: string[]
   onChange: (keys: string[]) => void
 }) {
+  const t = useTranslations('Automations')
   const available = options.filter((option) => !selectedKeys.includes(option.key))
 
   return (
@@ -32,7 +34,7 @@ function FieldPickerList<T extends { key: string; label: string }>({
           }}
           className="rounded border border-input-border bg-input-background px-3 py-2"
         >
-          <option value="">Add field…</option>
+          <option value="">{t('addFieldPlaceholder')}</option>
           {available.map((option) => (
             <option key={option.key} value={option.key}>
               {option.label}
@@ -49,7 +51,7 @@ function FieldPickerList<T extends { key: string; label: string }>({
               <button
                 type="button"
                 onClick={() => onChange(selectedKeys.filter((existing) => existing !== key))}
-                aria-label={`Remove ${option?.label ?? key}`}
+                aria-label={t('removeAria', { label: option?.label ?? key })}
                 className="text-muted-foreground hover:text-foreground"
               >
                 ✕
@@ -85,6 +87,7 @@ export function FillFieldsModal({
   triggers: StepTrigger[]
   onClose: () => void
 }) {
+  const t = useTranslations('Automations')
   const router = useRouter()
   const availableSteps = allSteps.filter((other) => other.id !== step.id)
   const existingConfig = (step.config ?? {}) as Partial<FillFieldsConfig>
@@ -110,6 +113,14 @@ export function FillFieldsModal({
 
   async function handleSave(event: React.FormEvent) {
     event.preventDefault()
+    if (!name.trim()) {
+      setError(t('titleRequiredError'))
+      return
+    }
+    if (!assignee.assigned_role_id && !assignee.assigned_profile_id) {
+      setError(t('assigneeRequiredError'))
+      return
+    }
     setError(null)
     setSubmitting(true)
 
@@ -128,7 +139,7 @@ export function FillFieldsModal({
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('genericError'))
       return
     }
 
@@ -137,12 +148,12 @@ export function FillFieldsModal({
   }
 
   return (
-    <Modal title="Update Fields" onClose={onClose}>
+    <Modal title={t('updateFieldsTitle')} onClose={onClose}>
       <form onSubmit={handleSave} className="flex flex-col gap-4">
         <AssigneeFields value={assignee} onChange={setAssignee} employeeRoles={employeeRoles} profiles={profiles} />
 
         <label className="field-label">
-          Task title
+          {t('taskTitleLabel')}
           <input
             type="text"
             required
@@ -153,14 +164,14 @@ export function FillFieldsModal({
         </label>
 
         <FieldPickerList
-          label="Select deal fields to update"
+          label={t('selectDealFieldsLabel')}
           options={dealFields.map((field) => ({ key: field.key, label: field.label }))}
           selectedKeys={dealFieldKeys}
           onChange={setDealFieldKeys}
         />
 
         <FieldPickerList
-          label="Select custom fields to update"
+          label={t('selectCustomFieldsLabel')}
           options={customFieldOptions}
           selectedKeys={customFieldIds}
           onChange={setCustomFieldIds}
@@ -176,7 +187,7 @@ export function FillFieldsModal({
           disabled={submitting}
           className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
         >
-          {submitting ? 'Saving…' : 'Create'}
+          {submitting ? t('saving') : t('create')}
         </button>
       </form>
     </Modal>

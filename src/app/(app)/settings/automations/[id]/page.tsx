@@ -1,21 +1,23 @@
+import { getTranslations } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 
 import { requirePermission } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
-import { DEAL_DATE_FIELDS, DEAL_FIELDS } from '@/lib/automations/deal-fields'
+import { getDealDateFields, getDealFields } from '@/lib/automations/labels'
 
 import { AutomationBuilder } from './automation-builder'
 
 export default async function AutomationPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
+  const t = await getTranslations('Automations')
   const profile = await requirePermission('can_manage_settings')
 
   if (!profile) {
     return (
       <div>
-        <h1 className="heading-page">Automation</h1>
-        <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to manage settings.</p>
+        <h1 className="heading-page">{t('automationFallback')}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{t('noPermissionSettings')}</p>
       </div>
     )
   }
@@ -66,8 +68,8 @@ export default async function AutomationPage({ params }: { params: Promise<{ id:
         customFieldDefinitions={customFieldDefinitions ?? []}
         otherTemplates={otherTemplates ?? []}
         otherSteps={otherSteps ?? []}
-        dealFields={DEAL_FIELDS}
-        dealDateFields={DEAL_DATE_FIELDS}
+        dealFields={getDealFields(t)}
+        dealDateFields={getDealDateFields(t)}
         folders={folders ?? []}
       />
     </div>

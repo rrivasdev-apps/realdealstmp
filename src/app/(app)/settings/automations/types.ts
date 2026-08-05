@@ -13,9 +13,9 @@ export type AutomationListItem = {
 // followed by their subfolders (label already indented), plus a null-id "Uncategorized" entry.
 export type FolderOption = { id: string | null; label: string }
 
-export function buildFolderOptions(folders: AutomationFolder[]): FolderOption[] {
+export function buildFolderOptions(folders: AutomationFolder[], uncategorizedLabel: string): FolderOption[] {
   const topLevel = folders.filter((folder) => !folder.parent_folder_id)
-  const options: FolderOption[] = [{ id: null, label: 'Uncategorized' }]
+  const options: FolderOption[] = [{ id: null, label: uncategorizedLabel }]
 
   for (const folder of topLevel) {
     options.push({ id: folder.id, label: folder.name })

@@ -1,9 +1,11 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 import type { DealField } from '@/lib/automations/deal-fields'
+import { getStepTypeLabels } from '@/lib/automations/labels'
 
 import { ConditionalStatementModal } from './step-config-modals/conditional-statement-modal'
 import { FillFieldsModal } from './step-config-modals/fill-fields-modal'
@@ -18,17 +20,6 @@ import {
 import { SimpleTaskModal } from './step-config-modals/simple-task-modal'
 import { StepTypePicker } from './step-type-picker'
 import type { AutomationStep, CustomFieldOption, LookupOption, StepTrigger } from './types'
-
-const STEP_TYPE_LABELS: Record<string, string> = {
-  fill_fields: 'Fill Fields',
-  conditional_statement: 'Conditional Statement',
-  email_task: 'Email Task',
-  call_task: 'Call Task',
-  generic_task: 'Generic Task',
-  show_text: 'Show Text',
-  option_list: 'Option List',
-  trigger: 'Trigger',
-}
 
 function TriggerStepInline({
   templateId,
@@ -49,6 +40,7 @@ function TriggerStepInline({
   triggers: StepTrigger[]
   onSaved: () => void
 }) {
+  const t = useTranslations('Automations')
   const router = useRouter()
   const availableSteps = allSteps.filter((other) => other.id !== step.id)
 
@@ -68,6 +60,14 @@ function TriggerStepInline({
   const [submitting, setSubmitting] = useState(false)
 
   async function handleSave() {
+    if (!name.trim()) {
+      setError(t('titleRequiredError'))
+      return
+    }
+    if (!assignee.assigned_role_id && !assignee.assigned_profile_id) {
+      setError(t('assigneeRequiredError'))
+      return
+    }
     setError(null)
     setSubmitting(true)
     const response = await fetch(`/api/automations/${templateId}/steps/${step.id}`, {
@@ -84,7 +84,7 @@ function TriggerStepInline({
     const result = await response.json()
     setSubmitting(false)
     if (!response.ok) {
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('genericError'))
       return
     }
     router.refresh()
@@ -94,7 +94,7 @@ function TriggerStepInline({
   return (
     <div className="flex flex-col gap-3 border-t border-border pt-3">
       <label className="field-label">
-        Step name
+        {t('stepNameLabel')}
         <input
           type="text"
           required
@@ -113,7 +113,7 @@ function TriggerStepInline({
         disabled={submitting}
         className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
       >
-        {submitting ? 'Saving…' : 'Save'}
+        {submitting ? t('saving') : t('save')}
       </button>
     </div>
   )
@@ -154,20 +154,22 @@ export function StepCard({
   onMoveUp: () => void
   onMoveDown: () => void
 }) {
+  const t = useTranslations('Automations')
   const router = useRouter()
   const [deleteError, setDeleteError] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
-  const typeLabel = step.step_type ? STEP_TYPE_LABELS[step.step_type] : null
+  const stepTypeLabels = getStepTypeLabels(t)
+  const typeLabel = step.step_type ? stepTypeLabels[step.step_type] : null
 
   async function handleDelete() {
-    if (!confirm(`Delete Step ${step.step_number}? This can't be undone.`)) return
+    if (!confirm(t('deleteStepConfirm', { number: step.step_number }))) return
     setDeleting(true)
     setDeleteError(null)
     const response = await fetch(`/api/automations/${templateId}/steps/${step.id}`, { method: 'DELETE' })
     const result = await response.json()
     setDeleting(false)
     if (!response.ok) {
-      setDeleteError(result.error ?? 'Could not delete this step.')
+      setDeleteError(result.error ?? t('deleteStepError'))
       return
     }
     onClose()
@@ -178,7 +180,7 @@ export function StepCard({
     <div className="rounded border border-border p-3">
       <div className="flex items-center justify-between gap-3">
         <button type="button" onClick={onOpen} className="flex-1 text-left text-sm font-medium">
-          Step {step.step_number}
+          {t('stepNumber', { number: step.step_number })}
           {step.name ? ` — ${step.name}` : ''}
           {typeLabel && <span className="ml-2 text-xs font-normal text-muted-foreground">{typeLabel}</span>}
         </button>
@@ -187,14 +189,14 @@ export function StepCard({
             step.is_operational ? 'bg-success/15 text-success' : 'bg-muted text-muted-foreground'
           }`}
         >
-          {step.is_operational ? 'Step Operational' : 'Step Not Operational'}
+          {step.is_operational ? t('operational') : t('notOperational')}
         </span>
         <div className="flex shrink-0 gap-1">
           <button
             type="button"
             onClick={onMoveUp}
             disabled={!canMoveUp}
-            aria-label="Move step up"
+            aria-label={t('moveUpAria')}
             className="rounded border border-input-border px-2 py-1 text-xs disabled:opacity-30"
           >
             ↑
@@ -203,7 +205,7 @@ export function StepCard({
             type="button"
             onClick={onMoveDown}
             disabled={!canMoveDown}
-            aria-label="Move step down"
+            aria-label={t('moveDownAria')}
             className="rounded border border-input-border px-2 py-1 text-xs disabled:opacity-30"
           >
             ↓
@@ -212,7 +214,7 @@ export function StepCard({
             type="button"
             onClick={handleDelete}
             disabled={deleting}
-            aria-label="Delete step"
+            aria-label={t('deleteStepAria')}
             className="rounded border border-danger px-2 py-1 text-xs text-danger disabled:opacity-50"
           >
             {deleting ? '…' : '✕'}

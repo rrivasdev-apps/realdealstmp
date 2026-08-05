@@ -1,15 +1,9 @@
+import { getTranslations } from 'next-intl/server'
 import Link from 'next/link'
 
 import { bucketDueDate, type DueBucket } from '@/lib/automations/urgency'
 import { requirePermission } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
-
-const BUCKET_LABELS: Record<DueBucket, string> = {
-  overdue: 'Overdue Steps',
-  due_today: 'Due Today Steps',
-  due_this_week: 'Due This Week Steps',
-  due_later: 'Due Later Steps',
-}
 
 const BUCKET_COLORS: Record<DueBucket, string> = {
   overdue: 'bg-danger/10 text-danger',
@@ -34,14 +28,21 @@ export default async function DealAutomationsPage({
   searchParams: Promise<{ filter?: string; address?: string; employee?: string }>
 }) {
   const { filter, address, employee } = await searchParams
+  const t = await getTranslations('Automations')
+  const BUCKET_LABELS: Record<DueBucket, string> = {
+    overdue: t('bucketOverdue'),
+    due_today: t('bucketDueToday'),
+    due_this_week: t('bucketDueThisWeek'),
+    due_later: t('bucketDueLater'),
+  }
   const activeFilter = filter && filter in BUCKET_LABELS ? (filter as DueBucket) : null
 
   const profile = await requirePermission('view_whiteboard')
   if (!profile || !profile.company_id) {
     return (
       <div>
-        <h1 className="heading-page">Deal Automations</h1>
-        <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to view this.</p>
+        <h1 className="heading-page">{t('dealAutomationsTitle')}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{t('noPermissionView')}</p>
       </div>
     )
   }
@@ -108,8 +109,8 @@ export default async function DealAutomationsPage({
       return {
         id: step.id,
         dealId: process.deal_id,
-        templateName: templateNameById.get(process.template_id) ?? 'Automation',
-        stepName: templateStep.name ?? 'Untitled step',
+        templateName: templateNameById.get(process.template_id) ?? t('automationFallback'),
+        stepName: templateStep.name ?? t('untitledStep'),
         dueAt: step.due_at,
         bucket: bucketDueDate(step.due_at),
         assigneeProfileIds,
@@ -147,8 +148,8 @@ export default async function DealAutomationsPage({
 
   return (
     <div>
-      <h1 className="heading-page">Deal Automations</h1>
-      <p className="mt-2 text-sm text-muted-foreground">Automation processes currently running against your deals.</p>
+      <h1 className="heading-page">{t('dealAutomationsTitle')}</h1>
+      <p className="mt-2 text-sm text-muted-foreground">{t('dealAutomationsDescription')}</p>
 
       <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
         {(['overdue', 'due_today', 'due_this_week'] as DueBucket[]).map((bucket) => (
@@ -166,7 +167,7 @@ export default async function DealAutomationsPage({
           </Link>
         ))}
         <div className="flex h-24 flex-col justify-center rounded-lg border border-border bg-background p-4">
-          <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Active Steps</div>
+          <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{t('activeSteps')}</div>
           <div className="mt-2 text-2xl font-semibold text-foreground">{rows.length}</div>
         </div>
       </div>
@@ -174,19 +175,19 @@ export default async function DealAutomationsPage({
       <form className="mt-6 flex flex-wrap items-end gap-3" method="get">
         {activeFilter && <input type="hidden" name="filter" value={activeFilter} />}
         <label className="field-label">
-          Address
+          {t('addressLabel')}
           <input
             type="text"
             name="address"
             defaultValue={address ?? ''}
-            placeholder="Start typing…"
+            placeholder={t('addressPlaceholder')}
             className="rounded border border-input-border bg-input-background px-3 py-2"
           />
         </label>
         <label className="field-label">
-          Employee
+          {t('employeeLabel')}
           <select name="employee" defaultValue={employee ?? ''} className="rounded border border-input-border bg-input-background px-3 py-2">
-            <option value="">Choose an option…</option>
+            <option value="">{t('chooseOption')}</option>
             {(companyProfiles ?? []).map((option) => (
               <option key={option.id} value={option.id}>
                 {option.name}
@@ -195,16 +196,16 @@ export default async function DealAutomationsPage({
           </select>
         </label>
         <button type="submit" className="rounded border border-input-border px-4 py-2 text-sm">
-          Filter
+          {t('filter')}
         </button>
         {(address || employee || activeFilter) && (
           <Link href="/deal-automations" className="text-sm underline">
-            Clear
+            {t('clear')}
           </Link>
         )}
       </form>
 
-      <p className="mt-4 text-sm text-muted-foreground">{rowsByDeal.size} deal(s) with active automations</p>
+      <p className="mt-4 text-sm text-muted-foreground">{t('dealsWithActiveAutomations', { count: rowsByDeal.size })}</p>
 
       <ul className="mt-2 divide-y divide-border rounded-lg border border-border bg-background">
         {Array.from(rowsByDeal.entries()).map(([dealId, dealRows]) => {
@@ -217,10 +218,10 @@ export default async function DealAutomationsPage({
             <li key={dealId} className="flex flex-col gap-1 px-4 py-3">
               <div className="flex items-center justify-between gap-4">
                 <Link href={`/deals/${dealId}/automations`} className="text-sm font-medium hover:underline">
-                  {deal?.address ?? 'Deal'}
+                  {deal?.address ?? t('dealFallback')}
                 </Link>
                 <span className="text-xs text-muted-foreground">
-                  {deal?.deal_statuses?.name} · {automatorCount} automator(s) running
+                  {deal?.deal_statuses?.name} · {t('automatorCount', { count: automatorCount })}
                 </span>
               </div>
               <div className="flex flex-wrap gap-2 text-xs">
@@ -235,7 +236,7 @@ export default async function DealAutomationsPage({
             </li>
           )
         })}
-        {rowsByDeal.size === 0 && <li className="px-4 py-3 text-sm text-muted-foreground">No deals with active automations.</li>}
+        {rowsByDeal.size === 0 && <li className="px-4 py-3 text-sm text-muted-foreground">{t('noDealsWithActiveAutomations')}</li>}
       </ul>
     </div>
   )

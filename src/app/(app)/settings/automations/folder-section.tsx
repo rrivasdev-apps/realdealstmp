@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -28,6 +29,7 @@ export function FolderSection({
   expandedIds: Set<string>
   onToggle: (id: string) => void
 }) {
+  const t = useTranslations('Automations')
   const router = useRouter()
   const [isRenaming, setIsRenaming] = useState(false)
   const [draftName, setDraftName] = useState(folder.name)
@@ -56,7 +58,7 @@ export function FolderSection({
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Could not rename this folder.')
+      setError(result.error ?? t('renameFolderError'))
       return
     }
 
@@ -66,14 +68,12 @@ export function FolderSection({
 
   async function handleDelete() {
     const subfolderCount = subfolders?.length ?? 0
-    const parts = [`${totalAutomationCount} automation${totalAutomationCount === 1 ? '' : 's'}`]
-    if (subfolderCount > 0) parts.push(`${subfolderCount} subfolder${subfolderCount === 1 ? '' : 's'}`)
+    const parts = [t('folderAutomationCount', { count: totalAutomationCount })]
+    if (subfolderCount > 0) parts.push(t('folderSubfolderCount', { count: subfolderCount }))
     const detail =
-      totalAutomationCount > 0 || subfolderCount > 0
-        ? ` This folder contains ${parts.join(' and ')}. Automations will move to Uncategorized.`
-        : ''
+      totalAutomationCount > 0 || subfolderCount > 0 ? t('deleteFolderDetail', { parts: parts.join(' ' + t('and') + ' ') }) : ''
 
-    if (!confirm(`Delete "${folder.name}"?${detail}`)) return
+    if (!confirm(`${t('deleteFolderConfirmTitle', { name: folder.name })}${detail}`)) return
 
     setError(null)
     setSubmitting(true)
@@ -82,7 +82,7 @@ export function FolderSection({
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Could not delete this folder.')
+      setError(result.error ?? t('deleteFolderError'))
       return
     }
 
@@ -107,7 +107,7 @@ export function FolderSection({
                 className="rounded border border-input-border bg-input-background px-2 py-0.5 text-sm"
               />
               <button type="submit" disabled={submitting} className="text-xs font-medium text-foreground underline">
-                Save
+                {t('save')}
               </button>
               <button
                 type="button"
@@ -117,24 +117,24 @@ export function FolderSection({
                 }}
                 className="text-xs text-muted-foreground underline"
               >
-                Cancel
+                {t('cancel')}
               </button>
             </form>
           ) : (
             <span className="truncate text-sm font-medium">{folder.name}</span>
           )}
           <span className="shrink-0 text-xs text-muted-foreground">
-            {totalAutomationCount} automation{totalAutomationCount === 1 ? '' : 's'}
+            {t('folderAutomationCount', { count: totalAutomationCount })}
           </span>
         </button>
 
         {!isRenaming && (
           <div className="flex shrink-0 items-center gap-3 text-xs">
             <button type="button" onClick={() => setIsRenaming(true)} className="text-muted-foreground underline">
-              Rename
+              {t('rename')}
             </button>
             <button type="button" onClick={handleDelete} disabled={submitting} className="text-danger underline disabled:opacity-50">
-              Delete
+              {t('delete')}
             </button>
           </div>
         )}
@@ -145,8 +145,8 @@ export function FolderSection({
       {isExpanded && (
         <div className="border-t border-border">
           <div className="flex flex-wrap items-center gap-2 px-4 py-2">
-            <NewAutomationButton folderId={folder.id} label="+ New Automation" />
-            {isTopLevel && <NewFolderButton parentFolderId={folder.id} label="+ New Subfolder" />}
+            <NewAutomationButton folderId={folder.id} label={t('newAutomation')} />
+            {isTopLevel && <NewFolderButton parentFolderId={folder.id} label={t('newSubfolder')} />}
           </div>
 
           {automations.length > 0 && (
@@ -174,7 +174,7 @@ export function FolderSection({
           )}
 
           {automations.length === 0 && (!subfolders || subfolders.length === 0) && (
-            <p className="px-4 py-2 text-sm text-muted-foreground">Nothing in this folder yet.</p>
+            <p className="px-4 py-2 text-sm text-muted-foreground">{t('nothingInFolder')}</p>
           )}
         </div>
       )}

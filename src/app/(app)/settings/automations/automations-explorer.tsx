@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useMemo, useState } from 'react'
 
 import { AutomationRow } from './automation-row'
@@ -9,10 +10,11 @@ import { NewFolderButton } from './new-folder-button'
 import { buildFolderOptions, type AutomationFolder, type AutomationListItem } from './types'
 
 export function AutomationsExplorer({ folders, templates }: { folders: AutomationFolder[]; templates: AutomationListItem[] }) {
+  const t = useTranslations('Automations')
   const [query, setQuery] = useState('')
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set())
 
-  const folderOptions = useMemo(() => buildFolderOptions(folders), [folders])
+  const folderOptions = useMemo(() => buildFolderOptions(folders, t('uncategorized')), [folders, t])
   const folderNameById = useMemo(() => new Map(folders.map((folder) => [folder.id, folder.name])), [folders])
 
   const templatesByFolder = useMemo(() => {
@@ -49,10 +51,10 @@ export function AutomationsExplorer({ folders, templates }: { folders: Automatio
               key={template.id}
               template={template}
               folderOptions={folderOptions}
-              folderLabel={template.folder_id ? folderNameById.get(template.folder_id) : 'Uncategorized'}
+              folderLabel={template.folder_id ? folderNameById.get(template.folder_id) : t('uncategorized')}
             />
           ))}
-          {matches.length === 0 && <li className="px-4 py-3 text-sm text-muted-foreground">No automations match &ldquo;{query}&rdquo;.</li>}
+          {matches.length === 0 && <li className="px-4 py-3 text-sm text-muted-foreground">{t('noMatches', { query })}</li>}
         </ul>
       </div>
     )
@@ -62,7 +64,7 @@ export function AutomationsExplorer({ folders, templates }: { folders: Automatio
     <div>
       <div className="flex flex-wrap items-center justify-between gap-2">
         <SearchBox query={query} onChange={setQuery} />
-        <NewFolderButton parentFolderId={null} label="+ New Folder" />
+        <NewFolderButton parentFolderId={null} label={t('newFolder')} />
       </div>
 
       <ul className="mt-2 max-w-2xl divide-y divide-border rounded-lg border border-border bg-background">
@@ -81,8 +83,8 @@ export function AutomationsExplorer({ folders, templates }: { folders: Automatio
 
         <li>
           <div className="flex flex-wrap items-center justify-between gap-2 bg-muted/40 px-4 py-2">
-            <span className="text-sm font-medium">Uncategorized</span>
-            <NewAutomationButton label="+ New Automation" />
+            <span className="text-sm font-medium">{t('uncategorized')}</span>
+            <NewAutomationButton label={t('newAutomation')} />
           </div>
           {uncategorized.length > 0 ? (
             <ul className="divide-y divide-border">
@@ -91,7 +93,7 @@ export function AutomationsExplorer({ folders, templates }: { folders: Automatio
               ))}
             </ul>
           ) : (
-            <p className="px-4 py-2 text-sm text-muted-foreground">Nothing here.</p>
+            <p className="px-4 py-2 text-sm text-muted-foreground">{t('nothingHere')}</p>
           )}
         </li>
       </ul>
@@ -100,12 +102,13 @@ export function AutomationsExplorer({ folders, templates }: { folders: Automatio
 }
 
 function SearchBox({ query, onChange }: { query: string; onChange: (value: string) => void }) {
+  const t = useTranslations('Automations')
   return (
     <input
       type="search"
       value={query}
       onChange={(event) => onChange(event.target.value)}
-      placeholder="Search automations by name…"
+      placeholder={t('searchPlaceholder')}
       className="w-full max-w-sm rounded border border-input-border bg-input-background px-3 py-2 text-sm"
     />
   )

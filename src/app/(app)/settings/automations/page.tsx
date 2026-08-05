@@ -1,16 +1,19 @@
+import { getTranslations } from 'next-intl/server'
+
 import { requirePermission } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
 import { AutomationsExplorer } from './automations-explorer'
 
 export default async function AutomationsPage() {
+  const t = await getTranslations('Automations')
   const profile = await requirePermission('can_manage_settings')
 
   if (!profile) {
     return (
       <div>
-        <h1 className="heading-page">Automations</h1>
-        <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to manage settings.</p>
+        <h1 className="heading-page">{t('listTitle')}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{t('noPermissionSettings')}</p>
       </div>
     )
   }
@@ -23,10 +26,8 @@ export default async function AutomationsPage() {
 
   return (
     <div>
-      <h1 className="heading-page">Automations</h1>
-      <p className="mt-2 text-sm text-muted-foreground">
-        Configure the automated step-by-step workflows (&ldquo;Deal Automations&rdquo;) that run against your deals.
-      </p>
+      <h1 className="heading-page">{t('listTitle')}</h1>
+      <p className="mt-2 text-sm text-muted-foreground">{t('listDescription')}</p>
 
       <div className="mt-6 max-w-2xl">
         <AutomationsExplorer folders={folders ?? []} templates={templates ?? []} />

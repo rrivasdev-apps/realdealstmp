@@ -1,13 +1,16 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 // Just creates a bare automation and opens the builder -- naming and every
 // other setting happens there as a second step, not up front in a form here.
 // An optional folderId pre-files the new automation when this button is
-// rendered inside a specific folder/subfolder's section.
-export function NewAutomationButton({ folderId, label = 'New' }: { folderId?: string; label?: string }) {
+// rendered inside a specific folder/subfolder's section. `label` is always
+// passed in translated by the caller (this component isn't the source of it).
+export function NewAutomationButton({ folderId, label }: { folderId?: string; label: string }) {
+  const t = useTranslations('Automations')
   const router = useRouter()
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
@@ -25,7 +28,7 @@ export function NewAutomationButton({ folderId, label = 'New' }: { folderId?: st
 
     if (!response.ok) {
       setSubmitting(false)
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('genericError'))
       return
     }
 
@@ -40,7 +43,7 @@ export function NewAutomationButton({ folderId, label = 'New' }: { folderId?: st
         disabled={submitting}
         className="rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
       >
-        {submitting ? 'Creating…' : label}
+        {submitting ? t('creating') : label}
       </button>
       {error && <p className="text-sm text-danger">{error}</p>}
     </div>
