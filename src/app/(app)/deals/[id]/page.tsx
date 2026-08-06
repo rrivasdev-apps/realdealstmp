@@ -204,7 +204,6 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
             jv_split_type_id: deal.jv_split_type_id ?? '',
             jv_split_percent: deal.jv_split_percent?.toString() ?? '',
             split_amount: deal.split_amount?.toString() ?? '',
-            total_commissions: deal.total_commissions?.toString() ?? '',
             checklist_post_occupancy: deal.checklist_post_occupancy ?? false,
             post_occupancy_hold_back_amount: deal.post_occupancy_hold_back_amount?.toString() ?? '',
             post_occupancy_move_out_date: deal.post_occupancy_move_out_date ?? '',
@@ -270,6 +269,7 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
             amount: expense.amount,
             expense_date: expense.expense_date,
           }))}
+          totalCommissions={deal.total_commissions ?? 0}
         />
       </div>
 

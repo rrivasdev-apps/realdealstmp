@@ -84,7 +84,6 @@ export type DealFormValues = {
   jv_split_type_id: string
   jv_split_percent: string
   split_amount: string
-  total_commissions: string
   checklist_post_occupancy: boolean
   post_occupancy_hold_back_amount: string
   post_occupancy_move_out_date: string
@@ -145,6 +144,7 @@ export function DealForm({
   customFieldDefinitions,
   expenseCategories,
   expenses,
+  totalCommissions,
 }: {
   mode: 'create' | 'edit'
   initialValues: DealFormValues
@@ -171,6 +171,7 @@ export function DealForm({
   customFieldDefinitions: CustomFieldDefinition[]
   expenseCategories: LookupOption[]
   expenses: DealExpense[]
+  totalCommissions: number
 }) {
   const router = useRouter()
   const t = useTranslations('DealForm')
@@ -261,7 +262,6 @@ export function DealForm({
       jv_split_type_id: values.jv_split_type_id || null,
       jv_split_percent: values.jv_split_percent ? Number(values.jv_split_percent) : null,
       split_amount: values.split_amount ? Number(values.split_amount) : null,
-      total_commissions: values.total_commissions ? Number(values.total_commissions) : null,
       checklist_post_occupancy: values.checklist_post_occupancy,
       post_occupancy_hold_back_amount: values.post_occupancy_hold_back_amount
         ? Number(values.post_occupancy_hold_back_amount)
@@ -919,17 +919,6 @@ export function DealForm({
         <fieldset className="flex flex-col gap-4 rounded border border-border p-4">
           <legend className="px-1 text-sm font-medium">{t('financial')}</legend>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <label className="field-label">
-              {t('totalCommissions')}
-              <CurrencyInput
-                value={values.total_commissions}
-                onChange={(value) => set('total_commissions', value)}
-                className="rounded border border-input-border bg-input-background px-3 py-2"
-              />
-            </label>
-          </div>
-
           <ExpensesPanel
             dealId={values.id as string}
             initialExpenses={expenses}
@@ -938,6 +927,10 @@ export function DealForm({
           />
 
           <div className="flex flex-col gap-1 rounded bg-muted px-3 py-2 text-sm">
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground">{t('totalCommissions')}</span>
+              <span className="font-medium">{currency.format(totalCommissions)}</span>
+            </div>
             {(() => {
               const cascade = calculateProfitCascade({
                 contract_price: values.contract_price ? Number(values.contract_price) : null,
@@ -945,7 +938,7 @@ export function DealForm({
                 buyer_contract_price: values.buyer_contract_price ? Number(values.buyer_contract_price) : null,
                 projected_sales_price: values.projected_sales_price ? Number(values.projected_sales_price) : null,
                 total_expenses: expensesTotal,
-                total_commissions: values.total_commissions ? Number(values.total_commissions) : null,
+                total_commissions: totalCommissions,
                 is_jv_deal: values.is_jv_deal,
                 split_amount: values.split_amount ? Number(values.split_amount) : null,
               })
