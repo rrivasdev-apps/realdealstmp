@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { getTranslations } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 
 import { requirePermission } from '@/lib/supabase/auth'
@@ -9,13 +10,14 @@ import { PartnerCompanyForm } from '../partner-company-form'
 
 export default async function EditPartnerCompanyPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
+  const t = await getTranslations('PartnerCompanies')
 
   const profile = await requirePermission('view_contacts')
   if (!profile) {
     return (
       <div>
-        <h1 className="heading-page">Company</h1>
-        <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to view this company.</p>
+        <h1 className="heading-page">{t('fallbackTitle')}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{t('viewNoPermission')}</p>
       </div>
     )
   }
@@ -48,7 +50,7 @@ export default async function EditPartnerCompanyPage({ params }: { params: Promi
 
   return (
     <div>
-      <h1 className="heading-page">Edit company</h1>
+      <h1 className="heading-page">{t('editTitle')}</h1>
       <div className="mt-6">
         <PartnerCompanyForm
           mode="edit"
@@ -65,11 +67,9 @@ export default async function EditPartnerCompanyPage({ params }: { params: Promi
       </div>
 
       <div className="mt-6 flex max-w-xl flex-col gap-2 text-sm">
-        <span className="font-medium">Points of Contact</span>
+        <span className="font-medium">{t('pointsOfContact')}</span>
         {linkedContacts.length === 0 ? (
-          <p className="text-xs text-muted-foreground">
-            No contacts linked yet — link this company from a contact&apos;s Company panel.
-          </p>
+          <p className="text-xs text-muted-foreground">{t('noLinkedContacts')}</p>
         ) : (
           <ul className="flex flex-col gap-1">
             {linkedContacts.map((contact) => (

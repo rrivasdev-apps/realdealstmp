@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -29,6 +30,7 @@ export function ShowingForm({
   buyerContacts: LookupOption[]
   vendorContacts: LookupOption[]
 }) {
+  const t = useTranslations('DealDetail')
   const router = useRouter()
   const [values, setValues] = useState(initialValues)
   const [error, setError] = useState<string | null>(null)
@@ -67,7 +69,7 @@ export function ShowingForm({
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('genericError'))
       return
     }
 
@@ -79,7 +81,7 @@ export function ShowingForm({
     <form onSubmit={handleSubmit} className="flex max-w-xl flex-col gap-6">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <label className="field-label">
-          Showing date
+          {t('showingDateLabel')}
           <input
             type="date"
             value={values.showing_date}
@@ -89,7 +91,7 @@ export function ShowingForm({
         </label>
 
         <label className="field-label">
-          Status
+          {t('statusLabel')}
           <select
             value={values.status_id}
             onChange={(event) => set('status_id', event.target.value)}
@@ -104,13 +106,13 @@ export function ShowingForm({
         </label>
 
         <label className="field-label">
-          Buyer contact
+          {t('buyerContactLabel')}
           <select
             value={values.buyer_contact_id}
             onChange={(event) => set('buyer_contact_id', event.target.value)}
             className="rounded border border-input-border bg-input-background px-3 py-2"
           >
-            <option value="">—</option>
+            <option value="">{t('emptyOption')}</option>
             {buyerContacts.map((option) => (
               <option key={option.id} value={option.id}>
                 {option.name}
@@ -120,13 +122,13 @@ export function ShowingForm({
         </label>
 
         <label className="field-label">
-          Vendor contact
+          {t('vendorContactLabel')}
           <select
             value={values.vendor_contact_id}
             onChange={(event) => set('vendor_contact_id', event.target.value)}
             className="rounded border border-input-border bg-input-background px-3 py-2"
           >
-            <option value="">—</option>
+            <option value="">{t('emptyOption')}</option>
             {vendorContacts.map((option) => (
               <option key={option.id} value={option.id}>
                 {option.name}
@@ -137,7 +139,7 @@ export function ShowingForm({
       </div>
 
       <label className="field-label">
-        Details
+        {t('detailsLabel')}
         <textarea
           value={values.details}
           onChange={(event) => set('details', event.target.value)}
@@ -154,10 +156,10 @@ export function ShowingForm({
           disabled={submitting}
           className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
         >
-          {submitting ? 'Saving…' : mode === 'create' ? 'Create showing' : 'Save changes'}
+          {submitting ? t('savingButton') : mode === 'create' ? t('createShowingButton') : t('saveChangesButton')}
         </button>
         <Link href={`/deals/${values.dealId}`} className="text-sm text-muted-foreground hover:underline">
-          Cancel
+          {t('cancelButton')}
         </Link>
       </div>
     </form>

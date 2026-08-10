@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -39,6 +40,7 @@ export function EmployeeForm({
   commissionTypes: LookupOption[]
   payPeriods: LookupOption[]
 }) {
+  const t = useTranslations('Team')
   const router = useRouter()
   const [employeeRoleIds, setEmployeeRoleIds] = useState<string[]>(initialEmployeeRoleIds)
   const [commissionTypeIds, setCommissionTypeIds] = useState<string[]>(initialCommissionTypeIds)
@@ -93,7 +95,7 @@ export function EmployeeForm({
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('genericError'))
       return
     }
 
@@ -104,7 +106,7 @@ export function EmployeeForm({
   return (
     <form onSubmit={handleSubmit} className="flex max-w-xl flex-col gap-6">
       <fieldset className="flex flex-col gap-2 rounded border border-border p-4">
-        <legend className="px-1 text-sm font-medium">Employee roles</legend>
+        <legend className="px-1 text-sm font-medium">{t('employeeRolesLegend')}</legend>
         {employeeRoles.map((option) => (
           <label key={option.id} className="flex items-center gap-1.5 text-sm">
             <input
@@ -116,31 +118,28 @@ export function EmployeeForm({
           </label>
         ))}
         {employeeRoles.length === 0 && (
-          <p className="text-sm text-muted-foreground">No employee roles yet — add some in Settings.</p>
+          <p className="text-sm text-muted-foreground">{t('noEmployeeRoles')}</p>
         )}
-        <span className="text-xs text-muted-foreground">
-          An employee can hold more than one role. Assigning a role pushes its permissions onto this employee; you
-          can still fine-tune this employee&apos;s individual permissions afterward.
-        </span>
+        <span className="text-xs text-muted-foreground">{t('employeeRolesHint')}</span>
       </fieldset>
 
       <fieldset className="grid grid-cols-1 gap-4 rounded border border-border p-4 sm:grid-cols-2">
-        <legend className="px-1 text-sm font-medium">Additional info</legend>
+        <legend className="px-1 text-sm font-medium">{t('additionalInfoLegend')}</legend>
         <label className="field-label">
-          Employee type
+          {t('employeeTypeLabel')}
           <select
             value={employeeType}
             onChange={(event) => setEmployeeType(event.target.value)}
             className="rounded border border-input-border bg-input-background px-3 py-2"
           >
-            <option value="">—</option>
-            <option value="full_time">Full-time employee</option>
-            <option value="part_time">Part-time employee</option>
-            <option value="contractor">Contractor</option>
+            <option value="">{t('emptyOption')}</option>
+            <option value="full_time">{t('employeeTypeFullTime')}</option>
+            <option value="part_time">{t('employeeTypePartTime')}</option>
+            <option value="contractor">{t('employeeTypeContractor')}</option>
           </select>
         </label>
         <label className="field-label">
-          Hire date
+          {t('hireDateLabel')}
           <input
             type="date"
             value={hireDate}
@@ -149,7 +148,7 @@ export function EmployeeForm({
           />
         </label>
         <label className="field-label">
-          Birth date
+          {t('birthDateLabel')}
           <input
             type="date"
             value={birthDate}
@@ -158,7 +157,7 @@ export function EmployeeForm({
           />
         </label>
         <label className="field-label">
-          Paid via
+          {t('paidViaLabel')}
           <input
             type="text"
             value={paidVia}
@@ -167,7 +166,7 @@ export function EmployeeForm({
           />
         </label>
         <label className="field-label sm:col-span-2">
-          Address
+          {t('addressLabel')}
           <input
             type="text"
             value={address}
@@ -181,26 +180,26 @@ export function EmployeeForm({
             checked={automaticEmails}
             onChange={(event) => setAutomaticEmails(event.target.checked)}
           />
-          Send automatic email notifications to this employee
+          {t('automaticEmailsLabel')}
         </label>
       </fieldset>
 
       <fieldset className="grid grid-cols-1 gap-4 rounded border border-border p-4 sm:grid-cols-2">
-        <legend className="px-1 text-sm font-medium">Pay rate</legend>
+        <legend className="px-1 text-sm font-medium">{t('payRateLegend')}</legend>
         <label className="field-label">
-          Pay type
+          {t('payTypeLabel')}
           <select
             value={payType}
             onChange={(event) => setPayType(event.target.value)}
             className="rounded border border-input-border bg-input-background px-3 py-2"
           >
-            <option value="">—</option>
-            <option value="hourly">Hourly</option>
-            <option value="salary">Salary</option>
+            <option value="">{t('emptyOption')}</option>
+            <option value="hourly">{t('payTypeHourly')}</option>
+            <option value="salary">{t('payTypeSalary')}</option>
           </select>
         </label>
         <label className="field-label">
-          {payType === 'salary' ? 'Salary per pay period' : 'Hourly rate'}
+          {payType === 'salary' ? t('salaryPerPeriodLabel') : t('hourlyRateLabel')}
           <input
             type="number"
             step="0.01"
@@ -212,7 +211,7 @@ export function EmployeeForm({
       </fieldset>
 
       <fieldset className="flex flex-col gap-2 rounded border border-border p-4">
-        <legend className="px-1 text-sm font-medium">Pay periods</legend>
+        <legend className="px-1 text-sm font-medium">{t('payPeriodsLegend')}</legend>
         {payPeriods.map((option) => (
           <label key={option.id} className="flex items-center gap-1.5 text-sm">
             <input
@@ -224,12 +223,12 @@ export function EmployeeForm({
           </label>
         ))}
         {payPeriods.length === 0 && (
-          <p className="text-sm text-muted-foreground">No pay periods yet — add some in Settings.</p>
+          <p className="text-sm text-muted-foreground">{t('noPayPeriods')}</p>
         )}
       </fieldset>
 
       <fieldset className="flex flex-col gap-2 rounded border border-border p-4">
-        <legend className="px-1 text-sm font-medium">Direct commission types</legend>
+        <legend className="px-1 text-sm font-medium">{t('commissionTypesLegend')}</legend>
         {commissionTypes.map((option) => (
           <label key={option.id} className="flex items-center gap-1.5 text-sm">
             <input
@@ -241,7 +240,7 @@ export function EmployeeForm({
           </label>
         ))}
         {commissionTypes.length === 0 && (
-          <p className="text-sm text-muted-foreground">No commission types yet — add some in Settings.</p>
+          <p className="text-sm text-muted-foreground">{t('noCommissionTypes')}</p>
         )}
       </fieldset>
 
@@ -253,10 +252,10 @@ export function EmployeeForm({
           disabled={submitting}
           className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
         >
-          {submitting ? 'Saving…' : 'Save changes'}
+          {submitting ? t('savingButton') : t('saveChangesButton')}
         </button>
         <Link href="/team" className="text-sm text-muted-foreground hover:underline">
-          Cancel
+          {t('cancelLink')}
         </Link>
       </div>
     </form>

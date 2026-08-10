@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -13,6 +14,7 @@ export function DealEmployeeForm({
   dealId: string
   availableProfiles: AvailableProfile[]
 }) {
+  const t = useTranslations('DealDetail')
   const router = useRouter()
   const [profileId, setProfileId] = useState('')
   const [employeeRoleIds, setEmployeeRoleIds] = useState<string[]>([])
@@ -44,7 +46,7 @@ export function DealEmployeeForm({
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('genericError'))
       return
     }
 
@@ -57,7 +59,7 @@ export function DealEmployeeForm({
     <form onSubmit={handleSubmit} className="flex flex-col gap-3">
       <div className="flex items-end gap-3">
         <label className="flex-1 field-label">
-          Employee
+          {t('employeeLabel')}
           <select
             value={profileId}
             onChange={(event) => {
@@ -66,7 +68,7 @@ export function DealEmployeeForm({
             }}
             className="rounded border border-input-border bg-input-background px-3 py-2"
           >
-            <option value="">Select a team member…</option>
+            <option value="">{t('selectTeamMember')}</option>
             {availableProfiles.map((option) => (
               <option key={option.id} value={option.id}>
                 {option.name}
@@ -79,7 +81,7 @@ export function DealEmployeeForm({
           disabled={submitting || !profileId}
           className="rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
         >
-          {submitting ? 'Adding…' : 'Add'}
+          {submitting ? t('addingButton') : t('addButton')}
         </button>
       </div>
 

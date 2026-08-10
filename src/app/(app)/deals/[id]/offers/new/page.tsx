@@ -1,3 +1,5 @@
+import { getTranslations } from 'next-intl/server'
+
 import { filterContactsByType } from '@/lib/contacts/by-type'
 import { requirePermission } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
@@ -6,13 +8,14 @@ import { OfferForm } from '../../../offer-form'
 
 export default async function NewOfferPage({ params }: { params: Promise<{ id: string }> }) {
   const { id: dealId } = await params
+  const t = await getTranslations('DealDetail')
 
   const profile = await requirePermission('edit_deal_detail')
   if (!profile) {
     return (
       <div>
-        <h1 className="heading-page">New offer</h1>
-        <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to edit this deal.</p>
+        <h1 className="heading-page">{t('newOfferTitle')}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{t('noEditPermission')}</p>
       </div>
     )
   }
@@ -33,7 +36,7 @@ export default async function NewOfferPage({ params }: { params: Promise<{ id: s
 
   return (
     <div>
-      <h1 className="heading-page">New offer</h1>
+      <h1 className="heading-page">{t('newOfferTitle')}</h1>
       <div className="mt-6">
         <OfferForm
           mode="create"

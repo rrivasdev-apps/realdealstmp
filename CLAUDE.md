@@ -21,6 +21,7 @@ npm run dev      # start dev server (Turbopack, default since Next 16)
 npm run build    # production build
 npm run start    # run the production build
 npm run lint     # eslint (flat config, eslint.config.mjs)
+npm run check:i18n  # en/es catalog parity + no hardcoded UI strings (see Localization)
 npx tsc --noEmit # typecheck — there is no separate `npm run typecheck` script
 ```
 
@@ -236,6 +237,41 @@ Custom fields per company (Settings module) are Phase 2 — the `custom_fields` 
 - Every mutating route re-checks permissions server-side — the trigger for an action (a button, a form field changing) can live in the UI, but the authorization decision and the business-rule side effects never do.
 - Commit small, deploy often — Phase 0 should be live on Vercel early, with real or test deal data, before Phase 1 work starts.
 - When a calculation is genuinely conditional (commission rules, profit rollups), write it as a single well-tested function others call, not logic repeated inline wherever it's needed.
+- **The app is bilingual (English/Spanish). Every new user-facing string ships in both languages — no exceptions, no follow-up pass.** See "Localization" below.
+
+## Localization (non-negotiable for new work)
+
+`next-intl`, English default, Spanish opt-in per company (`companies.locale`).
+Message catalogs are [src/messages/en.json](src/messages/en.json) and
+[src/messages/es.json](src/messages/es.json), one namespace per feature area.
+
+**Building any new page, form, modal, button, empty state, confirm dialog, or
+client-side validation message means adding its keys to *both* catalogs in the
+same commit.** A string that only exists in `en.json` is a bug, the same way a
+missing permission check is — don't leave it for later, and don't ship a
+feature "in English for now."
+
+- Server Components: `const t = await getTranslations('Namespace')`.
+  Client Components: `const t = useTranslations('Namespace')`.
+- Reuse an existing namespace when the feature belongs to one (`DealForm`,
+  `Settings`, `Team`, …); create a new one for a genuinely new area. `Common`
+  holds strings shared across features (address fields, generic pickers).
+- Interpolate with `t('key', { name })` — never concatenate translated
+  fragments, and never build a sentence out of two keys.
+- A component that takes a label as a prop (e.g. `ContactCompanyField`) gets
+  the *translated* string from its caller; don't translate inside it.
+- Values that are data, not copy — `deal_statuses.name` and the other lookup
+  rows, DB enum values compared in code — stay as they are. Only translate
+  what a person reads.
+- Server-side API error strings are deliberately still English (they surface
+  rarely). When one is reachable by normal use, pre-empt it with a translated
+  client-side check rather than translating the route — the established
+  pattern for every "X is required" message in the app.
+
+**Run `npm run check:i18n` before calling any UI work done.** It fails on a key
+present in one catalog but not the other, and on a user-facing English literal
+left in JSX text, `placeholder`, `aria-label`, `title`, `alt`, or a
+`confirm()`/`alert()` call — see [scripts/check-i18n.mjs](scripts/check-i18n.mjs).
 
 ## Node version
 

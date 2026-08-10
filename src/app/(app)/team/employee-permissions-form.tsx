@@ -42,7 +42,7 @@ export function EmployeePermissionsForm({
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('permissionsGenericError'))
       return
     }
 
@@ -74,7 +74,7 @@ export function EmployeePermissionsForm({
         disabled={submitting}
         className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
       >
-        {submitting ? 'Saving…' : 'Save permissions'}
+        {submitting ? t('savingButton') : t('savePermissionsButton')}
       </button>
     </form>
   )

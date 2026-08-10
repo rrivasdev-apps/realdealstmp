@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -7,6 +8,7 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
 export default function LoginPage() {
+  const t = useTranslations('Auth')
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -29,7 +31,7 @@ export default function LoginPage() {
       // banned") doesn't match what the company did or tell them what to do.
       setError(
         /banned/i.test(error.message)
-          ? 'This account has been deactivated. Contact your company admin if you think this is a mistake.'
+          ? t('deactivatedAccount')
           : error.message
       )
       return
@@ -41,11 +43,11 @@ export default function LoginPage() {
 
   return (
     <div className="mx-auto max-w-sm py-24">
-      <h1 className="heading-page">Log in</h1>
+      <h1 className="heading-page">{t('logInTitle')}</h1>
 
       <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
         <label className="field-label">
-          Email
+          {t('emailLabel')}
           <input
             type="email"
             required
@@ -56,7 +58,7 @@ export default function LoginPage() {
         </label>
 
         <label className="field-label">
-          Password
+          {t('passwordLabel')}
           <input
             type="password"
             required
@@ -73,14 +75,14 @@ export default function LoginPage() {
           disabled={submitting}
           className="mt-2 rounded bg-foreground px-4 py-2 text-background disabled:opacity-50"
         >
-          {submitting ? 'Logging in…' : 'Log in'}
+          {submitting ? t('loggingInButton') : t('logInButton')}
         </button>
       </form>
 
       <p className="mt-6 text-sm text-muted-foreground">
-        Setting up a new company?{' '}
+        {t('newCompanyPrompt')}{' '}
         <Link href="/signup" className="font-medium underline">
-          Create one
+          {t('createOneLink')}
         </Link>
       </p>
     </div>

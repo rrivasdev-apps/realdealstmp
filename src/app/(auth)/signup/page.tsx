@@ -1,11 +1,13 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useState } from 'react'
 
 import countries from '@/lib/geography/data/countries.json'
 
 export default function SignupPage() {
+  const t = useTranslations('Signup')
   const [companyName, setCompanyName] = useState('')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -31,7 +33,7 @@ export default function SignupPage() {
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('genericError'))
       return
     }
 
@@ -41,25 +43,20 @@ export default function SignupPage() {
   if (submitted) {
     return (
       <div className="mx-auto max-w-sm py-24 text-center">
-        <h1 className="heading-page">Check your email</h1>
-        <p className="mt-2 text-muted-foreground">
-          We sent a confirmation link to {email}. Click it to finish setting up{' '}
-          {companyName}.
-        </p>
+        <h1 className="heading-page">{t('checkEmailTitle')}</h1>
+        <p className="mt-2 text-muted-foreground">{t('checkEmailBody', { email, company: companyName })}</p>
       </div>
     )
   }
 
   return (
     <div className="mx-auto max-w-sm py-24">
-      <h1 className="heading-page">Create your company</h1>
-      <p className="mt-1 text-sm text-muted-foreground">
-        You&apos;ll be the admin — invite teammates once you&apos;re in.
-      </p>
+      <h1 className="heading-page">{t('title')}</h1>
+      <p className="mt-1 text-sm text-muted-foreground">{t('subtitle')}</p>
 
       <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
         <label className="field-label">
-          Company name
+          {t('companyNameLabel')}
           <input
             type="text"
             required
@@ -70,7 +67,7 @@ export default function SignupPage() {
         </label>
 
         <label className="field-label">
-          Your name
+          {t('yourNameLabel')}
           <input
             type="text"
             required
@@ -81,7 +78,7 @@ export default function SignupPage() {
         </label>
 
         <label className="field-label">
-          Email
+          {t('emailLabel')}
           <input
             type="email"
             required
@@ -92,7 +89,7 @@ export default function SignupPage() {
         </label>
 
         <label className="field-label">
-          Password
+          {t('passwordLabel')}
           <input
             type="password"
             required
@@ -104,7 +101,7 @@ export default function SignupPage() {
         </label>
 
         <label className="field-label">
-          Home country
+          {t('homeCountryLabel')}
           <select
             required
             value={homeCountryCode}
@@ -118,26 +115,21 @@ export default function SignupPage() {
             ))}
           </select>
         </label>
-        <p className="text-xs text-muted-foreground">
-          If it&apos;s the United States, we&apos;ll pre-load every state and city so
-          they&apos;re ready to pick from on your deals.
-        </p>
+        <p className="text-xs text-muted-foreground">{t('homeCountryHint')}</p>
 
         <label className="field-label">
-          Language
+          {t('language')}
           <select
             required
             value={locale}
             onChange={(event) => setLocale(event.target.value)}
             className="rounded border border-input-border bg-input-background px-3 py-2"
           >
-            <option value="en">English</option>
-            <option value="es">Español</option>
+            <option value="en">{t('languageEnglish')}</option>
+            <option value="es">{t('languageSpanish')}</option>
           </select>
         </label>
-        <p className="text-xs text-muted-foreground">
-          The whole app will show up in this language for everyone at your company.
-        </p>
+        <p className="text-xs text-muted-foreground">{t('languageHint')}</p>
 
         {error && <p className="text-sm text-danger">{error}</p>}
 
@@ -146,14 +138,14 @@ export default function SignupPage() {
           disabled={submitting}
           className="mt-2 rounded bg-foreground px-4 py-2 text-background disabled:opacity-50"
         >
-          {submitting ? 'Creating account…' : 'Create company'}
+          {submitting ? t('creatingButton') : t('createCompanyButton')}
         </button>
       </form>
 
       <p className="mt-6 text-sm text-muted-foreground">
-        Already have an account?{' '}
+        {t('haveAccountPrompt')}{' '}
         <Link href="/login" className="font-medium underline">
-          Log in
+          {t('logInLink')}
         </Link>
       </p>
     </div>

@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -35,6 +36,8 @@ export function NewDealButton({
   countries: CountryOption[]
   defaultCountryId: string | null
 }) {
+  const t = useTranslations('Deals')
+  const tField = useTranslations('DealForm')
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
   const defaultCountry = countries.find((country) => country.id === defaultCountryId)
@@ -89,7 +92,7 @@ export function NewDealButton({
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Could not create this deal.')
+      setError(result.error ?? t('createError'))
       return
     }
 
@@ -103,15 +106,15 @@ export function NewDealButton({
         onClick={() => setIsOpen(true)}
         className="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
       >
-        New deal
+        {t('newDealButton')}
       </button>
 
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="flex max-h-[90vh] w-full max-w-lg flex-col overflow-y-auto rounded-lg border border-border bg-background p-5">
             <div className="mb-4 flex items-center justify-between gap-4">
-              <h3 className="text-sm font-semibold">New deal</h3>
-              <button type="button" onClick={handleClose} aria-label="Close" className="text-muted-foreground hover:text-foreground">
+              <h3 className="text-sm font-semibold">{t('newDealButton')}</h3>
+              <button type="button" onClick={handleClose} aria-label={t('closeLabel')} className="text-muted-foreground hover:text-foreground">
                 ✕
               </button>
             </div>
@@ -121,7 +124,7 @@ export function NewDealButton({
 
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <label className="field-label">
-                  Deal type
+                  {tField('dealType')}
                   <select
                     required
                     value={dealTypeId}
@@ -129,7 +132,7 @@ export function NewDealButton({
                     className="rounded border border-input-border bg-input-background px-3 py-2"
                   >
                     <option value="" disabled>
-                      Select…
+                      {t('selectPlaceholder')}
                     </option>
                     {dealTypes.map((option) => (
                       <option key={option.id} value={option.id}>
@@ -139,7 +142,7 @@ export function NewDealButton({
                   </select>
                 </label>
                 <label className="field-label">
-                  Lead source
+                  {tField('leadSource')}
                   <select
                     required
                     value={leadSourceId}
@@ -147,7 +150,7 @@ export function NewDealButton({
                     className="rounded border border-input-border bg-input-background px-3 py-2"
                   >
                     <option value="" disabled>
-                      Select…
+                      {t('selectPlaceholder')}
                     </option>
                     {leadSources.map((option) => (
                       <option key={option.id} value={option.id}>
@@ -160,7 +163,7 @@ export function NewDealButton({
 
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <label className="field-label">
-                  Contract price
+                  {tField('contractPrice')}
                   <input
                     type="number"
                     required
@@ -172,7 +175,7 @@ export function NewDealButton({
                   />
                 </label>
                 <label className="field-label">
-                  Contract date
+                  {tField('contractDate')}
                   <input
                     type="date"
                     required
@@ -182,7 +185,7 @@ export function NewDealButton({
                   />
                 </label>
                 <label className="field-label">
-                  Projected sales price
+                  {tField('projectedSalesPrice')}
                   <input
                     type="number"
                     required
@@ -194,7 +197,7 @@ export function NewDealButton({
                   />
                 </label>
                 <label className="field-label">
-                  Closing date
+                  {tField('closingDate')}
                   <input
                     type="date"
                     required
@@ -206,7 +209,7 @@ export function NewDealButton({
               </div>
 
               <label className="field-label">
-                Due diligence period (days)
+                {t('dueDiligencePeriodDays')}
                 <input
                   type="number"
                   required
@@ -224,7 +227,7 @@ export function NewDealButton({
                 disabled={submitting}
                 className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
               >
-                {submitting ? 'Creating…' : 'Create deal'}
+                {submitting ? t('creatingButton') : t('createDealButton')}
               </button>
             </form>
           </div>

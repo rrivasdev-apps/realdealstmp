@@ -1,9 +1,11 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 export function InviteForm() {
+  const t = useTranslations('Team')
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -26,7 +28,7 @@ export function InviteForm() {
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('genericError'))
       return
     }
 
@@ -39,7 +41,7 @@ export function InviteForm() {
     <form onSubmit={handleSubmit} className="flex max-w-sm flex-col gap-2">
       <div className="flex items-end gap-2">
         <label className="flex-1 field-label">
-          Invite by email
+          {t('inviteLabel')}
           <input
             type="email"
             required
@@ -53,11 +55,11 @@ export function InviteForm() {
           disabled={submitting}
           className="rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
         >
-          {submitting ? 'Sending…' : 'Send invite'}
+          {submitting ? t('sendingButton') : t('sendInviteButton')}
         </button>
       </div>
       {error && <p className="text-sm text-danger">{error}</p>}
-      {success && <p className="text-sm text-success">Invite sent.</p>}
+      {success && <p className="text-sm text-success">{t('inviteSent')}</p>}
     </form>
   )
 }

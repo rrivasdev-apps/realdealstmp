@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -45,6 +46,7 @@ export function OfferForm({
   partnerCompanies: LookupOption[]
   contactPartnerCompanies: { contact_id: string; partner_company_id: string }[]
 }) {
+  const t = useTranslations('DealDetail')
   const router = useRouter()
   const [values, setValues] = useState(initialValues)
   const [error, setError] = useState<string | null>(null)
@@ -88,7 +90,7 @@ export function OfferForm({
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('genericError'))
       return
     }
 
@@ -100,7 +102,7 @@ export function OfferForm({
     <form onSubmit={handleSubmit} className="flex max-w-xl flex-col gap-6">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <label className="field-label">
-          Offer price
+          {t('offerPriceLabel')}
           <CurrencyInput
             value={values.offer_price}
             onChange={(value) => set('offer_price', value)}
@@ -109,7 +111,7 @@ export function OfferForm({
         </label>
 
         <label className="field-label">
-          Offer date
+          {t('offerDateLabel')}
           <input
             type="date"
             value={values.offer_date}
@@ -119,7 +121,7 @@ export function OfferForm({
         </label>
 
         <label className="field-label">
-          Status
+          {t('statusLabel')}
           <select
             value={values.status_id}
             onChange={(event) => set('status_id', event.target.value)}
@@ -134,7 +136,7 @@ export function OfferForm({
         </label>
 
         <label className="field-label">
-          Purchase type
+          {t('purchaseTypeLabel')}
           <select
             value={values.purchase_type_id}
             onChange={(event) => set('purchase_type_id', event.target.value)}
@@ -150,7 +152,7 @@ export function OfferForm({
         </label>
 
         <label className="field-label">
-          Inspection deadline
+          {t('inspectionDeadlineLabel')}
           <input
             type="date"
             value={values.inspection_deadline}
@@ -160,7 +162,7 @@ export function OfferForm({
         </label>
 
         <label className="field-label">
-          Closing deadline
+          {t('closingDeadlineLabel')}
           <input
             type="date"
             value={values.closing_deadline}
@@ -170,7 +172,7 @@ export function OfferForm({
         </label>
 
         <label className="field-label">
-          EMD deadline
+          {t('emdDeadlineLabel')}
           <input
             type="date"
             value={values.emd_deadline}
@@ -180,8 +182,8 @@ export function OfferForm({
         </label>
 
         <ContactCompanyField
-          contactLabel="Realtor"
-          companyLabel="Brokerage"
+          contactLabel={t('realtorLabel')}
+          companyLabel={t('brokerageLabel')}
           contacts={realtorContacts}
           companies={partnerCompanies}
           contactPartnerCompanies={contactPartnerCompanies}
@@ -194,8 +196,8 @@ export function OfferForm({
         />
 
         <ContactCompanyField
-          contactLabel="Investor"
-          companyLabel="Investor company"
+          contactLabel={t('investorLabel')}
+          companyLabel={t('investorCompanyLabel')}
           contacts={investorContacts}
           companies={partnerCompanies}
           contactPartnerCompanies={contactPartnerCompanies}
@@ -209,7 +211,7 @@ export function OfferForm({
       </div>
 
       <label className="field-label">
-        Notes
+        {t('notesLabel')}
         <textarea
           value={values.notes}
           onChange={(event) => set('notes', event.target.value)}
@@ -226,10 +228,10 @@ export function OfferForm({
           disabled={submitting}
           className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
         >
-          {submitting ? 'Saving…' : mode === 'create' ? 'Create offer' : 'Save changes'}
+          {submitting ? t('savingButton') : mode === 'create' ? t('createOfferButton') : t('saveChangesButton')}
         </button>
         <Link href={`/deals/${values.dealId}`} className="text-sm text-muted-foreground hover:underline">
-          Cancel
+          {t('cancelButton')}
         </Link>
       </div>
     </form>

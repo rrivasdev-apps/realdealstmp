@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -23,6 +24,7 @@ export function DealEmployeeItem({
   currentRoleIds: string[]
   payments: Payment[]
 }) {
+  const t = useTranslations('DealDetail')
   const router = useRouter()
   const [editing, setEditing] = useState(false)
   const [selectedRoleIds, setSelectedRoleIds] = useState(currentRoleIds)
@@ -52,7 +54,7 @@ export function DealEmployeeItem({
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('genericError'))
       return
     }
 
@@ -61,7 +63,7 @@ export function DealEmployeeItem({
   }
 
   async function handleRemove() {
-    if (!confirm(`Remove ${profileName} from this deal?`)) {
+    if (!confirm(t('removeConfirm', { name: profileName }))) {
       return
     }
 
@@ -74,7 +76,7 @@ export function DealEmployeeItem({
 
     if (!response.ok) {
       const result = await response.json()
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('genericError'))
       return
     }
 
@@ -87,16 +89,16 @@ export function DealEmployeeItem({
         <div>
           <div className="text-sm font-medium">{profileName}</div>
           {!editing && (
-            <div className="text-xs text-muted-foreground">{roleNames || 'No role selected for this deal'}</div>
+            <div className="text-xs text-muted-foreground">{roleNames || t('noRoleSelected')}</div>
           )}
         </div>
         {!editing && (
           <div className="flex shrink-0 gap-2 text-xs">
             <button type="button" onClick={() => setEditing(true)} className="underline">
-              Edit roles
+              {t('editRolesButton')}
             </button>
             <button type="button" onClick={handleRemove} disabled={submitting} className="text-danger underline disabled:opacity-50">
-              Remove
+              {t('removeButton')}
             </button>
           </div>
         )}
@@ -105,10 +107,7 @@ export function DealEmployeeItem({
       {editing && (
         <div className="mt-2 flex flex-col gap-2 rounded border border-border p-3 text-sm">
           {configuredRoles.length === 0 ? (
-            <p className="text-xs text-muted-foreground">
-              This team member has no roles configured on their profile yet — set those up in Settings &gt; Employee
-              Center first.
-            </p>
+            <p className="text-xs text-muted-foreground">{t('noConfiguredRoles')}</p>
           ) : (
             <div className="flex flex-wrap gap-3">
               {configuredRoles.map((role) => (
@@ -126,7 +125,7 @@ export function DealEmployeeItem({
               disabled={submitting}
               className="rounded bg-foreground px-3 py-1 text-xs text-background disabled:opacity-50"
             >
-              {submitting ? 'Saving…' : 'Save'}
+              {submitting ? t('savingButton') : t('saveButton')}
             </button>
             <button
               type="button"
@@ -137,7 +136,7 @@ export function DealEmployeeItem({
               }}
               className="rounded border border-input-border px-3 py-1 text-xs"
             >
-              Cancel
+              {t('cancelButton')}
             </button>
           </div>
         </div>
@@ -146,7 +145,7 @@ export function DealEmployeeItem({
       {error && <p className="mt-1 text-xs text-danger">{error}</p>}
 
       {payments.length === 0 ? (
-        <div className="mt-1 text-sm text-muted-foreground">No commissions apply.</div>
+        <div className="mt-1 text-sm text-muted-foreground">{t('noCommissionsApply')}</div>
       ) : (
         <ul className="mt-1 flex flex-col gap-1">
           {payments.map((payment) => (

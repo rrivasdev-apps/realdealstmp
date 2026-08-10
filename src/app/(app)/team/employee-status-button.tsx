@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -15,17 +16,13 @@ export function EmployeeStatusButton({
   name: string
   deleted: boolean
 }) {
+  const t = useTranslations('Team')
   const router = useRouter()
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   async function handleClick() {
-    if (
-      !deleted &&
-      !window.confirm(
-        `Delete ${name}? They'll be hidden from the team list and lose access, but their payroll, commissions and deal history stay intact. You can restore them from the Deleted view.`
-      )
-    ) {
+    if (!deleted && !window.confirm(t('deleteConfirm', { name }))) {
       return
     }
 
@@ -42,7 +39,7 @@ export function EmployeeStatusButton({
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('genericError'))
       return
     }
 
@@ -57,7 +54,7 @@ export function EmployeeStatusButton({
         disabled={submitting}
         className="rounded border border-border px-3 py-1 text-xs font-medium hover:bg-muted disabled:opacity-50"
       >
-        {submitting ? 'Saving…' : deleted ? 'Restore' : 'Delete'}
+        {submitting ? t('savingButton') : deleted ? t('restoreButton') : t('deleteButton')}
       </button>
       {error && <p className="text-xs text-danger">{error}</p>}
     </div>

@@ -1,3 +1,4 @@
+import { getTranslations } from 'next-intl/server'
 import Link from 'next/link'
 
 import { requireTeamAccess } from '@/lib/supabase/auth'
@@ -9,15 +10,14 @@ import { InviteForm } from './invite-form'
 export default async function TeamPage({ searchParams }: { searchParams: Promise<{ view?: string }> }) {
   const { view } = await searchParams
   const showingDeleted = view === 'deleted'
+  const t = await getTranslations('Team')
   const profile = await requireTeamAccess()
 
   if (!profile || !profile.company_id) {
     return (
       <div>
-        <h1 className="heading-page">Team</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          You don&apos;t have permission to manage the team.
-        </p>
+        <h1 className="heading-page">{t('title')}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{t('noPermission')}</p>
       </div>
     )
   }
@@ -39,9 +39,9 @@ export default async function TeamPage({ searchParams }: { searchParams: Promise
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="heading-page">Team</h1>
+        <h1 className="heading-page">{t('title')}</h1>
         <span className="text-sm text-muted-foreground">
-          Employee Center plan: {hasEmployeeCenter ? 'Yes' : 'No'}
+          {t('employeeCenterPlan', { status: hasEmployeeCenter ? t('planYes') : t('planNo') })}
         </span>
       </div>
 
@@ -58,7 +58,7 @@ export default async function TeamPage({ searchParams }: { searchParams: Promise
             showingDeleted ? 'border-transparent text-muted-foreground hover:text-foreground' : 'border-foreground font-medium'
           }`}
         >
-          Active employees
+          {t('activeTab')}
         </Link>
         <Link
           href="/team?view=deleted"
@@ -66,7 +66,7 @@ export default async function TeamPage({ searchParams }: { searchParams: Promise
             showingDeleted ? 'border-foreground font-medium' : 'border-transparent text-muted-foreground hover:text-foreground'
           }`}
         >
-          Deleted employees{deletedCount ? ` (${deletedCount})` : ''}
+          {deletedCount ? t('deletedTabWithCount', { count: deletedCount }) : t('deletedTab')}
         </Link>
       </nav>
 
@@ -81,7 +81,7 @@ export default async function TeamPage({ searchParams }: { searchParams: Promise
                 {[
                   member.email,
                   member.profile_employee_roles.map((assignment) => assignment.employee_roles?.name).filter(Boolean).join(', '),
-                  member.deleted_at ? `Deleted ${member.deleted_at.slice(0, 10)}` : null,
+                  member.deleted_at ? t('deletedOn', { date: member.deleted_at.slice(0, 10) }) : null,
                 ]
                   .filter(Boolean)
                   .join(' · ')}
@@ -89,7 +89,7 @@ export default async function TeamPage({ searchParams }: { searchParams: Promise
             </div>
             <div className="flex items-center gap-3">
               <span className="rounded-full bg-muted px-2 py-1 text-xs font-medium">
-                {member.role === 'admin' ? 'Company Admin' : 'Standard'}
+                {member.role === 'admin' ? t('roleAdmin') : t('roleStandard')}
               </span>
               <EmployeeStatusButton
                 profileId={member.id}
@@ -101,7 +101,7 @@ export default async function TeamPage({ searchParams }: { searchParams: Promise
         ))}
         {members?.length === 0 && (
           <li className="py-3 text-sm text-muted-foreground">
-            {showingDeleted ? 'No deleted employees.' : 'No active employees.'}
+            {showingDeleted ? t('noDeletedEmployees') : t('noActiveEmployees')}
           </li>
         )}
       </ul>

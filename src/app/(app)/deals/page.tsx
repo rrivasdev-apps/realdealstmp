@@ -1,3 +1,4 @@
+import { getTranslations } from 'next-intl/server'
 import Link from 'next/link'
 
 import { calculateProfit } from '@/lib/deals/profit'
@@ -31,31 +32,32 @@ type FilterKey =
   | 'on-hold'
   | 'cancelled'
 
-// Short label shown on the badge itself.
-const BADGE_LABELS: Record<FilterKey, string> = {
-  all: 'All Deals',
-  'for-sale': 'For Sale',
-  'pending-sale': 'Pending Sale',
-  closed: 'Closed',
-  'closed-not-funded': 'Not Funded',
-  'closed-funded': 'Funded',
-  'on-hold': 'On Hold',
-  cancelled: 'Cancelled',
-}
+// Message keys rather than literals -- the badge shows a short label, the
+// section heading a fuller one, and both are translated at render time.
+const BADGE_LABEL_KEYS = {
+  all: 'badgeAll',
+  'for-sale': 'badgeForSale',
+  'pending-sale': 'badgePendingSale',
+  closed: 'badgeClosed',
+  'closed-not-funded': 'badgeNotFunded',
+  'closed-funded': 'badgeFunded',
+  'on-hold': 'badgeOnHold',
+  cancelled: 'badgeCancelled',
+} as const satisfies Record<FilterKey, string>
 
-// Fuller label shown as the heading above the filtered deal list.
-const SECTION_LABELS: Record<FilterKey, string> = {
-  all: 'All deals',
-  'for-sale': 'For Sale',
-  'pending-sale': 'Pending Sale',
-  closed: 'Closed',
-  'closed-not-funded': 'Closed, Not Yet Funded',
-  'closed-funded': 'Closed & Funded',
-  'on-hold': 'On Hold',
-  cancelled: 'Cancelled',
-}
+const SECTION_LABEL_KEYS = {
+  all: 'sectionAll',
+  'for-sale': 'sectionForSale',
+  'pending-sale': 'sectionPendingSale',
+  closed: 'sectionClosed',
+  'closed-not-funded': 'sectionNotFunded',
+  'closed-funded': 'sectionFunded',
+  'on-hold': 'sectionOnHold',
+  cancelled: 'sectionCancelled',
+} as const satisfies Record<FilterKey, string>
 
-// Which deal_statuses name's color/dot to borrow for a given badge.
+// Which deal_statuses name's color/dot to borrow for a given badge. These are
+// row names from the database, not copy -- they stay English. i18n-exempt
 const BADGE_STATUS_COLOR: Record<FilterKey, string | null> = {
   all: null,
   'for-sale': 'For Sale',
@@ -101,14 +103,15 @@ export default async function DealsPage({
   searchParams: Promise<{ status?: string }>
 }) {
   const { status } = await searchParams
-  const activeFilter: FilterKey = status && status in SECTION_LABELS ? (status as FilterKey) : 'all'
+  const activeFilter: FilterKey = status && status in SECTION_LABEL_KEYS ? (status as FilterKey) : 'all'
 
+  const t = await getTranslations('Deals')
   const profile = await requirePermission('view_whiteboard')
   if (!profile) {
     return (
       <div>
-        <h1 className="heading-page">Whiteboard</h1>
-        <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to view the whiteboard.</p>
+        <h1 className="heading-page">{t('title')}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{t('noPermission')}</p>
       </div>
     )
   }
@@ -133,7 +136,7 @@ export default async function DealsPage({
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="heading-page">Whiteboard</h1>
+        <h1 className="heading-page">{t('title')}</h1>
         <NewDealButton
           dealTypes={dealTypes ?? []}
           leadSources={leadSources ?? []}
@@ -151,12 +154,13 @@ export default async function DealsPage({
         <FilterBadge filter="cancelled" active={activeFilter} deals={deals} />
       </div>
 
-      <DealSection title={SECTION_LABELS[activeFilter]} deals={filteredDeals} />
+      <DealSection title={t(SECTION_LABEL_KEYS[activeFilter])} deals={filteredDeals} />
     </div>
   )
 }
 
-function FilterBadge({ filter, active, deals }: { filter: FilterKey; active: FilterKey; deals: Deal[] }) {
+async function FilterBadge({ filter, active, deals }: { filter: FilterKey; active: FilterKey; deals: Deal[] }) {
+  const t = await getTranslations('Deals')
   const { count, profit } = summarize(deals, filter)
   const isActive = active === filter
   const colorStatus = BADGE_STATUS_COLOR[filter]
@@ -170,10 +174,10 @@ function FilterBadge({ filter, active, deals }: { filter: FilterKey; active: Fil
       }`}
     >
       <div className={`text-xs font-medium uppercase tracking-wide ${colors?.text ?? 'text-foreground'}`}>
-        {BADGE_LABELS[filter]}
+        {t(BADGE_LABEL_KEYS[filter])}
       </div>
       <div className="mt-2 text-2xl font-semibold text-foreground">{count}</div>
-      <div className="mt-1 text-xs text-muted-foreground">{currency.format(profit)} profit</div>
+      <div className="mt-1 text-xs text-muted-foreground">{t('profitSuffix', { amount: currency.format(profit) })}</div>
     </Link>
   )
 }
@@ -182,7 +186,8 @@ function FilterBadge({ filter, active, deals }: { filter: FilterKey; active: Fil
 // sum to Closed -- so they render as one connected, tinted strip (shared
 // background + border, thin dividers) instead of three separate cards, while
 // still occupying the same 3 grid columns and h-28 height as their siblings.
-function ClosedGroup({ active, deals }: { active: FilterKey; deals: Deal[] }) {
+async function ClosedGroup({ active, deals }: { active: FilterKey; deals: Deal[] }) {
+  const t = await getTranslations('Deals')
   const colors = statusColors('Closed')
   const cells: FilterKey[] = ['closed', 'closed-not-funded', 'closed-funded']
 
@@ -200,10 +205,10 @@ function ClosedGroup({ active, deals }: { active: FilterKey; deals: Deal[] }) {
             }`}
           >
             <div className={`text-xs font-medium uppercase tracking-wide ${colors.text}`}>
-              {BADGE_LABELS[filter]}
+              {t(BADGE_LABEL_KEYS[filter])}
             </div>
             <div className="mt-2 text-2xl font-semibold text-foreground">{count}</div>
-            <div className="mt-1 text-xs text-muted-foreground">{currency.format(profit)} profit</div>
+            <div className="mt-1 text-xs text-muted-foreground">{t('profitSuffix', { amount: currency.format(profit) })}</div>
           </Link>
         )
       })}
@@ -211,7 +216,8 @@ function ClosedGroup({ active, deals }: { active: FilterKey; deals: Deal[] }) {
   )
 }
 
-function DealSection({ title, deals }: { title: string; deals: Deal[] }) {
+async function DealSection({ title, deals }: { title: string; deals: Deal[] }) {
+  const t = await getTranslations('Deals')
   return (
     <section className="mt-8">
       <h2 className="heading-subsection">{title}</h2>
@@ -225,21 +231,23 @@ function DealSection({ title, deals }: { title: string; deals: Deal[] }) {
                   {deal.address}
                 </Link>
                 <div className="text-sm text-muted-foreground">
-                  {deal.closing_date ? `Closing ${deal.closing_date}` : 'No closing date set'}
+                  {deal.closing_date ? t('closingOn', { date: deal.closing_date }) : t('noClosingDate')}
                 </div>
               </div>
               <div className="text-right text-sm">
                 <div className="text-foreground">
-                  {deal.contract_price != null ? `Contract: ${currency.format(deal.contract_price)}` : 'Contract: —'}
+                  {deal.contract_price != null
+                    ? t('contractAmount', { amount: currency.format(deal.contract_price) })
+                    : t('contractEmpty')}
                 </div>
                 <div className="text-muted-foreground">
-                  {profit != null ? `Profit: ${currency.format(profit)}` : 'Profit: —'}
+                  {profit != null ? t('profitAmount', { amount: currency.format(profit) }) : t('profitEmpty')}
                 </div>
               </div>
             </li>
           )
         })}
-        {deals.length === 0 && <li className="px-4 py-3 text-sm text-muted-foreground">No deals here yet.</li>}
+        {deals.length === 0 && <li className="px-4 py-3 text-sm text-muted-foreground">{t('noDealsHere')}</li>}
       </ul>
     </section>
   )

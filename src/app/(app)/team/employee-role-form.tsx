@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -7,6 +8,7 @@ import { useState } from 'react'
 // employee_roles (the assignable job-role/capability templates). Only an
 // admin ever sees this control; see src/app/api/team/[id]/role/route.ts.
 export function EmployeeRoleForm({ profileId, initialRole }: { profileId: string; initialRole: 'admin' | 'member' }) {
+  const t = useTranslations('Team')
   const router = useRouter()
   const [role, setRole] = useState(initialRole)
   const [error, setError] = useState<string | null>(null)
@@ -26,7 +28,7 @@ export function EmployeeRoleForm({ profileId, initialRole }: { profileId: string
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('genericError'))
       return
     }
 
@@ -36,7 +38,7 @@ export function EmployeeRoleForm({ profileId, initialRole }: { profileId: string
 
   return (
     <div className="flex flex-col gap-2 rounded border border-border p-4">
-      <p className="text-sm font-medium">Account role</p>
+      <p className="text-sm font-medium">{t('accountRoleLegend')}</p>
       <div className="flex gap-4 text-sm">
         <label className="flex items-center gap-1.5">
           <input
@@ -46,7 +48,7 @@ export function EmployeeRoleForm({ profileId, initialRole }: { profileId: string
             disabled={submitting}
             onChange={() => handleChange('admin')}
           />
-          Company Admin
+          {t('roleAdmin')}
         </label>
         <label className="flex items-center gap-1.5">
           <input
@@ -56,7 +58,7 @@ export function EmployeeRoleForm({ profileId, initialRole }: { profileId: string
             disabled={submitting}
             onChange={() => handleChange('member')}
           />
-          Standard
+          {t('roleStandard')}
         </label>
       </div>
       {error && <p className="text-sm text-danger">{error}</p>}

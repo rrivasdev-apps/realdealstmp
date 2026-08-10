@@ -1,3 +1,4 @@
+import { getTranslations } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 
 import { filterContactsByType } from '@/lib/contacts/by-type'
@@ -12,13 +13,14 @@ export default async function EditOfferPage({
   params: Promise<{ id: string; offerId: string }>
 }) {
   const { id: dealId, offerId } = await params
+  const t = await getTranslations('DealDetail')
 
   const profile = await requirePermission('edit_deal_detail')
   if (!profile) {
     return (
       <div>
-        <h1 className="heading-page">Offer</h1>
-        <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to edit this deal.</p>
+        <h1 className="heading-page">{t('offerFallbackTitle')}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{t('noEditPermission')}</p>
       </div>
     )
   }
@@ -50,7 +52,7 @@ export default async function EditOfferPage({
 
   return (
     <div>
-      <h1 className="heading-page">Edit offer</h1>
+      <h1 className="heading-page">{t('editOfferTitle')}</h1>
       <div className="mt-6">
         <OfferForm
           mode="edit"

@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useEffect, useRef, useState } from 'react'
 
 export type AddressValue = {
@@ -34,6 +35,7 @@ export function AddressFields({
   onChange: (value: AddressValue) => void
   countries: CountryOption[]
 }) {
+  const t = useTranslations('Common')
   const [predictions, setPredictions] = useState<Prediction[]>([])
   const [showPredictions, setShowPredictions] = useState(false)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -166,7 +168,7 @@ export function AddressFields({
     <div className="flex flex-col gap-3">
       <div className="relative">
         <label className="field-label">
-          Address
+          {t('addressLabel')}
           <input
             type="text"
             required
@@ -197,13 +199,13 @@ export function AddressFields({
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <label className="field-label">
-          Country
+          {t('countryLabel')}
           <select
             value={value.countryId}
             onChange={(event) => handleCountryChange(event.target.value)}
             className="rounded border border-input-border bg-input-background px-3 py-2"
           >
-            <option value="">Select…</option>
+            <option value="">{t('selectPlaceholder')}</option>
             {countries.map((country) => (
               <option key={country.id} value={country.id}>
                 {country.name}
@@ -212,14 +214,14 @@ export function AddressFields({
           </select>
         </label>
         <label className="field-label">
-          State
+          {t('stateLabel')}
           <select
             value={value.stateId}
             onChange={(event) => handleStateChange(event.target.value)}
             disabled={!value.countryId}
             className="rounded border border-input-border bg-input-background px-3 py-2 disabled:opacity-50"
           >
-            <option value="">{statesLoading ? 'Loading…' : 'Select…'}</option>
+            <option value="">{statesLoading ? t('loadingPlaceholder') : t('selectPlaceholder')}</option>
             {states.map((state) => (
               <option key={state.id} value={state.id}>
                 {state.name}
@@ -229,7 +231,7 @@ export function AddressFields({
         </label>
         <div className="relative">
           <label className="field-label">
-            City
+            {t('cityLabel')}
             <input
               type="text"
               value={value.cityName}
@@ -261,7 +263,7 @@ export function AddressFields({
                     onClick={handleCreateCity}
                     className="block w-full px-3 py-2 text-left text-sm text-brand-600 hover:bg-muted"
                   >
-                    + Add &quot;{trimmedCityQuery}&quot;
+                    {t('addCityOption', { name: trimmedCityQuery })}
                   </button>
                 </li>
               )}
@@ -272,7 +274,7 @@ export function AddressFields({
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <label className="field-label">
-          Zip code
+          {t('zipCodeLabel')}
           <input
             type="text"
             value={value.zipCode}

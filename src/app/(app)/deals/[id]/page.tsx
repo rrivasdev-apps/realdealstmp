@@ -375,7 +375,7 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
             )
           })}
           {(dealEmployees ?? []).length === 0 && (
-            <li className="px-4 py-3 text-sm text-muted-foreground">No employees added yet.</li>
+            <li className="px-4 py-3 text-sm text-muted-foreground">{t('noEmployeesYet')}</li>
           )}
         </ul>
       </div>

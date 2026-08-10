@@ -1,11 +1,13 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 import { createClient } from '@/lib/supabase/client'
 
 export function SetPasswordForm() {
+  const t = useTranslations('Auth')
   const router = useRouter()
   const [name, setName] = useState('')
   const [password, setPassword] = useState('')
@@ -35,7 +37,7 @@ export function SetPasswordForm() {
 
     if (!response.ok) {
       const result = await response.json()
-      setError(result.error ?? 'Could not save your name.')
+      setError(result.error ?? t('couldNotSaveName'))
       return
     }
 
@@ -46,7 +48,7 @@ export function SetPasswordForm() {
   return (
     <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
       <label className="field-label">
-        Your name
+        {t('yourNameLabel')}
         <input
           type="text"
           required
@@ -57,7 +59,7 @@ export function SetPasswordForm() {
       </label>
 
       <label className="field-label">
-        New password
+        {t('newPasswordLabel')}
         <input
           type="password"
           required
@@ -75,7 +77,7 @@ export function SetPasswordForm() {
         disabled={submitting}
         className="mt-2 rounded bg-foreground px-4 py-2 text-background disabled:opacity-50"
       >
-        {submitting ? 'Saving…' : 'Set password'}
+        {submitting ? t('savingButton') : t('setPasswordButton')}
       </button>
     </form>
   )

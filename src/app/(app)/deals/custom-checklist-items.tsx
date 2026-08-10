@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 
 type LookupOption = { id: string; name: string }
@@ -17,6 +18,7 @@ export function CustomChecklistItems({
   availableItems: LookupOption[]
   initialCheckedIds: string[]
 }) {
+  const t = useTranslations('DealForm')
   const [checkedIds, setCheckedIds] = useState<string[]>(initialCheckedIds)
   const [pendingId, setPendingId] = useState<string | null>(null)
 
@@ -44,7 +46,7 @@ export function CustomChecklistItems({
 
   return (
     <div className="flex flex-col gap-2 border-t border-border pt-3">
-      <span className="text-xs font-medium text-muted-foreground">Custom checklist items</span>
+      <span className="text-xs font-medium text-muted-foreground">{t('customChecklistItems')}</span>
       {availableItems.map((item) => (
         <label key={item.id} className="flex items-center gap-1.5 text-sm">
           <input

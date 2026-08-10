@@ -1,3 +1,4 @@
+import { getTranslations } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 
 import type { Capabilities } from '@/lib/employee-permissions/labels'
@@ -22,13 +23,14 @@ const DEFAULT_CAPABILITIES: Capabilities = {
 
 export default async function TeamMemberPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
+  const t = await getTranslations('Team')
   const profile = await requireTeamAccess()
 
   if (!profile) {
     return (
       <div>
-        <h1 className="heading-page">Team member</h1>
-        <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to manage team members.</p>
+        <h1 className="heading-page">{t('memberFallbackTitle')}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{t('memberNoPermission')}</p>
       </div>
     )
   }

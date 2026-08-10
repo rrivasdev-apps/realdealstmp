@@ -1,15 +1,17 @@
+import { getTranslations } from 'next-intl/server'
 import Link from 'next/link'
 
 import { requirePermission } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
 export default async function PartnerCompaniesPage() {
+  const t = await getTranslations('PartnerCompanies')
   const profile = await requirePermission('view_contacts')
   if (!profile) {
     return (
       <div>
-        <h1 className="heading-page">Companies</h1>
-        <p className="mt-2 text-sm text-muted-foreground">You don&apos;t have permission to view companies.</p>
+        <h1 className="heading-page">{t('title')}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{t('noPermission')}</p>
       </div>
     )
   }
@@ -23,14 +25,12 @@ export default async function PartnerCompaniesPage() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="heading-page">Companies</h1>
+        <h1 className="heading-page">{t('title')}</h1>
         <Link href="/partner-companies/new" className="rounded bg-foreground px-4 py-2 text-sm text-background">
-          New company
+          {t('newCompanyButton')}
         </Link>
       </div>
-      <p className="mt-1 text-sm text-muted-foreground">
-        Title companies, brokerages, mortgage companies, and investor/JV partner LLCs available to pick from a deal.
-      </p>
+      <p className="mt-1 text-sm text-muted-foreground">{t('listSubtitle')}</p>
 
       <ul className="mt-6 divide-y divide-border">
         {partnerCompanies?.map((partnerCompany) => {
@@ -47,13 +47,13 @@ export default async function PartnerCompaniesPage() {
               <div className="text-sm text-muted-foreground">
                 {[types, partnerCompany.address, partnerCompany.phone, partnerCompany.email]
                   .filter(Boolean)
-                  .join(' · ') || 'No details yet'}
+                  .join(' · ') || t('noDetailsYet')}
               </div>
             </li>
           )
         })}
         {partnerCompanies?.length === 0 && (
-          <li className="py-3 text-sm text-muted-foreground">No companies yet.</li>
+          <li className="py-3 text-sm text-muted-foreground">{t('noCompaniesYet')}</li>
         )}
       </ul>
     </div>

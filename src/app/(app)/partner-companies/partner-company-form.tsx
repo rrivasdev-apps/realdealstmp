@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -23,6 +24,7 @@ export function PartnerCompanyForm({
   initialValues: PartnerCompanyFormValues
   companyTypes: LookupOption[]
 }) {
+  const t = useTranslations('PartnerCompanies')
   const router = useRouter()
   const [values, setValues] = useState(initialValues)
   const [error, setError] = useState<string | null>(null)
@@ -61,7 +63,7 @@ export function PartnerCompanyForm({
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('genericError'))
       return
     }
 
@@ -72,7 +74,7 @@ export function PartnerCompanyForm({
   return (
     <form onSubmit={handleSubmit} className="flex max-w-xl flex-col gap-6">
       <label className="field-label">
-        Business Name
+        {t('businessNameLabel')}
         <input
           type="text"
           required
@@ -83,7 +85,7 @@ export function PartnerCompanyForm({
       </label>
 
       <label className="field-label">
-        Business Address
+        {t('businessAddressLabel')}
         <input
           type="text"
           value={values.address}
@@ -93,7 +95,7 @@ export function PartnerCompanyForm({
       </label>
 
       <label className="field-label">
-        Email
+        {t('emailLabel')}
         <input
           type="email"
           value={values.email}
@@ -103,7 +105,7 @@ export function PartnerCompanyForm({
       </label>
 
       <label className="field-label">
-        Phone Number
+        {t('phoneNumberLabel')}
         <input
           type="tel"
           value={values.phone}
@@ -113,7 +115,7 @@ export function PartnerCompanyForm({
       </label>
 
       <fieldset className="flex flex-col gap-2 text-sm">
-        <legend className="mb-1 font-medium">Type of Company</legend>
+        <legend className="mb-1 font-medium">{t('typeOfCompanyLegend')}</legend>
         <div className="flex flex-wrap gap-3">
           {companyTypes.map((type) => (
             <label key={type.id} className="flex items-center gap-1.5">
@@ -135,7 +137,7 @@ export function PartnerCompanyForm({
         disabled={submitting}
         className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
       >
-        {submitting ? 'Saving…' : mode === 'create' ? 'Create company' : 'Save changes'}
+        {submitting ? t('savingButton') : mode === 'create' ? t('createCompanyButton') : t('saveChangesButton')}
       </button>
     </form>
   )

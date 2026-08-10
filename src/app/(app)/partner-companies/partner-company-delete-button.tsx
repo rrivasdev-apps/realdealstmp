@@ -1,15 +1,17 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 export function PartnerCompanyDeleteButton({ partnerCompanyId }: { partnerCompanyId: string }) {
+  const t = useTranslations('PartnerCompanies')
   const router = useRouter()
   const [error, setError] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
 
   async function handleDelete() {
-    if (!confirm('Delete this company? This cannot be undone.')) {
+    if (!confirm(t('deleteConfirm'))) {
       return
     }
 
@@ -22,7 +24,7 @@ export function PartnerCompanyDeleteButton({ partnerCompanyId }: { partnerCompan
 
     if (!response.ok) {
       const result = await response.json()
-      setError(result.error ?? 'Something went wrong.')
+      setError(result.error ?? t('genericError'))
       return
     }
 
@@ -38,7 +40,7 @@ export function PartnerCompanyDeleteButton({ partnerCompanyId }: { partnerCompan
         disabled={deleting}
         className="rounded bg-danger px-4 py-2 text-sm text-white disabled:opacity-50"
       >
-        {deleting ? 'Deleting…' : 'Delete'}
+        {deleting ? t('deletingButton') : t('deleteButton')}
       </button>
       {error && <p className="text-sm text-danger">{error}</p>}
     </div>
