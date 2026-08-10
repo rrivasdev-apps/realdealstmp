@@ -51,7 +51,7 @@ export default async function DealAutomationsPage({
 
   const [{ data: deals }, { data: companyProfiles }, { data: roleMembers }] = await Promise.all([
     supabase.from('deals').select('id, address, deal_statuses(name)').eq('company_id', profile.company_id),
-    supabase.from('profiles').select('id, name').eq('company_id', profile.company_id).order('name'),
+    supabase.from('profiles').select('id, name').eq('company_id', profile.company_id).is('deleted_at', null).order('name'),
     supabase.from('profile_employee_roles').select('profile_id, employee_role_id'),
   ])
 

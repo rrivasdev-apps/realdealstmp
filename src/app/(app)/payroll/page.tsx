@@ -30,7 +30,7 @@ export default async function PayrollPage() {
   const supabase = await createClient()
   const [{ data: employees }, { data: payments }, { data: company }, { data: runs }, { data: payPeriods }, { data: assignments }] =
     await Promise.all([
-      supabase.from('profiles').select('id, name').order('name'),
+      supabase.from('profiles').select('id, name').is('deleted_at', null).order('name'),
       supabase
         .from('payments')
         .select('id, amount, pay_period_start, pay_period_end, profiles(name)')

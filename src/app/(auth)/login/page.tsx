@@ -24,7 +24,14 @@ export default function LoginPage() {
     setSubmitting(false)
 
     if (error) {
-      setError(error.message)
+      // A deleted employee's auth user is banned (see
+      // /api/team/[id]/status), and GoTrue's own wording for that ("User is
+      // banned") doesn't match what the company did or tell them what to do.
+      setError(
+        /banned/i.test(error.message)
+          ? 'This account has been deactivated. Contact your company admin if you think this is a mistake.'
+          : error.message
+      )
       return
     }
 

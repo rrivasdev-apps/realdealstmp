@@ -2945,6 +2945,7 @@ export type Database = {
           birth_date: string | null
           company_id: string | null
           created_at: string
+          deleted_at: string | null
           email: string
           employee_type: string | null
           hire_date: string | null
@@ -2961,6 +2962,7 @@ export type Database = {
           birth_date?: string | null
           company_id?: string | null
           created_at?: string
+          deleted_at?: string | null
           email: string
           employee_type?: string | null
           hire_date?: string | null
@@ -2977,6 +2979,7 @@ export type Database = {
           birth_date?: string | null
           company_id?: string | null
           created_at?: string
+          deleted_at?: string | null
           email?: string
           employee_type?: string | null
           hire_date?: string | null

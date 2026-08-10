@@ -90,7 +90,14 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
       .from('deal_employees')
       .select('id, profile_id, profiles(name), deal_employee_roles(employee_roles(id, name))')
       .eq('deal_id', id),
-    supabase.from('profiles').select('id, name, profile_employee_roles(employee_roles(id, name))').order('name'),
+    // Assignable employees only -- an employee already on the deal is rendered
+    // from the deal_employees join above, so hiding deleted ones here removes
+    // them from the picker without erasing them from the deal's history.
+    supabase
+      .from('profiles')
+      .select('id, name, profile_employee_roles(employee_roles(id, name))')
+      .is('deleted_at', null)
+      .order('name'),
     supabase
       .from('payments')
       .select('id, profile_id, amount, status, commission_types(name, category)')

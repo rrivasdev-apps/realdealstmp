@@ -32,7 +32,13 @@ export async function validateAssignee(
     const { data } = await supabase.from('employee_roles').select('id').eq('id', roleId).eq('company_id', companyId).single()
     if (!data) return { ok: false, error: 'That role was not found.' }
   } else if (profileId) {
-    const { data } = await supabase.from('profiles').select('id').eq('id', profileId).eq('company_id', companyId).single()
+    const { data } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('id', profileId)
+      .eq('company_id', companyId)
+      .is('deleted_at', null)
+      .single()
     if (!data) return { ok: false, error: 'That user was not found.' }
   }
 

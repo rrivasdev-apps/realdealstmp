@@ -38,7 +38,7 @@ export default async function AutomationPage({ params }: { params: Promise<{ id:
     supabase.from('automation_templates').select('*').eq('id', id).single(),
     supabase.from('automation_template_steps').select('*').eq('template_id', id).order('step_number'),
     supabase.from('employee_roles').select('id, name').order('name'),
-    supabase.from('profiles').select('id, name').order('name'),
+    supabase.from('profiles').select('id, name').is('deleted_at', null).order('name'),
     supabase.from('deal_types').select('id, name').order('name'),
     supabase.from('custom_field_definitions').select('id, name, field_type').order('name'),
     supabase.from('automation_templates').select('id, name').neq('id', id).order('name'),

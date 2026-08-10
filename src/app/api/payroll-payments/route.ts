@@ -27,7 +27,13 @@ export async function POST(request: Request) {
 
   const supabase = await createClient()
 
-  const { data: employee } = await supabase.from('profiles').select('company_id').eq('id', profileId).single()
+  // Deleted employees can't be paid -- same not-found path as an unknown id.
+  const { data: employee } = await supabase
+    .from('profiles')
+    .select('company_id')
+    .eq('id', profileId)
+    .is('deleted_at', null)
+    .single()
   if (!employee || employee.company_id !== admin.company_id) {
     return NextResponse.json({ error: 'Employee not found.' }, { status: 404 })
   }

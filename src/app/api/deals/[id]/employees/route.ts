@@ -26,10 +26,13 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 
   const requestedRoleIds: string[] = Array.isArray(body.employee_role_ids) ? body.employee_role_ids : []
 
+  // `.is('deleted_at', null)` so a deleted employee can't be added to a deal
+  // -- they fall through to the same not-found response as an unknown id.
   const { data: employeeProfile } = await supabase
     .from('profiles')
     .select('company_id')
     .eq('id', employeeProfileId)
+    .is('deleted_at', null)
     .single()
   if (!employeeProfile || employeeProfile.company_id !== profile.company_id) {
     return NextResponse.json({ error: 'Employee not found.' }, { status: 400 })

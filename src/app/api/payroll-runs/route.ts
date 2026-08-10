@@ -77,6 +77,7 @@ export async function POST(request: Request) {
     .from('profiles')
     .select('id')
     .eq('company_id', admin.company_id)
+    .is('deleted_at', null)
     .not('pay_type', 'is', null)
     .not('pay_rate', 'is', null)
 

@@ -55,12 +55,25 @@ export async function requireProfile(): Promise<Profile | null> {
   const { data, error } = await supabase
     .from('profiles')
     .select(
-      'id, company_id, name, email, role, permissions:profile_permissions(can_manage_team, can_manage_settings, can_view_financials, can_manage_payroll, view_whiteboard, view_deal_detail, edit_deal_detail, view_contacts, edit_contacts)'
+      'id, company_id, name, email, role, deleted_at, permissions:profile_permissions(can_manage_team, can_manage_settings, can_view_financials, can_manage_payroll, view_whiteboard, view_deal_detail, edit_deal_detail, view_contacts, edit_contacts)'
     )
     .eq('id', user.id)
     .single()
 
   if (error || !data) {
+    return null
+  }
+
+  // A soft-deleted employee is treated as not logged in at all, so every
+  // page (via the (app) layout) and every route built on requireProfile
+  // denies them without needing its own check. Their auth user is also
+  // banned when they're deleted (see /api/team/[id]/status), so in practice
+  // they can't get a fresh token either -- this covers an access token
+  // issued moments before, and is the authorization decision proper.
+  // RLS enforces the same rule underneath (is_company_member and every
+  // capability helper require deleted_at is null, see
+  // 20260810000005_profile_soft_delete.sql).
+  if (data.deleted_at) {
     return null
   }
 
