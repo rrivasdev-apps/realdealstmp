@@ -28,21 +28,36 @@ export default async function PayrollPage() {
   }
 
   const supabase = await createClient()
-  const [{ data: employees }, { data: payments }, { data: company }, { data: runs }] = await Promise.all([
-    supabase.from('profiles').select('id, name').order('name'),
-    supabase
-      .from('payments')
-      .select('id, amount, pay_period_start, pay_period_end, profiles(name)')
-      .eq('type', 'payroll')
-      .order('pay_period_end', { ascending: false }),
-    supabase.from('companies').select('subscription_tier').eq('id', profile.company_id).single(),
-    supabase
-      .from('payroll_runs')
-      .select('id, pay_period_start, pay_period_end, status')
-      .order('pay_period_end', { ascending: false }),
-  ])
+  const [{ data: employees }, { data: payments }, { data: company }, { data: runs }, { data: payPeriods }, { data: assignments }] =
+    await Promise.all([
+      supabase.from('profiles').select('id, name').order('name'),
+      supabase
+        .from('payments')
+        .select('id, amount, pay_period_start, pay_period_end, profiles(name)')
+        .eq('type', 'payroll')
+        .order('pay_period_end', { ascending: false }),
+      supabase.from('companies').select('subscription_tier').eq('id', profile.company_id).single(),
+      supabase
+        .from('payroll_runs')
+        .select('id, pay_period_start, pay_period_end, status, pay_periods(name)')
+        .order('pay_period_end', { ascending: false }),
+      supabase
+        .from('pay_periods')
+        .select('id, name, salary_pay_frequency, commission_pay_frequency, first_payday, next_payday')
+        .order('name'),
+      // Drives the New Run form's pre-empt: a schedule whose members all lack a
+      // pay type/rate can't produce a payable run, and saying so up front beats
+      // a server error after the fact.
+      supabase.from('profile_pay_periods').select('pay_period_id, profiles!inner(pay_type, pay_rate)'),
+    ])
 
   const hasEmployeeCenter = company?.subscription_tier === 'employee_center'
+
+  const payableCountByPayPeriod = new Map<string, number>()
+  for (const assignment of assignments ?? []) {
+    if (assignment.profiles?.pay_type == null || assignment.profiles?.pay_rate == null) continue
+    payableCountByPayPeriod.set(assignment.pay_period_id, (payableCountByPayPeriod.get(assignment.pay_period_id) ?? 0) + 1)
+  }
 
   return (
     <div>
@@ -83,14 +98,22 @@ export default async function PayrollPage() {
         {hasEmployeeCenter ? (
           <>
             <div className="mt-2 max-w-xl">
-              <NewRunForm />
+              <NewRunForm
+                payPeriods={(payPeriods ?? []).map((payPeriod) => ({
+                  ...payPeriod,
+                  payable_employee_count: payableCountByPayPeriod.get(payPeriod.id) ?? 0,
+                }))}
+              />
             </div>
             <ul className="mt-4 divide-y divide-border rounded-lg border border-border bg-background">
               {(runs ?? []).map((run) => (
-                <li key={run.id} className="flex items-center justify-between px-4 py-3 text-sm">
-                  <Link href={`/payroll/runs/${run.id}`} className="font-medium hover:underline">
-                    {run.pay_period_start} – {run.pay_period_end}
-                  </Link>
+                <li key={run.id} className="flex items-center justify-between gap-3 px-4 py-3 text-sm">
+                  <div>
+                    <Link href={`/payroll/runs/${run.id}`} className="font-medium hover:underline">
+                      {run.pay_period_start} – {run.pay_period_end}
+                    </Link>
+                    <div className="text-muted-foreground">{run.pay_periods?.name ?? t('adHocRunLabel')}</div>
+                  </div>
                   <span className="rounded bg-muted px-2 py-1 text-xs font-medium">
                     {STATUS_LABELS[run.status] ?? run.status}
                   </span>

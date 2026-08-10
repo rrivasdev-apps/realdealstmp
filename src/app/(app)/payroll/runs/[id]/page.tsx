@@ -27,7 +27,11 @@ export default async function PayrollRunPage({ params }: { params: Promise<{ id:
 
   const supabase = await createClient()
   const [{ data: run }, { data: entries }] = await Promise.all([
-    supabase.from('payroll_runs').select('id, pay_period_start, pay_period_end, status').eq('id', id).single(),
+    supabase
+      .from('payroll_runs')
+      .select('id, pay_period_start, pay_period_end, status, pay_periods(name)')
+      .eq('id', id)
+      .single(),
     supabase
       .from('payroll_run_entries')
       .select('id, profile_id, hours_worked, computed_amount, profiles(name, pay_type, pay_rate)')
@@ -43,7 +47,9 @@ export default async function PayrollRunPage({ params }: { params: Promise<{ id:
       <h1 className="heading-page">
         {t('runHeading', { start: run.pay_period_start, end: run.pay_period_end })}
       </h1>
-      <p className="mt-1 text-sm text-muted-foreground">{STATUS_LABELS[run.status] ?? run.status}</p>
+      <p className="mt-1 text-sm text-muted-foreground">
+        {run.pay_periods?.name ?? t('adHocRunLabel')} · {STATUS_LABELS[run.status] ?? run.status}
+      </p>
 
       <div className="mt-6">
         <RunEntriesForm

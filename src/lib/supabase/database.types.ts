@@ -2745,6 +2745,7 @@ export type Database = {
           finalized_at: string | null
           id: string
           pay_period_end: string
+          pay_period_id: string | null
           pay_period_start: string
           status: string
         }
@@ -2754,6 +2755,7 @@ export type Database = {
           finalized_at?: string | null
           id?: string
           pay_period_end: string
+          pay_period_id?: string | null
           pay_period_start: string
           status?: string
         }
@@ -2763,6 +2765,7 @@ export type Database = {
           finalized_at?: string | null
           id?: string
           pay_period_end?: string
+          pay_period_id?: string | null
           pay_period_start?: string
           status?: string
         }
@@ -2772,6 +2775,13 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payroll_runs_pay_period_id_fkey"
+            columns: ["pay_period_id"]
+            isOneToOne: false
+            referencedRelation: "pay_periods"
             referencedColumns: ["id"]
           },
         ]
