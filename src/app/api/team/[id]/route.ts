@@ -20,6 +20,14 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   }
 
   const body = await request.json()
+  // An invited teammate's profile is created by the handle_new_user trigger
+  // with their email as the name (they haven't told us one yet), so editing it
+  // here is how an admin fixes that without waiting for them to log in.
+  const name = typeof body.name === 'string' ? body.name.trim() : ''
+  if (!name) {
+    return NextResponse.json({ error: 'Name is required.' }, { status: 400 })
+  }
+
   const employeeRoleIds: string[] = Array.isArray(body.employee_role_ids) ? body.employee_role_ids : []
   const commissionTypeIds: string[] = Array.isArray(body.commission_type_ids) ? body.commission_type_ids : []
   const payPeriodIds: string[] = Array.isArray(body.pay_period_ids) ? body.pay_period_ids : []
@@ -41,6 +49,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   const { error: profileError } = await adminClient
     .from('profiles')
     .update({
+      name,
       pay_type: payType,
       pay_rate: payRate,
       employee_type: employeeType,

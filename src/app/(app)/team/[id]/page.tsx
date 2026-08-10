@@ -86,6 +86,7 @@ export default async function TeamMemberPage({ params }: { params: Promise<{ id:
       <div className="mt-6">
         <EmployeeForm
           profileId={member.id}
+          initialName={member.name}
           initialEmployeeRoleIds={(roleAssignments ?? []).map((row) => row.employee_role_id)}
           initialCommissionTypeIds={(assignments ?? []).map((row) => row.commission_type_id)}
           initialPayType={member.pay_type ?? ''}

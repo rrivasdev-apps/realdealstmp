@@ -9,6 +9,7 @@ type LookupOption = { id: string; name: string }
 
 export function EmployeeForm({
   profileId,
+  initialName,
   initialEmployeeRoleIds,
   initialCommissionTypeIds,
   initialPayType,
@@ -25,6 +26,7 @@ export function EmployeeForm({
   payPeriods,
 }: {
   profileId: string
+  initialName: string
   initialEmployeeRoleIds: string[]
   initialCommissionTypeIds: string[]
   initialPayType: string
@@ -42,6 +44,7 @@ export function EmployeeForm({
 }) {
   const t = useTranslations('Team')
   const router = useRouter()
+  const [name, setName] = useState(initialName)
   const [employeeRoleIds, setEmployeeRoleIds] = useState<string[]>(initialEmployeeRoleIds)
   const [commissionTypeIds, setCommissionTypeIds] = useState<string[]>(initialCommissionTypeIds)
   const [payPeriodIds, setPayPeriodIds] = useState<string[]>(initialPayPeriodIds)
@@ -71,12 +74,21 @@ export function EmployeeForm({
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
     setError(null)
+
+    // Pre-empt the server's own check so the message is translated, the
+    // pattern used for every other required field in the app.
+    if (!name.trim()) {
+      setError(t('nameRequiredError'))
+      return
+    }
+
     setSubmitting(true)
 
     const response = await fetch(`/api/team/${profileId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        name,
         employee_role_ids: employeeRoleIds,
         commission_type_ids: commissionTypeIds,
         pay_type: payType || null,
@@ -105,6 +117,18 @@ export function EmployeeForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex max-w-xl flex-col gap-6">
+      <fieldset className="flex flex-col gap-2 rounded border border-border p-4">
+        <legend className="px-1 text-sm font-medium">{t('nameLabel')}</legend>
+        <input
+          type="text"
+          required
+          value={name}
+          onChange={(event) => setName(event.target.value)}
+          className="rounded border border-input-border bg-input-background px-3 py-2"
+        />
+        <span className="text-xs text-muted-foreground">{t('nameHint')}</span>
+      </fieldset>
+
       <fieldset className="flex flex-col gap-2 rounded border border-border p-4">
         <legend className="px-1 text-sm font-medium">{t('employeeRolesLegend')}</legend>
         {employeeRoles.map((option) => (

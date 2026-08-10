@@ -891,7 +891,10 @@
     "saveChangesButton": "Guardar cambios",
     "cancelLink": "Cancelar",
     "emptyOption": "—",
-    "restoreButton": "Restaurar"
+    "restoreButton": "Restaurar",
+    "nameLabel": "Nombre",
+    "nameRequiredError": "El nombre es obligatorio.",
+    "nameHint": "Se muestra en toda la aplicación. Un compañero invitado aparece con su correo como nombre hasta que lo cambie él mismo."
   },
   "Auth": {
     "logInTitle": "Iniciar sesión",
@@ -910,7 +913,9 @@
     "setPasswordButton": "Establecer contraseña",
     "couldNotSaveName": "No se pudo guardar tu nombre.",
     "errorTitle": "Algo salió mal",
-    "invalidLink": "Ese enlace no es válido o ha expirado."
+    "invalidLink": "Ese enlace no es válido o ha expirado.",
+    "signingYouIn": "Iniciando tu sesión…",
+    "missingToken": "A ese enlace le falta su token de confirmación."
   },
   "Deals": {
     "title": "Pizarra",

@@ -891,7 +891,10 @@
     "noCommissionTypes": "No commission types yet — add some in Settings.",
     "saveChangesButton": "Save changes",
     "cancelLink": "Cancel",
-    "emptyOption": "—"
+    "emptyOption": "—",
+    "nameLabel": "Name",
+    "nameRequiredError": "Name is required.",
+    "nameHint": "Shown across the app. An invited teammate starts out named after their email until they set this themselves."
   },
   "Auth": {
     "logInTitle": "Log in",
@@ -910,7 +913,9 @@
     "setPasswordButton": "Set password",
     "couldNotSaveName": "Could not save your name.",
     "errorTitle": "Something went wrong",
-    "invalidLink": "That link is invalid or has expired."
+    "invalidLink": "That link is invalid or has expired.",
+    "signingYouIn": "Signing you in…",
+    "missingToken": "That link is missing its confirmation token."
   },
   "Deals": {
     "title": "Whiteboard",
