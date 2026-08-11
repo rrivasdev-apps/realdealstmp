@@ -32,12 +32,25 @@ export type PeriodDeal = {
   split_amount: number | null
 }
 
-const MONTH_LABELS = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-]
+// How a period renders for a reader. Month names come from the platform's own
+// locale data (a hardcoded English list here used to leave a Spanish company
+// reading "Aug 2026" on an otherwise translated dashboard); the quarter prefix
+// is copy, so it comes from the message catalogs via the caller rather than
+// being duplicated in this file.
+export type PeriodLabelOptions = { locale: string; quarterPrefix: string }
+
+const DEFAULT_LABEL_OPTIONS: PeriodLabelOptions = { locale: 'en', quarterPrefix: 'Q' }
 
 function pad2(n: number): string {
   return String(n).padStart(2, '0')
+}
+
+// Formatted in UTC to match parseDateParts' timezone-free reading of Postgres
+// dates -- a local-time Date here could shift the label to the wrong month.
+function monthLabel(year: number, month: number, locale: string): string {
+  return new Intl.DateTimeFormat(locale, { month: 'short', timeZone: 'UTC' }).format(
+    new Date(Date.UTC(year, month - 1, 1))
+  )
 }
 
 // dateStr is a Postgres `date` ('YYYY-MM-DD') -- split on '-' rather than
@@ -48,7 +61,11 @@ function parseDateParts(dateStr: string): { year: number; month: number; day: nu
   return { year, month, day }
 }
 
-export function periodKey(dateStr: string, granularity: PeriodGranularity): { key: string; label: string } {
+export function periodKey(
+  dateStr: string,
+  granularity: PeriodGranularity,
+  labels: PeriodLabelOptions = DEFAULT_LABEL_OPTIONS
+): { key: string; label: string } {
   const { year, month } = parseDateParts(dateStr)
 
   if (granularity === 'yearly') {
@@ -56,9 +73,9 @@ export function periodKey(dateStr: string, granularity: PeriodGranularity): { ke
   }
   if (granularity === 'quarterly') {
     const quarter = Math.ceil(month / 3)
-    return { key: `${year}-Q${quarter}`, label: `Q${quarter} ${year}` }
+    return { key: `${year}-Q${quarter}`, label: `${labels.quarterPrefix}${quarter} ${year}` }
   }
-  return { key: `${year}-${pad2(month)}`, label: `${MONTH_LABELS[month - 1]} ${year}` }
+  return { key: `${year}-${pad2(month)}`, label: `${monthLabel(year, month, labels.locale)} ${year}` }
 }
 
 // Steps `count` periods back from (year, month), returning the (year, month)
@@ -96,7 +113,8 @@ export function buildPeriodPerformance(
   deals: PeriodDeal[],
   granularity: PeriodGranularity,
   periodCount: number,
-  referenceDate: Date = new Date()
+  referenceDate: Date = new Date(),
+  labels: PeriodLabelOptions = DEFAULT_LABEL_OPTIONS
 ): PeriodPerformanceRow[] {
   const refYear = referenceDate.getFullYear()
   const refMonth = referenceDate.getMonth() + 1
@@ -106,7 +124,7 @@ export function buildPeriodPerformance(
 
   for (let i = 0; i < periodCount; i++) {
     const { year, month } = stepPeriodBack(refYear, refMonth, granularity, i)
-    const { key, label } = periodKey(`${year}-${pad2(month)}-01`, granularity)
+    const { key, label } = periodKey(`${year}-${pad2(month)}-01`, granularity, labels)
     rows.set(key, {
       key,
       label,

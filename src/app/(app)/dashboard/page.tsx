@@ -1,4 +1,4 @@
-import { getTranslations } from 'next-intl/server'
+import { getLocale, getTranslations } from 'next-intl/server'
 import { redirect } from 'next/navigation'
 
 import { calculateProfit } from '@/lib/deals/profit'
@@ -71,9 +71,12 @@ export default async function DashboardPage() {
     .filter((deal) => deal.is_jv_deal)
     .reduce((sum, deal) => sum + (deal.split_amount ?? 0), 0)
 
-  const monthly = buildPeriodPerformance(closedFundedDeals, 'monthly', 12)
-  const quarterly = buildPeriodPerformance(closedFundedDeals, 'quarterly', 8)
-  const yearly = buildPeriodPerformance(closedFundedDeals, 'yearly', 6)
+  // Period row labels ("ago 2026", "T3 2026") are built here rather than in the
+  // client component because the rows are already assembled server-side.
+  const periodLabels = { locale: await getLocale(), quarterPrefix: t('quarterPrefix') }
+  const monthly = buildPeriodPerformance(closedFundedDeals, 'monthly', 12, new Date(), periodLabels)
+  const quarterly = buildPeriodPerformance(closedFundedDeals, 'quarterly', 8, new Date(), periodLabels)
+  const yearly = buildPeriodPerformance(closedFundedDeals, 'yearly', 6, new Date(), periodLabels)
 
   return (
     <div>

@@ -40,3 +40,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# playwright mcp browser artifacts (snapshots/console logs from local QA runs)
+/.playwright-mcp/

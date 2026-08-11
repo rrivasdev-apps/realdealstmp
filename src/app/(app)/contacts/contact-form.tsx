@@ -1,6 +1,6 @@
 'use client'
 
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -138,6 +138,9 @@ export function ContactForm({
   listingStatuses: LookupOption[]
 }) {
   const t = useTranslations('Contacts')
+  // These timestamps were formatted as 'en-US' regardless of language, so a
+  // Spanish company read "8/11/2026" as 8 November rather than 11 August.
+  const locale = useLocale()
   const router = useRouter()
   const [values, setValues] = useState(initialValues)
   const [error, setError] = useState<string | null>(null)
@@ -577,7 +580,7 @@ export function ContactForm({
             <div>{t('createdByLabel', { name: meta.createdByName ?? t('unknownPerson') })}</div>
             <div>
               {t('createdOnLabel', {
-                date: meta.createdAt ? new Date(meta.createdAt).toLocaleDateString('en-US') : '—',
+                date: meta.createdAt ? new Date(meta.createdAt).toLocaleDateString(locale) : '—',
               })}
             </div>
           </div>
@@ -733,13 +736,13 @@ export function ContactForm({
           {mode === 'edit' && (
             <div className="flex flex-col gap-2 text-xs text-muted-foreground">
               <div>
-                {t('lastUpdatedLabel', { date: meta.updatedAt ? new Date(meta.updatedAt).toLocaleString('en-US') : '—' })}
+                {t('lastUpdatedLabel', { date: meta.updatedAt ? new Date(meta.updatedAt).toLocaleString(locale) : '—' })}
               </div>
               <div className="flex items-center gap-2">
                 <span>
                   {t('lastContactedLabel', {
                     date: values.last_contacted_at
-                      ? new Date(values.last_contacted_at).toLocaleDateString('en-US')
+                      ? new Date(values.last_contacted_at).toLocaleDateString(locale)
                       : t('neverLabel'),
                   })}
                 </span>

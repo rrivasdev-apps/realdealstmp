@@ -57,6 +57,7 @@
     "periodPerformance": "Period Performance",
     "monthly": "Monthly",
     "quarterly": "Quarterly",
+    "quarterPrefix": "Q",
     "yearly": "Yearly",
     "colPeriod": "Period",
     "colDeals": "Deals",

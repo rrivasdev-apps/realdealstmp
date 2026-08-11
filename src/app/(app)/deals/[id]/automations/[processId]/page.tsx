@@ -1,4 +1,4 @@
-import { getTranslations } from 'next-intl/server'
+import { getLocale, getTranslations } from 'next-intl/server'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
@@ -15,6 +15,9 @@ export default async function AutomationProcessPage({
 }) {
   const { id, processId } = await params
   const t = await getTranslations('Automations')
+  // Bare toLocaleString() would format with whatever locale the server process
+  // happens to run under, which is neither the reader's nor stable across hosts.
+  const locale = await getLocale()
   const profile = await requirePermission('view_deal_detail')
   if (!profile || !profile.company_id) {
     return (
@@ -117,7 +120,7 @@ export default async function AutomationProcessPage({
             <li key={entry.id} className="text-xs">
               <div className="font-medium text-foreground">{entry.event_type.replace(/_/g, ' ')}</div>
               <div className="text-muted-foreground">
-                {new Date(entry.created_at).toLocaleString()}
+                {new Date(entry.created_at).toLocaleString(locale)}
                 {entry.actor_profile_id ? ` — ${actorNameById.get(entry.actor_profile_id) ?? t('someoneFallback')}` : ''}
               </div>
             </li>

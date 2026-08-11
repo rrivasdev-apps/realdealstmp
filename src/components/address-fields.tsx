@@ -47,6 +47,15 @@ export function AddressFields({
   const [showCityResults, setShowCityResults] = useState(false)
   const cityDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  // Read by the blur handler below, which runs on a timer after a suggestion
+  // click may already have updated either one -- its own closure would be stale.
+  const latestValueRef = useRef(value)
+  const latestCityResultsRef = useRef(cityResults)
+  useEffect(() => {
+    latestValueRef.current = value
+    latestCityResultsRef.current = cityResults
+  }, [value, cityResults])
+
   useEffect(() => {
     let cancelled = false
     // Deferred a microtask via Promise.resolve().then() so the reset/loading setState
@@ -149,6 +158,26 @@ export function AddressFields({
     onChange({ ...value, cityId: city.id, cityName: city.name })
   }
 
+  // City is a lookup, not free text: cityId is cleared on every keystroke and only
+  // set again by picking a suggestion. Typing a real city and tabbing away used to
+  // save the record with no city at all, silently -- the input still showed the
+  // typed name, so nothing hinted the value had been dropped. Resolve an exact
+  // name match here, and clear anything we can't resolve so the field always shows
+  // what will actually be saved. Runs on the same delay as the dropdown hide, so a
+  // click on a suggestion or "add city" has already set cityId by the time it fires.
+  function handleCityBlur() {
+    setTimeout(() => {
+      setShowCityResults(false)
+      const current = latestValueRef.current
+      const typed = current.cityName.trim()
+      if (current.cityId || !typed) return
+      const match = latestCityResultsRef.current.find(
+        (city) => city.name.toLowerCase() === typed.toLowerCase()
+      )
+      onChange({ ...current, cityId: match?.id ?? '', cityName: match?.name ?? '' })
+    }, 150)
+  }
+
   async function handleCreateCity() {
     const name = value.cityName.trim()
     if (!value.stateId || !name) return
@@ -237,7 +266,7 @@ export function AddressFields({
               value={value.cityName}
               onChange={(event) => handleCityQueryChange(event.target.value)}
               onFocus={() => setShowCityResults(true)}
-              onBlur={() => setTimeout(() => setShowCityResults(false), 150)}
+              onBlur={handleCityBlur}
               disabled={!value.stateId}
               autoComplete="off"
               className="rounded border border-input-border bg-input-background px-3 py-2 disabled:opacity-50"

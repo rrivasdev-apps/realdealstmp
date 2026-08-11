@@ -57,6 +57,7 @@
     "periodPerformance": "Rendimiento del Período",
     "monthly": "Mensual",
     "quarterly": "Trimestral",
+    "quarterPrefix": "T",
     "yearly": "Anual",
     "colPeriod": "Período",
     "colDeals": "Negocios",
