@@ -99,6 +99,19 @@ const SETTINGS_GROUPS: { id: string; labelKey: NavKey; sections: { id: string; l
   },
 ]
 
+// Which company you're working in, under the wordmark. Rendered in both the
+// mobile top bar and the sidebar proper so it's visible whether or not the
+// drawer is open. Not translated -- it's the company's own name, data rather
+// than copy, same rule the lookup tables follow.
+function WorkspaceName({ companyName }: { companyName: string }) {
+  if (!companyName) return null
+  return (
+    <div className="truncate text-xs text-sidebar-muted" title={companyName}>
+      {companyName}
+    </div>
+  )
+}
+
 function settingsGroupForSection(sectionId: string): string {
   return SETTINGS_GROUPS.find((group) => group.sections.some((section) => section.id === sectionId))?.id
     ?? SETTINGS_GROUPS[0].id
@@ -107,11 +120,13 @@ function settingsGroupForSection(sectionId: string): string {
 export function Sidebar({
   navItems,
   canManageTeam,
+  companyName,
   userName,
   userRole,
 }: {
   navItems: NavItem[]
   canManageTeam: boolean
+  companyName: string
   userName: string
   userRole: string
 }) {
@@ -234,14 +249,17 @@ export function Sidebar({
   return (
     <>
       <div className="flex items-center justify-between border-b border-border bg-sidebar px-4 py-3 text-sidebar-foreground lg:hidden">
-        <span className="text-lg font-semibold tracking-tight">
-          Real<span className="text-brand-400">Deals</span>
-        </span>
+        <div className="min-w-0">
+          <span className="text-lg font-semibold tracking-tight">
+            Real<span className="text-brand-400">Deals</span>
+          </span>
+          <WorkspaceName companyName={companyName} />
+        </div>
         <button
           type="button"
           onClick={() => setOpen(true)}
           aria-label={t('openMenu')}
-          className="rounded-md p-2 text-sidebar-foreground hover:bg-sidebar-hover"
+          className="shrink-0 rounded-md p-2 text-sidebar-foreground hover:bg-sidebar-hover"
         >
           <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2">
             <path strokeLinecap="round" d="M4 6h16M4 12h16M4 18h16" />
@@ -263,14 +281,17 @@ export function Sidebar({
         }`}
       >
       <div className="flex items-center justify-between px-5 py-6">
-        <span className="text-lg font-semibold tracking-tight">
-          Real<span className="text-brand-400">Deals</span>
-        </span>
+        <div className="min-w-0">
+          <span className="text-lg font-semibold tracking-tight">
+            Real<span className="text-brand-400">Deals</span>
+          </span>
+          <WorkspaceName companyName={companyName} />
+        </div>
         <button
           type="button"
           onClick={() => setOpen(false)}
           aria-label={t('closeMenu')}
-          className="rounded-md p-1 text-sidebar-muted hover:bg-sidebar-hover hover:text-sidebar-foreground lg:hidden"
+          className="shrink-0 rounded-md p-1 text-sidebar-muted hover:bg-sidebar-hover hover:text-sidebar-foreground lg:hidden"
         >
           <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
             <path strokeLinecap="round" d="M6 6l12 12M18 6L6 18" />
@@ -283,9 +304,16 @@ export function Sidebar({
           const active = pathname === item.href || pathname.startsWith(`${item.href}/`)
           return (
             <div key={item.href}>
+              {/* `block` matters: an <a> is inline by default, and horizontal
+                  padding on an inline box is only drawn before its first line and
+                  after its last -- a label long enough to wrap (e.g. Spanish
+                  "Automatizaciones de Negocios") had its second line start flush
+                  against the container, out of line with the first. The nested
+                  menus below don't need this because they sit directly inside
+                  `flex flex-col` parents, which blockifies them already. */}
               <Link
                 href={item.href}
-                className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                className={`block rounded-md px-3 py-2 text-sm font-medium transition-colors ${
                   active
                     ? 'bg-sidebar-active text-white'
                     : 'text-sidebar-muted hover:bg-sidebar-hover hover:text-sidebar-foreground'

@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 
 import { requireProfile } from '@/lib/supabase/auth'
+import { createClient } from '@/lib/supabase/server'
 
 import { Sidebar, type NavKey } from './sidebar'
 
@@ -20,6 +21,17 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const canManageTeam =
     profile.role === 'admin' || Boolean(profile.permissions?.can_manage_team && profile.permissions?.can_manage_settings)
 
+  // Fetched here rather than added to requireProfile()'s select, which nearly
+  // every mutating API route calls -- none of those need the company's name,
+  // and this is the one place it's displayed. RLS allows it: "Members can view
+  // their own company" (20260715000001_companies_and_profiles.sql).
+  const supabase = await createClient()
+  const { data: company } = await supabase
+    .from('companies')
+    .select('name')
+    .eq('id', profile.company_id ?? '')
+    .maybeSingle()
+
   const navItem = (href: string, labelKey: NavKey) => ({ href, labelKey })
   const navItems = [
     navItem('/dashboard', 'dashboard'),
@@ -37,7 +49,13 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="flex h-full flex-col lg:flex-row">
-      <Sidebar navItems={navItems} canManageTeam={canManageTeam} userName={profile.name} userRole={profile.role} />
+      <Sidebar
+        navItems={navItems}
+        canManageTeam={canManageTeam}
+        companyName={company?.name ?? ''}
+        userName={profile.name}
+        userRole={profile.role}
+      />
       <main className="flex-1 overflow-y-auto bg-surface px-4 py-6 sm:px-6 lg:px-8 lg:py-8">{children}</main>
     </div>
   )
