@@ -2,6 +2,7 @@ import { getTranslations } from 'next-intl/server'
 import Link from 'next/link'
 
 import { ListImportForm } from '@/components/list-import-form'
+import { defaultLocale, isLocale } from '@/i18n/config'
 import { SettingsSection } from '@/components/settings-section'
 import { SimpleListForm } from '@/components/simple-list-form'
 import { getPayPeriodLabels } from '@/lib/pay-periods/labels'
@@ -16,6 +17,7 @@ import { CountryForm } from './country-form'
 import { CustomFieldDefinitionForm } from './custom-field-definition-form'
 import { DefaultCountryForm } from './default-country-form'
 import { EmployeeRoleForm } from './employee-role-form'
+import { LanguageForm } from './language-form'
 import { PayPeriodForm, type PayPeriodFormValues } from './pay-period-form'
 import { StatesSection } from './states-section'
 
@@ -90,14 +92,24 @@ export default async function SettingsPage() {
       .select('id, name, payment_type, salary_pay_frequency, commission_pay_frequency, next_payday')
       .order('name'),
     supabase.from('countries').select('id, name, iso_code').order('name'),
-    supabase.from('companies').select('default_country_id').eq('id', profile.company_id ?? '').single(),
+    supabase.from('companies').select('default_country_id, locale').eq('id', profile.company_id ?? '').single(),
   ])
+
+  // `companies.locale` is not-null + check-constrained in the DB, so this only
+  // falls back when the row itself is missing.
+  const storedLocale = company?.locale
+  const companyLocale = isLocale(storedLocale) ? storedLocale : defaultLocale
 
   return (
     <div>
       <h1 className="heading-page">{t('title')}</h1>
 
       <div className="mt-6">
+        <SettingsSection id="language" title={t('languageTitle')}>
+          <p className="text-sm text-muted-foreground">{t('languageDescription')}</p>
+          <LanguageForm locale={companyLocale} />
+        </SettingsSection>
+
         <SettingsSection id="markets" title={t('marketsTitle')}>
           <p className="text-sm text-muted-foreground">{t('marketsDescription')}</p>
           <div className="max-w-md">

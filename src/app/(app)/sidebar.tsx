@@ -54,6 +54,11 @@ const CONTACT_HUB_LINKS: { href: string; labelKey: NavKey }[] = [
 // break the moment the app isn't in English).
 const SETTINGS_GROUPS: { id: string; labelKey: NavKey; sections: { id: string; labelKey: NavKey; href?: string }[] }[] = [
   {
+    id: 'general',
+    labelKey: 'settingsGroupGeneral',
+    sections: [{ id: 'language', labelKey: 'settingsLanguage' }],
+  },
+  {
     id: 'deal',
     labelKey: 'settingsGroupDeal',
     sections: [

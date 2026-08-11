@@ -15,10 +15,11 @@ import { defaultLocale, isLocale, LOCALE_COOKIE } from './config'
 // reconciling against could disagree on locale. A cookie is synchronous and
 // request-stable, which is also next-intl's own documented pattern for
 // apps without a [locale] URL segment. src/proxy.ts is what keeps this
-// cookie in sync with companies.locale (sets it whenever missing); the
-// cookie is cleared on logout so a different account's login can't inherit
-// a stale value. Unauthenticated requests (no cookie yet) fall back to
-// English.
+// cookie in sync with companies.locale (sets it whenever missing, and
+// re-checks it every LOCALE_CHECK_MAX_AGE so a company switching language
+// reaches sessions that are already open); the cookie is cleared on logout
+// so a different account's login can't inherit a stale value.
+// Unauthenticated requests (no cookie yet) fall back to English.
 export default getRequestConfig(async () => {
   const store = await cookies()
   const cookieLocale = store.get(LOCALE_COOKIE)?.value
