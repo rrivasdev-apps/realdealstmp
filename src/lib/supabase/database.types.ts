@@ -196,6 +196,7 @@ export type Database = {
       }
       automation_steps: {
         Row: {
+          ai_output: Json | null
           completed_at: string | null
           completed_by_profile_id: string | null
           created_at: string
@@ -208,6 +209,7 @@ export type Database = {
           template_step_id: string
         }
         Insert: {
+          ai_output?: Json | null
           completed_at?: string | null
           completed_by_profile_id?: string | null
           created_at?: string
@@ -220,6 +222,7 @@ export type Database = {
           template_step_id: string
         }
         Update: {
+          ai_output?: Json | null
           completed_at?: string | null
           completed_by_profile_id?: string | null
           created_at?: string

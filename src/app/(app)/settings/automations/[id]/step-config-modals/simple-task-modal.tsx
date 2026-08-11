@@ -4,9 +4,10 @@ import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
+import { DRAFT_AUDIENCES, MAX_PURPOSE_LENGTH, type DraftAudience } from '@/lib/ai/draft-config'
 import { getStepTypeLabels, type AutomationsTranslator } from '@/lib/automations/labels'
 
-import type { AutomationStep, LookupOption, StepTrigger } from '../types'
+import type { AiDraftStepConfig, AutomationStep, LookupOption, StepTrigger } from '../types'
 import { AssigneeFields, initialAssigneeValue, initialNextStepValue, Modal, NextStepFields, TriggerAutomationFields } from './shared'
 
 function getKind(t: AutomationsTranslator, stepType: string | null) {
@@ -61,6 +62,17 @@ export function SimpleTaskModal({
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
+  // Drafting is offered on the two step types that produce an outbound message.
+  const supportsDraft = step.step_type === 'email_task' || step.step_type === 'call_task'
+  const savedDraft = (step.config as AiDraftStepConfig | null)?.ai_draft
+  const [draftEnabled, setDraftEnabled] = useState(savedDraft?.enabled === true)
+  const [draftAudience, setDraftAudience] = useState<DraftAudience>(
+    (DRAFT_AUDIENCES as readonly string[]).includes(savedDraft?.audience ?? '')
+      ? (savedDraft?.audience as DraftAudience)
+      : 'seller'
+  )
+  const [draftPurpose, setDraftPurpose] = useState(savedDraft?.purpose ?? '')
+
   async function handleSave(event: React.FormEvent) {
     event.preventDefault()
     if (!name.trim()) {
@@ -69,6 +81,12 @@ export function SimpleTaskModal({
     }
     if (!assignee.assigned_role_id && !assignee.assigned_profile_id) {
       setError(t('assigneeRequiredError'))
+      return
+    }
+    // Pre-empts the route's English "Describe what the draft should ask for."
+    // with a translated check, per CLAUDE.md's rule on server error strings.
+    if (supportsDraft && draftEnabled && !draftPurpose.trim()) {
+      setError(t('aiDraftPurposeRequiredError'))
       return
     }
     setError(null)
@@ -82,7 +100,10 @@ export function SimpleTaskModal({
         description,
         ...assignee,
         ...nextStep,
-        config: {},
+        config:
+          supportsDraft && draftEnabled
+            ? { ai_draft: { enabled: true, audience: draftAudience, purpose: draftPurpose.trim() } }
+            : {},
         triggers: [{ option_key: null, target_template_ids: targetIds }],
       }),
     })
@@ -123,6 +144,52 @@ export function SimpleTaskModal({
             className="rounded border border-input-border bg-input-background px-3 py-2"
           />
         </label>
+
+        {supportsDraft && (
+          <fieldset className="rounded border border-border p-3">
+            <legend className="px-1 text-sm font-medium">{t('aiDraftLegend')}</legend>
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={draftEnabled}
+                onChange={(event) => setDraftEnabled(event.target.checked)}
+              />
+              {t('aiDraftEnabledLabel')}
+            </label>
+            <p className="mt-1 text-xs text-muted-foreground">{t('aiDraftBlurb')}</p>
+
+            {draftEnabled && (
+              <div className="mt-3 flex flex-col gap-3">
+                <label className="field-label">
+                  {t('aiDraftAudienceLabel')}
+                  <select
+                    value={draftAudience}
+                    onChange={(event) => setDraftAudience(event.target.value as DraftAudience)}
+                    className="rounded border border-input-border bg-input-background px-3 py-2"
+                  >
+                    {DRAFT_AUDIENCES.map((audience) => (
+                      <option key={audience} value={audience}>
+                        {t(`aiDraftAudience_${audience}` as Parameters<typeof t>[0])}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
+                <label className="field-label">
+                  {t('aiDraftPurposeLabel')}
+                  <input
+                    type="text"
+                    value={draftPurpose}
+                    maxLength={MAX_PURPOSE_LENGTH}
+                    onChange={(event) => setDraftPurpose(event.target.value)}
+                    placeholder={t('aiDraftPurposePlaceholder')}
+                    className="rounded border border-input-border bg-input-background px-3 py-2"
+                  />
+                </label>
+              </div>
+            )}
+          </fieldset>
+        )}
 
         <AssigneeFields value={assignee} onChange={setAssignee} employeeRoles={employeeRoles} profiles={profiles} />
         <NextStepFields value={nextStep} onChange={setNextStep} availableSteps={availableSteps} />

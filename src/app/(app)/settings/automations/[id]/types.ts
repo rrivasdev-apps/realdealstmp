@@ -52,6 +52,7 @@ export type BranchOption = {
 
 export type SimpleOption = { key: string; label: string }
 
+export type AiDraftStepConfig = { ai_draft?: { enabled?: boolean; audience?: string; purpose?: string } }
 export type FillFieldsConfig = { deal_fields: string[]; custom_field_ids: string[] }
 export type ConditionalStatementConfig = { question: string; options: BranchOption[] }
 export type OptionListConfig = { choice_mode: 'single' | 'multiple'; options: (BranchOption | SimpleOption)[] }

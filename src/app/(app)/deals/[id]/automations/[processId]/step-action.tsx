@@ -8,6 +8,8 @@ import type { DealField } from '@/lib/automations/deal-fields'
 import type { BranchOption, SimpleOption } from '@/lib/automations/step-config'
 import type { Database } from '@/lib/supabase/database.types'
 
+import { AiDraftPanel, type AiOutput } from './ai-draft-panel'
+
 type AutomationStepRow = Database['public']['Tables']['automation_steps']['Row']
 type AutomationTemplateStepRow = Database['public']['Tables']['automation_template_steps']['Row']
 type CustomFieldDefinition = { id: string; name: string; field_type: string; options: string[] | null }
@@ -44,6 +46,11 @@ export function StepAction({
   const isSingleChoice = templateStep.step_type === 'option_list' && config.choice_mode === 'single'
   const isMultipleChoice = templateStep.step_type === 'option_list' && config.choice_mode === 'multiple'
   const options = Array.isArray(config.options) ? (config.options as (BranchOption | SimpleOption)[]) : []
+  // Only for the two outbound-message step types, and only when the template
+  // opted in. Everything else renders exactly as before.
+  const showAiDraft =
+    (templateStep.step_type === 'email_task' || templateStep.step_type === 'call_task') &&
+    (config.ai_draft as { enabled?: boolean } | undefined)?.enabled === true
 
   const [fieldValues, setFieldValues] = useState<Record<string, unknown>>(() => {
     const initial: Record<string, unknown> = {}
@@ -210,6 +217,8 @@ export function StepAction({
           ))}
         </div>
       )}
+
+      {showAiDraft && <AiDraftPanel stepId={step.id} initialOutput={(step.ai_output ?? null) as AiOutput | null} />}
 
       {nextStepPreview && (
         <p className="text-xs text-muted-foreground">

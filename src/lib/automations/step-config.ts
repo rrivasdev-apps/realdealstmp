@@ -2,6 +2,7 @@ import 'server-only'
 
 import type { SupabaseClient } from '@supabase/supabase-js'
 
+import { isDraftAudience, MAX_PURPOSE_LENGTH, type AiDraftConfig } from '@/lib/ai/draft-config'
 import type { Database } from '@/lib/supabase/database.types'
 
 import { isValidDealField } from './deal-fields'
@@ -36,6 +37,31 @@ export type BranchOption = {
 export type SimpleOption = { key: string; label: string }
 
 export type StepConfigResult = { ok: true; config: Record<string, unknown> } | { ok: false; error: string }
+
+// Phase 2.6a. Returns `null` (rather than an error) for absent or switched-off
+// drafting, so `ai_draft` simply doesn't appear in the stored config -- that
+// keeps an untouched email_task's config byte-identical to what it was before
+// this feature existed.
+function parseAiDraft(raw: unknown): { ok: true; value: AiDraftConfig | null } | { ok: false; error: string } {
+  if (typeof raw !== 'object' || raw === null) {
+    return { ok: true, value: null }
+  }
+  const value = raw as Record<string, unknown>
+  if (value.enabled !== true) {
+    return { ok: true, value: null }
+  }
+  if (!isDraftAudience(value.audience)) {
+    return { ok: false, error: 'Choose who the draft is addressed to.' }
+  }
+  const purpose = typeof value.purpose === 'string' ? value.purpose.trim() : ''
+  if (!purpose) {
+    return { ok: false, error: 'Describe what the draft should ask for.' }
+  }
+  if (purpose.length > MAX_PURPOSE_LENGTH) {
+    return { ok: false, error: `Keep the draft purpose under ${MAX_PURPOSE_LENGTH} characters.` }
+  }
+  return { ok: true, value: { enabled: true, audience: value.audience, purpose } }
+}
 
 function parseBranchOption(
   raw: unknown,
@@ -92,13 +118,16 @@ export async function buildStepConfigForSave(
 ): Promise<StepConfigResult> {
   const input = typeof rawConfig === 'object' && rawConfig !== null ? (rawConfig as Record<string, unknown>) : {}
 
-  if (
-    stepType === 'email_task' ||
-    stepType === 'call_task' ||
-    stepType === 'generic_task' ||
-    stepType === 'show_text' ||
-    stepType === 'trigger'
-  ) {
+  // email_task/call_task can additionally carry an ai_draft block (Phase 2.6a).
+  // Absent or disabled is the default, and produces the same empty config these
+  // step types have always had -- existing templates are untouched.
+  if (stepType === 'email_task' || stepType === 'call_task') {
+    const aiDraft = parseAiDraft(input.ai_draft)
+    if (!aiDraft.ok) return aiDraft
+    return { ok: true, config: aiDraft.value ? { ai_draft: aiDraft.value } : {} }
+  }
+
+  if (stepType === 'generic_task' || stepType === 'show_text' || stepType === 'trigger') {
     return { ok: true, config: {} }
   }
 
