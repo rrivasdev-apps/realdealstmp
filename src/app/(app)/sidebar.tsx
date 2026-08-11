@@ -299,7 +299,10 @@ export function Sidebar({
         </button>
       </div>
 
-      <nav className="momentum-scroll flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto px-3">
+      {/* gap/padding kept in step with the nested menus below (gap-0.5, py-1.5)
+          so the whole rail reads as one list rather than the top level sitting
+          noticeably looser than everything under it. */}
+      <nav className="momentum-scroll flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto px-3">
         {navItems.map((item) => {
           const active = pathname === item.href || pathname.startsWith(`${item.href}/`)
           return (
@@ -313,7 +316,7 @@ export function Sidebar({
                   `flex flex-col` parents, which blockifies them already. */}
               <Link
                 href={item.href}
-                className={`block rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                className={`block rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
                   active
                     ? 'bg-sidebar-active text-white'
                     : 'text-sidebar-muted hover:bg-sidebar-hover hover:text-sidebar-foreground'
