@@ -1,160 +1,27 @@
-'use client'
+import { getLocale } from 'next-intl/server'
 
-import { useTranslations } from 'next-intl'
-import Link from 'next/link'
-import { useState } from 'react'
+import { defaultLocale, isLocale, locales } from '@/i18n/config'
+import en from '@/messages/en.json'
+import es from '@/messages/es.json'
 
-import countries from '@/lib/geography/data/countries.json'
-import { AUTH_EMAIL_SEND_FAILED } from '@/lib/supabase/auth-error'
+import { SignupForm } from './signup-form'
 
-export default function SignupPage() {
-  const t = useTranslations('Signup')
-  const [companyName, setCompanyName] = useState('')
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [homeCountryCode, setHomeCountryCode] = useState('US')
-  const [locale, setLocale] = useState('en')
-  const [error, setError] = useState<string | null>(null)
-  const [submitting, setSubmitting] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
+const CATALOGS = { en, es }
 
-  async function handleSubmit(event: React.FormEvent) {
-    event.preventDefault()
-    setError(null)
-    setSubmitting(true)
+// Only the one namespace this page reads gets handed to the client. Shipping both
+// full catalogs so the form could switch between them would put every string in the
+// app into the bundle for the one route a visitor sees before they have an account.
+const SIGNUP_MESSAGES = Object.fromEntries(
+  locales.map((locale) => [locale, { Signup: CATALOGS[locale].Signup }])
+) as Record<(typeof locales)[number], { Signup: (typeof en)['Signup'] }>
 
-    const response = await fetch('/api/signup', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ companyName, name, email, password, homeCountryCode, locale }),
-    })
-    const result = await response.json()
-
-    setSubmitting(false)
-
-    if (!response.ok) {
-      // `result.error` is deliberately English (see auth-error.ts); a code means
-      // the failure has translated copy of its own to show instead.
-      setError(
-        result.code === AUTH_EMAIL_SEND_FAILED
-          ? t('confirmationEmailFailed')
-          : (result.error ?? t('genericError'))
-      )
-      return
-    }
-
-    setSubmitted(true)
-  }
-
-  if (submitted) {
-    return (
-      <div className="mx-auto max-w-sm py-24 text-center">
-        <h1 className="heading-page">{t('checkEmailTitle')}</h1>
-        <p className="mt-2 text-muted-foreground">{t('checkEmailBody', { email, company: companyName })}</p>
-      </div>
-    )
-  }
+export default async function SignupPage() {
+  const cookieLocale = await getLocale()
 
   return (
-    <div className="mx-auto max-w-sm py-24">
-      <h1 className="heading-page">{t('title')}</h1>
-      <p className="mt-1 text-sm text-muted-foreground">{t('subtitle')}</p>
-
-      <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
-        <label className="field-label">
-          {t('companyNameLabel')}
-          <input
-            type="text"
-            required
-            value={companyName}
-            onChange={(event) => setCompanyName(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
-          />
-        </label>
-
-        <label className="field-label">
-          {t('yourNameLabel')}
-          <input
-            type="text"
-            required
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
-          />
-        </label>
-
-        <label className="field-label">
-          {t('emailLabel')}
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
-          />
-        </label>
-
-        <label className="field-label">
-          {t('passwordLabel')}
-          <input
-            type="password"
-            required
-            minLength={8}
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
-          />
-        </label>
-
-        <label className="field-label">
-          {t('homeCountryLabel')}
-          <select
-            required
-            value={homeCountryCode}
-            onChange={(event) => setHomeCountryCode(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
-          >
-            {countries.map((country) => (
-              <option key={country.iso_code} value={country.iso_code}>
-                {country.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <p className="text-xs text-muted-foreground">{t('homeCountryHint')}</p>
-
-        <label className="field-label">
-          {t('language')}
-          <select
-            required
-            value={locale}
-            onChange={(event) => setLocale(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
-          >
-            <option value="en">{t('languageEnglish')}</option>
-            <option value="es">{t('languageSpanish')}</option>
-          </select>
-        </label>
-        <p className="text-xs text-muted-foreground">{t('languageHint')}</p>
-
-        {error && <p className="text-sm text-danger">{error}</p>}
-
-        <button
-          type="submit"
-          disabled={submitting}
-          className="mt-2 rounded bg-foreground px-4 py-2 text-background disabled:opacity-50"
-        >
-          {submitting ? t('creatingButton') : t('createCompanyButton')}
-        </button>
-      </form>
-
-      <p className="mt-6 text-sm text-muted-foreground">
-        {t('haveAccountPrompt')}{' '}
-        <Link href="/login" className="font-medium underline">
-          {t('logInLink')}
-        </Link>
-      </p>
-    </div>
+    <SignupForm
+      initialLocale={isLocale(cookieLocale) ? cookieLocale : defaultLocale}
+      messagesByLocale={SIGNUP_MESSAGES}
+    />
   )
 }
