@@ -4,7 +4,7 @@ import { defaultLocale, isLocale } from '@/i18n/config'
 import countriesData from '@/lib/geography/data/countries.json'
 import { seedCompanyGeography } from '@/lib/geography/seed-company'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { authErrorMessage } from '@/lib/supabase/auth-error'
+import { authErrorBody } from '@/lib/supabase/auth-error'
 import { createClient } from '@/lib/supabase/server'
 
 const VALID_ISO_CODES = new Set(countriesData.map((country) => country.iso_code))
@@ -114,12 +114,10 @@ export async function POST(request: Request) {
   if (signUpError) {
     await admin.from('companies').delete().eq('id', company.id)
     return NextResponse.json(
-      {
-        error: authErrorMessage(
-          signUpError.message,
-          'Could not send the confirmation email. Check the address and try again in a moment.'
-        ),
-      },
+      authErrorBody(
+        signUpError.message,
+        'Could not send the confirmation email. Check the address and try again in a moment.'
+      ),
       { status: 400 }
     )
   }

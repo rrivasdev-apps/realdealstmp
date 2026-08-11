@@ -7,10 +7,26 @@
 //
 // Postgres errors elsewhere in the app are specific enough to surface as-is (that's the
 // established pattern in the route handlers); these are not, so callers pair them with a
-// fallback that says what actually failed. Kept server-side and in English on purpose,
-// matching the convention in CLAUDE.md for API error strings.
-export function authErrorMessage(message: string | null | undefined, fallback: string): string {
+// fallback that says what actually failed.
+//
+// The `error` string stays server-side English per CLAUDE.md's convention. `code` is what
+// makes that convention work here: this failure is reachable in normal use and can't be
+// pre-empted by a client-side check (nothing is wrong with the input -- the mail server is
+// down), so the client maps the code to a translated string instead of rendering `error`.
+// Anything without a code is a specific upstream message worth showing as-is.
+export const AUTH_EMAIL_SEND_FAILED = 'auth_email_send_failed'
+
+export type AuthErrorBody = { error: string; code?: string }
+
+export function authErrorBody(message: string | null | undefined, fallback: string): AuthErrorBody {
   const trimmed = message?.trim() ?? ''
   const isUninformative = !trimmed || trimmed === '{}' || trimmed === '[object Object]'
-  return isUninformative ? fallback : trimmed
+  // The same failure reads as a real sentence when it comes back over plain REST
+  // rather than through supabase-js, so match that shape too.
+  const isMailFailure = /error sending\b.*\bmail/i.test(trimmed)
+
+  if (isUninformative || isMailFailure) {
+    return { error: fallback, code: AUTH_EMAIL_SEND_FAILED }
+  }
+  return { error: trimmed }
 }

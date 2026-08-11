@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 
 import { createAdminClient } from '@/lib/supabase/admin'
-import { authErrorMessage } from '@/lib/supabase/auth-error'
+import { authErrorBody } from '@/lib/supabase/auth-error'
 import { requireTeamAccess } from '@/lib/supabase/auth'
 
 export async function POST(request: Request) {
@@ -26,12 +26,10 @@ export async function POST(request: Request) {
 
   if (error) {
     return NextResponse.json(
-      {
-        error: authErrorMessage(
-          error.message,
-          'Could not send the invite email. Check the address and try again in a moment.'
-        ),
-      },
+      authErrorBody(
+        error.message,
+        'Could not send the invite email. Check the address and try again in a moment.'
+      ),
       { status: 400 }
     )
   }

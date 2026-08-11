@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 
 import countries from '@/lib/geography/data/countries.json'
+import { AUTH_EMAIL_SEND_FAILED } from '@/lib/supabase/auth-error'
 
 export default function SignupPage() {
   const t = useTranslations('Signup')
@@ -33,7 +34,13 @@ export default function SignupPage() {
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? t('genericError'))
+      // `result.error` is deliberately English (see auth-error.ts); a code means
+      // the failure has translated copy of its own to show instead.
+      setError(
+        result.code === AUTH_EMAIL_SEND_FAILED
+          ? t('confirmationEmailFailed')
+          : (result.error ?? t('genericError'))
+      )
       return
     }
 

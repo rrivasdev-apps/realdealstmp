@@ -4,6 +4,8 @@ import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
+import { AUTH_EMAIL_SEND_FAILED } from '@/lib/supabase/auth-error'
+
 export function InviteForm() {
   const t = useTranslations('Team')
   const router = useRouter()
@@ -28,7 +30,13 @@ export function InviteForm() {
     setSubmitting(false)
 
     if (!response.ok) {
-      setError(result.error ?? t('genericError'))
+      // `result.error` is deliberately English (see auth-error.ts); a code means
+      // the failure has translated copy of its own to show instead.
+      setError(
+        result.code === AUTH_EMAIL_SEND_FAILED
+          ? t('inviteEmailFailed')
+          : (result.error ?? t('genericError'))
+      )
       return
     }
 
