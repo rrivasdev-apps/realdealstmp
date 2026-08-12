@@ -46,16 +46,17 @@ This project is on **Next.js 16**, which has breaking changes from the Next.js m
 
 **Authorization.** [src/lib/supabase/auth.ts](src/lib/supabase/auth.ts) exports `requireUser()`, which every mutating Route Handler / Server Action must call and check before touching data — see [src/app/api/profile/route.ts](src/app/api/profile/route.ts) for the pattern. `requireProfile()` additionally loads the caller's `company_id`/`role`/`employee_role` capabilities (most routes need it to scope queries/writes). Two ways to gate a route on top of that: `requirePermission('can_manage_team' | 'can_manage_settings' | 'can_view_financials')` checks the caller's `employee_role` capability flags (`role === 'admin'` always passes regardless) — this is the one to use for Team/Settings/Dashboard-financials routes. `requireAdmin()` is a hard `role === 'admin'` check, reserved specifically for `employee_roles`' own routes (creating/editing a role's capability flags) — a `can_manage_settings` caller must never be able to edit `employee_roles`, or they could grant themselves every capability, an escalation straight to admin-equivalent power. This is non-negotiable per project requirements: permission checks happen server-side on every mutation, never inferred from what the UI shows or hides. The proxy's optimistic cookie check is not a substitute for this. RLS policies (scoped via the `is_company_member()` Postgres function, plus `can_manage_team()`/`can_manage_settings()`/`can_view_financials()`/`is_company_admin()` for the tables that need tighter-than-membership checks) are defense in depth underneath these checks, not a replacement for them — see `supabase/migrations/`.
 
-**Environment variables.** See [.env.local.example](.env.local.example) for the full list. `NEXT_PUBLIC_*` vars are exposed to the browser; `SUPABASE_SERVICE_ROLE_KEY`, `ANTHROPIC_API_KEY`, `GOOGLE_MAPS_API_KEY` (optional -- proxied through `src/app/api/places/*` for deal-address autocomplete, falls back to plain manual entry when unset), and `CRON_SECRET` (gates [src/app/api/cron/automations](src/app/api/cron/automations/route.ts), the Deal Automations date-based-trigger/stalled-process sweep) are server-only and must never be prefixed `NEXT_PUBLIC_` or referenced from a Client Component.
+**Environment variables.** See [.env.local.example](.env.local.example) for the full list. `NEXT_PUBLIC_*` vars are exposed to the browser; `SUPABASE_SERVICE_ROLE_KEY`, `ANTHROPIC_API_KEY` (optional -- used by `src/lib/ai/*` for Phase 2.6a's drafted task messages; steps stay usable without a draft panel when unset), `GOOGLE_MAPS_API_KEY` (optional -- proxied through `src/app/api/places/*` for deal-address autocomplete, falls back to plain manual entry when unset), and `CRON_SECRET` (gates [src/app/api/cron/automations](src/app/api/cron/automations/route.ts), the Deal Automations date-based-trigger/stalled-process sweep) are server-only and must never be prefixed `NEXT_PUBLIC_` or referenced from a Client Component.
 
 **Deployment.** Vercel project `realdealstmp` (scope `rerss-projects`), live at https://realdealstmp.vercel.app, auto-deploys on push to `main`. No CI config exists yet beyond Vercel's own build step (`npm run build`). [vercel.json](vercel.json) schedules the Deal Automations cron sweep (`/api/cron/automations`) daily via Vercel Cron; that file is Vercel-specific, but the route it calls is a plain secret-gated HTTP endpoint any other scheduler can hit the same way.
 
-## Current phase: Phase 2.5 (Contact Hub) — done, pending real usage
+## Current phase: Phase 2.6a (AI-drafted task messages) — shipped, pending real usage
 
-Phase 2 (Operations) is done — see below. Phase 2.5 (Contact Hub full
-buildout) is now also done — see the "Phase 2.5" write-up further down this
-section for what shipped. Both need real usage before Phase 3 planning
-starts, per the phased-rollout approach below.
+Phase 2 (Operations) and Phase 2.5 (Contact Hub full buildout) are both done
+— see the write-ups further down this section for what shipped. Phase 2.6a
+(AI-drafted task messages) is now shipped on top of Deal Automations; see its
+section below. All three need real usage before Phase 3 planning starts, per
+the phased-rollout approach below.
 
 **Phase 0 (MVP) and Phase 1 (Financial Engine) are both complete and live.**
 Phase 0 shipped the Deal Whiteboard (now at `/deals`), the KPI Dashboard
@@ -157,6 +158,46 @@ repeat that.
   (Cities, Zip Codes) use a debounced search-and-add control
   (`SearchAddMultiSelect`) instead of a flat list.
 
+**Phase 2.6a — AI-drafted task messages.** **Shipped.** The first feature to
+call the Anthropic API. An `email_task`/`call_task` step's template can opt into
+drafting the message from the deal's own field values; the assignee reviews and
+sends it themselves through their normal channel. **Nothing is sent from the
+app**, and there is no send button — this is a drafting aid, not an outbox.
+
+- **Off by default.** Drafting lives in `config.ai_draft`
+  (`{ enabled, audience, purpose }`, validated by `parseAiDraft` in
+  `src/lib/automations/step-config.ts`) and is edited in the existing Settings >
+  Automations step modal. A template without it produces the same empty config
+  it always did and renders no panel.
+- **Drafts generate on first view, not at step creation.** `activateProcess()`
+  runs in a loop inside the daily cron sweep (`advanceStalledProcesses`), so a
+  model call there would serialise one request per overdue process into a single
+  serverless invocation. Viewing also grounds the draft in the deal as it stands
+  when the task is picked up rather than when it was scheduled — weeks earlier
+  for a delayed step. The result is cached on `automation_steps.ai_output`, so
+  it still generates once, not per view. `POST /api/automation-steps/[id]/draft`
+  handles both first generation and regeneration (capped at 5 per step).
+- **`AUDIENCE_FIELDS` in `src/lib/ai/draft-message.ts` is a confidentiality
+  boundary, not a token-cost trim.** The margin is the gap between the AB price
+  (`contract_price`) and the BC price (`buyer_contract_price`), so a
+  buyer-facing draft must never carry the former, nor a seller-facing one the
+  latter. Adding an audience means deciding what that recipient may see; don't
+  widen a list without that reasoning, and never pass the whole deal row and
+  rely on the prompt to stay quiet.
+- **Degrades to today's behaviour in every failure mode.** No
+  `ANTHROPIC_API_KEY` (`AiNotConfiguredError`), a failed request, or a model
+  returning nothing all leave `ai_output` null and the step completable — same
+  optional-dependency pattern as `GOOGLE_MAPS_API_KEY`. Failures log to
+  `automation_activity_log` as the *fact* of a failure; the draft text and deal
+  facts must never go in `detail`, which everyone in the company can read.
+- Model is `AI_MODEL` in `src/lib/ai/client.ts` (`claude-sonnet-5`), one
+  constant. A replacement must support adaptive thinking and `effort: low` —
+  check `client.models.retrieve(id)` first, older Sonnet/Haiku releases reject
+  `effort` outright.
+- Not yet proven on real output: built and verified end-to-end against a mock,
+  but no live draft has been generated (the API account was out of credit).
+  Judge draft quality before turning this on broadly.
+
 ## Data model — Phase 0 starting point (see `supabase/migrations/` for the current full schema)
 
 Refined from real screenshots of the original app — see [docs/data-model.md](docs/data-model.md) for the full reverse-engineered model (all phases) and the reasoning behind these field names. Deals are structured around an **AB contract** (wholesaler buying from the seller) in Phase 0; the **BC contract** (wholesaler selling/assigning to the end buyer/investor) is added in Phase 1 along with Offers.
@@ -228,7 +269,8 @@ Custom fields per company (Settings module) are Phase 2 — the `custom_fields` 
 1. ~~**Phase 1 — Financial engine**: role-based commission rules, JV expense allocation, cascading gross/net profit, monthly/quarterly/yearly KPI reporting.~~ **Done.**
 2. ~~**Phase 2 — Operations**: Employee Center (roles, permissions, payroll), per-company custom fields, full Settings module, Transaction Guardian automation engine (event-triggered, named step ownership).~~ **Done.**
 3. ~~**Phase 2.5 — Contact Hub full buildout**: badge/count/filter list page, 3-column type→sub-section→detail edit view, `contact_partner_companies` join table (contact-as-primary-entity model, see above), per-type sub-sections (Investor/Realtor/etc.), deal-form contact-slot + company-slot pairing.~~ **Done.** See the Phase 2.5 section above for the full spec. Phase 2 and 2.5 both need real usage before Phase 3 planning starts.
-4. **Phase 3 — Platform**: multi-tenant licensing, API layer, automation marketplace between companies.
+4. ~~**Phase 2.6a — AI-drafted task messages**: opt-in drafting for `email_task`/`call_task` automation steps, grounded in the deal's own fields, reviewed and sent by the assignee.~~ **Done.** See the Phase 2.6a section above. Needs real usage — and a look at actual draft quality — before it's considered validated.
+5. **Phase 3 — Platform**: multi-tenant licensing, API layer, automation marketplace between companies.
 
 ## Conventions
 
