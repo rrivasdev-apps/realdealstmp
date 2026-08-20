@@ -215,6 +215,16 @@
     @apply rounded-lg border border-border bg-background px-4 py-2 text-sm font-semibold text-foreground transition
            hover:bg-muted disabled:pointer-events-none disabled:opacity-50;
   }
+
+  /* A titled group of fields -- elevated card with a header divider,
+     replacing the plain border+legend fieldset look. Applied page-by-page
+     as each area gets its modernization pass (deal-form.tsx first). */
+  .field-group {
+    @apply flex flex-col gap-4 rounded-2xl border border-border bg-background p-6 shadow-sm;
+  }
+  .field-group-title {
+    @apply w-full border-b border-border pb-3 text-base font-semibold text-foreground;
+  }
 }
 
 body {

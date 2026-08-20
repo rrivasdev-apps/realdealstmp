@@ -93,6 +93,9 @@
   },
   "DealForm": {
     "propertyFacts": "Datos de la Propiedad",
+    "propertyAddress": "Dirección de la propiedad",
+    "dealClassification": "Clasificación del negocio",
+    "pricingAndDates": "Precios y fechas",
     "apn": "APN",
     "lotSizeAcres": "Tamaño del lote (acres)",
     "legalDescription": "Descripción legal",

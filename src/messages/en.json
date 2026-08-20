@@ -93,6 +93,9 @@
   },
   "DealForm": {
     "propertyFacts": "Property Facts",
+    "propertyAddress": "Property Address",
+    "dealClassification": "Deal Classification",
+    "pricingAndDates": "Pricing & Dates",
     "apn": "APN",
     "lotSizeAcres": "Lot size (acres)",
     "legalDescription": "Legal description",

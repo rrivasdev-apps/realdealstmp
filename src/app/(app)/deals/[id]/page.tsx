@@ -281,14 +281,14 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
       </div>
 
       <DealSection id="jv-dispo">
-      <div className="mt-10">
-        <div className="flex items-center justify-between">
-          <h2 className="heading-subsection">{t('offers')}</h2>
-          <Link href={`/deals/${id}/offers/new`} className="text-xs underline">
+      <div className="field-group">
+        <div className="flex items-center justify-between field-group-title">
+          <h2>{t('offers')}</h2>
+          <Link href={`/deals/${id}/offers/new`} className="text-xs font-normal text-muted-foreground underline">
             {t('addOffer')}
           </Link>
         </div>
-        <ul className="mt-2 divide-y divide-border rounded-lg border border-border bg-background">
+        <ul className="divide-y divide-border rounded-lg border border-border bg-background">
           {(offers ?? []).map((offer) => (
             <li key={offer.id} className="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
@@ -313,14 +313,14 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
         </ul>
       </div>
 
-      <div className="mt-10">
-        <div className="flex items-center justify-between">
-          <h2 className="heading-subsection">{t('showings')}</h2>
-          <Link href={`/deals/${id}/showings/new`} className="text-xs underline">
+      <div className="field-group">
+        <div className="flex items-center justify-between field-group-title">
+          <h2>{t('showings')}</h2>
+          <Link href={`/deals/${id}/showings/new`} className="text-xs font-normal text-muted-foreground underline">
             {t('addShowing')}
           </Link>
         </div>
-        <ul className="mt-2 divide-y divide-border rounded-lg border border-border bg-background">
+        <ul className="divide-y divide-border rounded-lg border border-border bg-background">
           {(showings ?? []).map((showing) => (
             <li key={showing.id} className="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
@@ -347,12 +347,12 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
       </DealSection>
 
       <DealSection id="employees">
-      <div className="mt-10">
-        <h2 className="heading-subsection">{t('employees')}</h2>
-        <div className="mt-2">
+      <div className="field-group">
+        <h2 className="field-group-title">{t('employees')}</h2>
+        <div>
           <DealEmployeeForm dealId={id} availableProfiles={availableProfiles} />
         </div>
-        <ul className="mt-4 divide-y divide-border rounded-lg border border-border bg-background">
+        <ul className="divide-y divide-border rounded-lg border border-border bg-background">
           {(dealEmployees ?? []).map((dealEmployee) => {
             const employeePayments = paymentsByProfile.get(dealEmployee.profile_id) ?? []
             const companyProfile = (companyProfiles ?? []).find((p) => p.id === dealEmployee.profile_id)

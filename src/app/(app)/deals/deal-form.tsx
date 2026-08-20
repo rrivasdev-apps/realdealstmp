@@ -319,35 +319,38 @@ export function DealForm({
   return (
     <form onSubmit={handleSubmit} className="flex max-w-xl flex-col gap-6">
       <DealSection id="deal-info" title={tNav('dealInfo')}>
-      <AddressFields
-        value={{
-          address: values.address,
-          countryId: values.country_id,
-          countryName: values.country_name,
-          stateId: values.state_id,
-          stateName: values.state_name,
-          cityId: values.city_id,
-          cityName: values.city_name,
-          zipCode: values.zip_code,
-        }}
-        countries={countries}
-        onChange={(next) => {
-          setValues((prev) => ({
-            ...prev,
-            address: next.address,
-            country_id: next.countryId,
-            country_name: next.countryName,
-            state_id: next.stateId,
-            state_name: next.stateName,
-            city_id: next.cityId,
-            city_name: next.cityName,
-            zip_code: next.zipCode,
-          }))
-        }}
-      />
+      <div className="field-group">
+        <h3 className="field-group-title">{t('propertyAddress')}</h3>
+        <AddressFields
+          value={{
+            address: values.address,
+            countryId: values.country_id,
+            countryName: values.country_name,
+            stateId: values.state_id,
+            stateName: values.state_name,
+            cityId: values.city_id,
+            cityName: values.city_name,
+            zipCode: values.zip_code,
+          }}
+          countries={countries}
+          onChange={(next) => {
+            setValues((prev) => ({
+              ...prev,
+              address: next.address,
+              country_id: next.countryId,
+              country_name: next.countryName,
+              state_id: next.stateId,
+              state_name: next.stateName,
+              city_id: next.cityId,
+              city_name: next.cityName,
+              zip_code: next.zipCode,
+            }))
+          }}
+        />
+      </div>
 
-      <fieldset className="flex flex-col gap-4 rounded border border-border p-4">
-        <legend className="px-1 text-sm font-medium">{t('propertyFacts')}</legend>
+      <div className="field-group">
+        <h3 className="field-group-title">{t('propertyFacts')}</h3>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <label className="field-label">
@@ -465,9 +468,11 @@ export function DealForm({
             {t('inForeclosure')}
           </label>
         </div>
-      </fieldset>
+      </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="field-group">
+        <h3 className="field-group-title">{t('dealClassification')}</h3>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <label className="field-label">
           {t('market')}
           <select
@@ -566,9 +571,12 @@ export function DealForm({
             </select>
           </label>
         )}
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="field-group">
+        <h3 className="field-group-title">{t('pricingAndDates')}</h3>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <label className="field-label">
           {t('contractPrice')}
           <CurrencyInput
@@ -633,10 +641,11 @@ export function DealForm({
             />
           </label>
         )}
+        </div>
       </div>
 
-      <fieldset className="flex flex-col gap-4 rounded border border-border p-4">
-        <legend className="px-1 text-sm font-medium">{t('dealFacts')}</legend>
+      <div className="field-group">
+        <h3 className="field-group-title">{t('dealFacts')}</h3>
 
         <div className="flex flex-wrap gap-4">
           <label className="flex items-center gap-1.5 text-sm">
@@ -732,13 +741,13 @@ export function DealForm({
             </select>
           </label>
         </div>
-      </fieldset>
+      </div>
       </DealSection>
 
       {mode === 'edit' && (
         <DealSection id="buyer-bc">
-        <fieldset className="flex flex-col gap-4 rounded border border-border p-4">
-          <legend className="px-1 text-sm font-medium">{t('buyerBcContract')}</legend>
+        <div className="field-group">
+          <h3 className="field-group-title">{t('buyerBcContract')}</h3>
 
           <label className="flex items-center gap-1.5 text-sm">
             <input
@@ -839,14 +848,14 @@ export function DealForm({
               {t('buyerDepositReceived')}
             </label>
           )}
-        </fieldset>
+        </div>
         </DealSection>
       )}
 
       {mode === 'edit' && (
         <DealSection id="jv-dispo" title={tNav('jvDispo')}>
-        <fieldset className="flex flex-col gap-4 rounded border border-border p-4">
-          <legend className="px-1 text-sm font-medium">{t('jvDeal')}</legend>
+        <div className="field-group">
+          <h3 className="field-group-title">{t('jvDeal')}</h3>
 
           <label className="flex items-center gap-1.5 text-sm">
             <input
@@ -910,14 +919,14 @@ export function DealForm({
               </label>
             </div>
           )}
-        </fieldset>
+        </div>
         </DealSection>
       )}
 
       {mode === 'edit' && (
         <DealSection id="financial">
-        <fieldset className="flex flex-col gap-4 rounded border border-border p-4">
-          <legend className="px-1 text-sm font-medium">{t('financial')}</legend>
+        <div className="field-group">
+          <h3 className="field-group-title">{t('financial')}</h3>
 
           <ExpensesPanel
             dealId={values.id as string}
@@ -964,14 +973,14 @@ export function DealForm({
               ))
             })()}
           </div>
-        </fieldset>
+        </div>
         </DealSection>
       )}
 
       {mode === 'edit' && (
         <DealSection id="checklist">
-        <fieldset className="flex flex-col gap-4 rounded border border-border p-4">
-          <legend className="px-1 text-sm font-medium">{t('checklist')}</legend>
+        <div className="field-group">
+          <h3 className="field-group-title">{t('checklist')}</h3>
 
           <div className="flex flex-col gap-3">
             <div>
@@ -1413,13 +1422,13 @@ export function DealForm({
               />
             )}
           </div>
-        </fieldset>
+        </div>
         </DealSection>
       )}
 
       <DealSection id="custom-fields" title={t('customFields')}>
-      <fieldset className="flex flex-col gap-4 rounded border border-border p-4">
-        <legend className="px-1 text-sm font-medium">{t('customFields')}</legend>
+      <div className="field-group">
+        <h3 className="field-group-title">{t('customFields')}</h3>
 
         {customFieldDefinitions.length === 0 ? (
           <p className="text-sm text-muted-foreground">
@@ -1478,7 +1487,7 @@ export function DealForm({
             })}
           </div>
         )}
-      </fieldset>
+      </div>
       </DealSection>
 
       {error && <p className="text-sm text-danger">{error}</p>}
