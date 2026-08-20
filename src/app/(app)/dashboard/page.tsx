@@ -1,6 +1,7 @@
 import { getLocale, getTranslations } from 'next-intl/server'
 import { redirect } from 'next/navigation'
 
+import { FileSpreadsheetIcon, FileTextIcon, PercentIcon, RouteIcon } from '@/components/icons'
 import { calculateProfit } from '@/lib/deals/profit'
 import { buildPeriodPerformance, type PeriodDeal } from '@/lib/deals/kpi'
 import { requireProfile } from '@/lib/supabase/auth'
@@ -80,15 +81,39 @@ export default async function DashboardPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-semibold text-foreground">{t('title')}</h1>
+      <h1 className="heading-page">{t('title')}</h1>
 
       <section className="mt-6">
         <h2 className="heading-subsection">{t('pipeline')}</h2>
-        <div className="mt-2 grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <PipelineCard label={t('openDeals')} value={String(openDeals.length)} />
-          <PipelineCard label={t('projectedProfit')} value={currency.format(projectedProfit)} />
-          <PipelineCard label={t('jvExpenses')} value={currency.format(jvExpenses)} />
-          <PipelineCard label={t('openOffers')} value={String(openOfferCount)} />
+        <div className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <PipelineCard
+            icon={RouteIcon}
+            iconBg="bg-brand-600/10"
+            iconColor="text-brand-600"
+            label={t('openDeals')}
+            value={String(openDeals.length)}
+          />
+          <PipelineCard
+            icon={FileSpreadsheetIcon}
+            iconBg="bg-landing-lime-dark/10"
+            iconColor="text-landing-lime-dark"
+            label={t('projectedProfit')}
+            value={currency.format(projectedProfit)}
+          />
+          <PipelineCard
+            icon={PercentIcon}
+            iconBg="bg-landing-cyan/10"
+            iconColor="text-landing-cyan"
+            label={t('jvExpenses')}
+            value={currency.format(jvExpenses)}
+          />
+          <PipelineCard
+            icon={FileTextIcon}
+            iconBg="bg-landing-navy/10"
+            iconColor="text-landing-navy"
+            label={t('openOffers')}
+            value={String(openOfferCount)}
+          />
         </div>
       </section>
 
@@ -100,11 +125,26 @@ export default async function DashboardPage() {
   )
 }
 
-function PipelineCard({ label, value }: { label: string; value: string }) {
+function PipelineCard({
+  icon: Icon,
+  iconBg,
+  iconColor,
+  label,
+  value,
+}: {
+  icon: (props: { className?: string }) => React.ReactElement
+  iconBg: string
+  iconColor: string
+  label: string
+  value: string
+}) {
   return (
-    <div className="flex h-28 flex-col justify-center rounded-lg border border-border bg-background p-4">
-      <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</div>
-      <div className="mt-2 text-2xl font-semibold text-foreground">{value}</div>
+    <div className="rounded-2xl border border-border bg-background p-5 shadow-sm">
+      <div className={`flex h-10 w-10 items-center justify-center rounded-full ${iconBg}`}>
+        <Icon className={`h-5 w-5 ${iconColor}`} />
+      </div>
+      <div className="mt-4 text-2xl font-semibold text-foreground">{value}</div>
+      <div className="mt-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</div>
     </div>
   )
 }

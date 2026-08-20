@@ -7,7 +7,7 @@ import {
   TargetIcon,
   UsersRoundIcon,
   WorkflowIcon,
-} from './icons'
+} from '@/components/icons'
 
 // Tailwind's scanner needs full literal class names, not interpolated ones
 // (`border-${accent}` is invisible to it) -- so this is a lookup of complete

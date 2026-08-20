@@ -1,6 +1,8 @@
 // Inline Lucide-style icons (MIT-licensed path shapes) recolored via
-// currentColor so each feature card can tint them with its own accent.
-// Avoids adding lucide-react as a dependency for six icons.
+// currentColor so callers can tint them with their own accent. Shared by
+// the public landing page (src/app/_landing/) and the authenticated app
+// (e.g. the dashboard's KPI cards) -- avoids adding lucide-react as a
+// dependency for a small, fixed set of icons.
 
 type IconProps = { className?: string }
 
@@ -82,6 +84,28 @@ export function CheckIcon({ className }: IconProps) {
   return (
     <svg {...base} className={className}>
       <path d="M20 6 9 17l-5-5" />
+    </svg>
+  )
+}
+
+export function PercentIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <line x1="19" x2="5" y1="5" y2="19" />
+      <circle cx="6.5" cy="6.5" r="2.5" />
+      <circle cx="17.5" cy="17.5" r="2.5" />
+    </svg>
+  )
+}
+
+export function FileTextIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z" />
+      <path d="M14 2v6h6" />
+      <path d="M8 13h8" />
+      <path d="M8 17h8" />
+      <path d="M8 9h1" />
     </svg>
   )
 }

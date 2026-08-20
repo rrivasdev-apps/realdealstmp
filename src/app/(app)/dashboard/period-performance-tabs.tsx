@@ -48,10 +48,10 @@ export function PeriodPerformanceTabs({
         ))}
       </div>
 
-      <div className="overflow-x-auto rounded-b-lg border border-t-0 border-border bg-background">
+      <div className="overflow-x-auto rounded-b-2xl border border-t-0 border-border bg-background shadow-sm">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-muted-foreground">
+            <tr className="border-b border-border bg-surface text-left text-xs uppercase tracking-wide text-muted-foreground">
               <th className="px-4 py-2 font-medium">{t('colPeriod')}</th>
               <th className="px-4 py-2 font-medium">{t('colDeals')}</th>
               <th className="px-4 py-2 font-medium">{t('colGrossProfit')}</th>
@@ -64,7 +64,7 @@ export function PeriodPerformanceTabs({
           </thead>
           <tbody className="divide-y divide-border">
             {rows.map((row) => (
-              <tr key={row.key}>
+              <tr key={row.key} className="transition-colors hover:bg-muted/50">
                 <td className="px-4 py-2 font-medium text-foreground">{row.label}</td>
                 <td className="px-4 py-2 text-foreground">{row.dealCount}</td>
                 <td className="px-4 py-2 text-foreground">{currency.format(row.grossProfit)}</td>

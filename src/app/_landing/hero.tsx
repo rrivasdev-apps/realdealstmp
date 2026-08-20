@@ -1,7 +1,7 @@
 import { getTranslations } from 'next-intl/server'
 import Link from 'next/link'
 
-import { CheckIcon } from './icons'
+import { CheckIcon } from '@/components/icons'
 
 export async function LandingHero() {
   const t = await getTranslations('Landing')
