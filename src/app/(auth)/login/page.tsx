@@ -42,7 +42,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="mx-auto max-w-sm py-24">
+    <>
       <h1 className="heading-page">{t('logInTitle')}</h1>
 
       <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
@@ -73,7 +73,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={submitting}
-          className="mt-2 rounded bg-foreground px-4 py-2 text-background disabled:opacity-50"
+          className="mt-2 rounded-lg bg-landing-lime px-4 py-2 font-semibold text-landing-navy transition hover:bg-landing-lime-dark hover:text-white disabled:opacity-50"
         >
           {submitting ? t('loggingInButton') : t('logInButton')}
         </button>
@@ -81,10 +81,10 @@ export default function LoginPage() {
 
       <p className="mt-6 text-sm text-muted-foreground">
         {t('newCompanyPrompt')}{' '}
-        <Link href="/signup" className="font-medium underline">
+        <Link href="/signup" className="font-medium text-landing-blue hover:text-landing-navy">
           {t('createOneLink')}
         </Link>
       </p>
-    </div>
+    </>
   )
 }

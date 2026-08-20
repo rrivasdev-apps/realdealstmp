@@ -89,7 +89,7 @@ function SignupFields({
 
   if (submitted) {
     return (
-      <div className="mx-auto max-w-sm py-24 text-center">
+      <div className="text-center">
         <h1 className="heading-page">{t('checkEmailTitle')}</h1>
         <p className="mt-2 text-muted-foreground">{t('checkEmailBody', { email, company: companyName })}</p>
       </div>
@@ -97,7 +97,7 @@ function SignupFields({
   }
 
   return (
-    <div className="mx-auto max-w-sm py-24">
+    <>
       <h1 className="heading-page">{t('title')}</h1>
       <p className="mt-1 text-sm text-muted-foreground">{t('subtitle')}</p>
 
@@ -183,7 +183,7 @@ function SignupFields({
         <button
           type="submit"
           disabled={submitting}
-          className="mt-2 rounded bg-foreground px-4 py-2 text-background disabled:opacity-50"
+          className="mt-2 rounded-lg bg-landing-lime px-4 py-2 font-semibold text-landing-navy transition hover:bg-landing-lime-dark hover:text-white disabled:opacity-50"
         >
           {submitting ? t('creatingButton') : t('createCompanyButton')}
         </button>
@@ -191,10 +191,10 @@ function SignupFields({
 
       <p className="mt-6 text-sm text-muted-foreground">
         {t('haveAccountPrompt')}{' '}
-        <Link href="/login" className="font-medium underline">
+        <Link href="/login" className="font-medium text-landing-blue hover:text-landing-navy">
           {t('logInLink')}
         </Link>
       </p>
-    </div>
+    </>
   )
 }

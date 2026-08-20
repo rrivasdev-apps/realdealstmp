@@ -62,6 +62,18 @@
   --contact-type-mortgage-company: #7c3aed;
   --contact-type-title-company: #059669;
   --contact-type-other: #6b7280;
+
+  /* Public landing page only -- see src/app/_landing/. Not used by the
+     authenticated app, which keeps --brand-* above. */
+  --landing-navy: #033253;
+  --landing-blue: #19659c;
+  --landing-cyan: #36a0c7;
+  --landing-lime: #9ac43c;
+  --landing-lime-dark: #6f9b17;
+  --landing-ink: #153044;
+  --landing-muted: #607482;
+  --landing-soft: #f3f8fa;
+  --landing-line: #d8e5eb;
 }
 
 @theme inline {
@@ -110,6 +122,16 @@
   --color-contact-type-mortgage-company: var(--contact-type-mortgage-company);
   --color-contact-type-title-company: var(--contact-type-title-company);
   --color-contact-type-other: var(--contact-type-other);
+
+  --color-landing-navy: var(--landing-navy);
+  --color-landing-blue: var(--landing-blue);
+  --color-landing-cyan: var(--landing-cyan);
+  --color-landing-lime: var(--landing-lime);
+  --color-landing-lime-dark: var(--landing-lime-dark);
+  --color-landing-ink: var(--landing-ink);
+  --color-landing-muted: var(--landing-muted);
+  --color-landing-soft: var(--landing-soft);
+  --color-landing-line: var(--landing-line);
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
