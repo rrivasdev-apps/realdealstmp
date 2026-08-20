@@ -181,12 +181,12 @@ export default async function DealAutomationsPage({
             name="address"
             defaultValue={address ?? ''}
             placeholder={t('addressPlaceholder')}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
         <label className="field-label">
           {t('employeeLabel')}
-          <select name="employee" defaultValue={employee ?? ''} className="rounded border border-input-border bg-input-background px-3 py-2">
+          <select name="employee" defaultValue={employee ?? ''} className="field-input px-3 py-2">
             <option value="">{t('chooseOption')}</option>
             {(companyProfiles ?? []).map((option) => (
               <option key={option.id} value={option.id}>

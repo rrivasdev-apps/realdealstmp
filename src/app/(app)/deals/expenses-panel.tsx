@@ -236,7 +236,7 @@ function ExpenseForm({
         <select
           value={form.category_id}
           onChange={(event) => setForm((prev) => ({ ...prev, category_id: event.target.value }))}
-          className="rounded border border-input-border bg-input-background px-2 py-1"
+          className="field-input px-2 py-1"
         >
           <option value="">—</option>
           {expenseCategories.map((category) => (
@@ -251,7 +251,7 @@ function ExpenseForm({
         <CurrencyInput
           value={form.amount}
           onChange={(value) => setForm((prev) => ({ ...prev, amount: value }))}
-          className="rounded border border-input-border bg-input-background px-2 py-1"
+          className="field-input px-2 py-1"
         />
       </label>
       <label className="field-label">
@@ -260,7 +260,7 @@ function ExpenseForm({
           type="date"
           value={form.expense_date}
           onChange={(event) => setForm((prev) => ({ ...prev, expense_date: event.target.value }))}
-          className="rounded border border-input-border bg-input-background px-2 py-1"
+          className="field-input px-2 py-1"
         />
       </label>
       <label className="field-label">
@@ -269,7 +269,7 @@ function ExpenseForm({
           value={form.description}
           onChange={(event) => setForm((prev) => ({ ...prev, description: event.target.value }))}
           rows={2}
-          className="rounded border border-input-border bg-input-background px-2 py-1"
+          className="field-input px-2 py-1"
         />
       </label>
       {error && <p className="text-xs text-danger">{error}</p>}
@@ -278,7 +278,7 @@ function ExpenseForm({
           type="button"
           onClick={onSave}
           disabled={submitting}
-          className="rounded bg-foreground px-3 py-1 text-xs text-background disabled:opacity-50"
+          className="btn-primary px-3 py-1 text-xs"
         >
           {submitting ? t('saving') : t('save')}
         </button>

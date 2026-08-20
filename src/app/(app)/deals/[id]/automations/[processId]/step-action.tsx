@@ -122,7 +122,7 @@ export function StepAction({
                     type={inputTypeFor(field.type)}
                     value={(fieldValues[key] as string) ?? ''}
                     onChange={(event) => setFieldValues((values) => ({ ...values, [key]: event.target.value }))}
-                    className="rounded border border-input-border bg-input-background px-3 py-2"
+                    className="field-input px-3 py-2"
                   />
                 )}
               </label>
@@ -143,7 +143,7 @@ export function StepAction({
                   <select
                     value={(fieldValues[key] as string) ?? ''}
                     onChange={(event) => setFieldValues((values) => ({ ...values, [key]: event.target.value }))}
-                    className="rounded border border-input-border bg-input-background px-3 py-2"
+                    className="field-input px-3 py-2"
                   >
                     <option value="">—</option>
                     {(definition.options ?? []).map((option) => (
@@ -157,7 +157,7 @@ export function StepAction({
                     type={inputTypeFor(definition.field_type)}
                     value={(fieldValues[key] as string) ?? ''}
                     onChange={(event) => setFieldValues((values) => ({ ...values, [key]: event.target.value }))}
-                    className="rounded border border-input-border bg-input-background px-3 py-2"
+                    className="field-input px-3 py-2"
                   />
                 )}
               </label>
@@ -236,7 +236,7 @@ export function StepAction({
           type="button"
           onClick={handleComplete}
           disabled={submitting}
-          className="rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
+          className="btn-primary"
         >
           {submitting ? t('saving') : t('completedButton')}
         </button>

@@ -53,7 +53,7 @@ export default function LoginPage() {
             required
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
 
@@ -64,7 +64,7 @@ export default function LoginPage() {
             required
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
 

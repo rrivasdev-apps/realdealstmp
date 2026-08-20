@@ -66,7 +66,7 @@ export function DealEmployeeForm({
               setProfileId(event.target.value)
               setEmployeeRoleIds([])
             }}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           >
             <option value="">{t('selectTeamMember')}</option>
             {availableProfiles.map((option) => (
@@ -79,7 +79,7 @@ export function DealEmployeeForm({
         <button
           type="submit"
           disabled={submitting || !profileId}
-          className="rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
+          className="btn-primary"
         >
           {submitting ? t('addingButton') : t('addButton')}
         </button>

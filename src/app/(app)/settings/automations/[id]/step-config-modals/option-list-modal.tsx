@@ -56,7 +56,7 @@ function OptionRow({
           required
           value={option.label}
           onChange={(event) => onChangeOption({ ...option, label: event.target.value })}
-          className="rounded border border-input-border bg-input-background px-3 py-2"
+          className="field-input px-3 py-2"
         />
       </label>
 
@@ -202,18 +202,18 @@ export function OptionListModal({
       <form onSubmit={handleSave} className="flex flex-col gap-4">
         <p className="text-sm text-muted-foreground">{t('optionsTaskBlurb')}</p>
 
-        <div className="flex w-fit overflow-hidden rounded border border-input-border">
+        <div className="flex w-fit overflow-hidden rounded-lg border border-input-border">
           <button
             type="button"
             onClick={() => setChoiceMode('single')}
-            className={`px-3 py-1.5 text-sm ${choiceMode === 'single' ? 'bg-foreground text-background' : ''}`}
+            className={`px-3 py-1.5 text-sm ${choiceMode === 'single' ? 'bg-brand-600 text-white' : 'hover:bg-muted'}`}
           >
             {t('singleChoice')}
           </button>
           <button
             type="button"
             onClick={() => setChoiceMode('multiple')}
-            className={`px-3 py-1.5 text-sm ${choiceMode === 'multiple' ? 'bg-foreground text-background' : ''}`}
+            className={`px-3 py-1.5 text-sm ${choiceMode === 'multiple' ? 'bg-brand-600 text-white' : 'hover:bg-muted'}`}
           >
             {t('multipleChoice')}
           </button>
@@ -228,7 +228,7 @@ export function OptionListModal({
             value={name}
             onChange={(event) => setName(event.target.value)}
             rows={2}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
 
@@ -285,7 +285,7 @@ export function OptionListModal({
         <button
           type="submit"
           disabled={submitting}
-          className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
+          className="w-fit btn-primary"
         >
           {submitting ? t('saving') : t('create')}
         </button>

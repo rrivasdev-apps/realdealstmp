@@ -51,7 +51,7 @@ export function LanguageForm({ locale }: { locale: Locale }) {
         <select
           value={selected}
           onChange={(event) => setSelected(event.target.value as Locale)}
-          className="rounded border border-input-border bg-input-background px-3 py-2"
+          className="field-input px-3 py-2"
         >
           {locales.map((option) => (
             <option key={option} value={option}>
@@ -63,7 +63,7 @@ export function LanguageForm({ locale }: { locale: Locale }) {
       <button
         type="submit"
         disabled={submitting || selected === locale}
-        className="rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
+        className="btn-primary"
       >
         {submitting ? t('savingButton') : t('saveButton')}
       </button>

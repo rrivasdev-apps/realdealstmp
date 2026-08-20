@@ -72,7 +72,7 @@ export function AutomationRow({
           value={template.folder_id ?? ''}
           onChange={handleMove}
           disabled={moving}
-          className="rounded border border-input-border bg-input-background px-2 py-1 text-xs disabled:opacity-50"
+          className="field-input px-2 py-1 text-xs disabled:opacity-50"
         >
           {folderOptions.map((option) => (
             <option key={option.id ?? 'uncategorized'} value={option.id ?? ''}>

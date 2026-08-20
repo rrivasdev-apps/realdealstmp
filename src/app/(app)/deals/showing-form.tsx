@@ -86,7 +86,7 @@ export function ShowingForm({
             type="date"
             value={values.showing_date}
             onChange={(event) => set('showing_date', event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
 
@@ -95,7 +95,7 @@ export function ShowingForm({
           <select
             value={values.status_id}
             onChange={(event) => set('status_id', event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           >
             {showingStatuses.map((option) => (
               <option key={option.id} value={option.id}>
@@ -110,7 +110,7 @@ export function ShowingForm({
           <select
             value={values.buyer_contact_id}
             onChange={(event) => set('buyer_contact_id', event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           >
             <option value="">{t('emptyOption')}</option>
             {buyerContacts.map((option) => (
@@ -126,7 +126,7 @@ export function ShowingForm({
           <select
             value={values.vendor_contact_id}
             onChange={(event) => set('vendor_contact_id', event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           >
             <option value="">{t('emptyOption')}</option>
             {vendorContacts.map((option) => (
@@ -144,7 +144,7 @@ export function ShowingForm({
           value={values.details}
           onChange={(event) => set('details', event.target.value)}
           rows={3}
-          className="rounded border border-input-border bg-input-background px-3 py-2"
+          className="field-input px-3 py-2"
         />
       </label>
 
@@ -154,7 +154,7 @@ export function ShowingForm({
         <button
           type="submit"
           disabled={submitting}
-          className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
+          className="w-fit btn-primary"
         >
           {submitting ? t('savingButton') : mode === 'create' ? t('createShowingButton') : t('saveChangesButton')}
         </button>

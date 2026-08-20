@@ -56,7 +56,7 @@ export function PayrollPaymentForm({ employees }: { employees: Employee[] }) {
             required
             value={profileId}
             onChange={(event) => setProfileId(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           >
             <option value="">{t('chooseEmployeePlaceholder')}</option>
             {employees.map((employee) => (
@@ -75,7 +75,7 @@ export function PayrollPaymentForm({ employees }: { employees: Employee[] }) {
             required
             value={amount}
             onChange={(event) => setAmount(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
 
@@ -86,7 +86,7 @@ export function PayrollPaymentForm({ employees }: { employees: Employee[] }) {
             required
             value={payPeriodStart}
             onChange={(event) => setPayPeriodStart(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
 
@@ -97,7 +97,7 @@ export function PayrollPaymentForm({ employees }: { employees: Employee[] }) {
             required
             value={payPeriodEnd}
             onChange={(event) => setPayPeriodEnd(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
       </div>
@@ -107,7 +107,7 @@ export function PayrollPaymentForm({ employees }: { employees: Employee[] }) {
       <button
         type="submit"
         disabled={submitting}
-        className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
+        className="w-fit btn-primary"
       >
         {submitting ? t('recordingButton') : t('recordPaymentButton')}
       </button>

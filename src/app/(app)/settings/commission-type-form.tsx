@@ -95,7 +95,7 @@ export function CommissionTypeForm({
             value={values.name}
             onChange={(event) => setValues((prev) => ({ ...prev, name: event.target.value }))}
             placeholder={t('commissionNamePlaceholder')}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
 
@@ -106,7 +106,7 @@ export function CommissionTypeForm({
             onChange={(event) =>
               setValues((prev) => ({ ...prev, category: event.target.value as 'flat' | 'percentage' }))
             }
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           >
             <option value="flat">{t('categoryFlat')}</option>
             <option value="percentage">{t('categoryPercentage')}</option>
@@ -119,7 +119,7 @@ export function CommissionTypeForm({
             <select
               value={values.basis}
               onChange={(event) => setValues((prev) => ({ ...prev, basis: event.target.value }))}
-              className="rounded border border-input-border bg-input-background px-3 py-2"
+              className="field-input px-3 py-2"
             >
               {Object.entries(BASIS_LABELS).map(([id, label]) => (
                 <option key={id} value={id}>
@@ -138,7 +138,7 @@ export function CommissionTypeForm({
             required
             value={values.value}
             onChange={(event) => setValues((prev) => ({ ...prev, value: event.target.value }))}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
       </div>
@@ -150,7 +150,7 @@ export function CommissionTypeForm({
           onChange={(event) => setValues((prev) => ({ ...prev, description: event.target.value }))}
           rows={2}
           placeholder={t('descriptionPlaceholder')}
-          className="rounded border border-input-border bg-input-background px-3 py-2"
+          className="field-input px-3 py-2"
         />
       </label>
 
@@ -160,7 +160,7 @@ export function CommissionTypeForm({
         <button
           type="submit"
           disabled={submitting}
-          className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
+          className="w-fit btn-primary"
         >
           {submitting ? t('savingButton') : mode === 'edit' ? t('saveChangesButton') : t('addCommissionTypeButton')}
         </button>

@@ -71,7 +71,7 @@ export function CustomFieldDefinitionForm() {
             value={name}
             onChange={(event) => setName(event.target.value)}
             placeholder={t('customFieldNamePlaceholder')}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
 
@@ -80,7 +80,7 @@ export function CustomFieldDefinitionForm() {
           <select
             value={fieldType}
             onChange={(event) => setFieldType(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           >
             {Object.entries(FIELD_TYPE_LABELS).map(([id, label]) => (
               <option key={id} value={id}>
@@ -99,7 +99,7 @@ export function CustomFieldDefinitionForm() {
             onChange={(event) => setOptionsText(event.target.value)}
             rows={3}
             placeholder={t('optionsPlaceholder')}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
       )}
@@ -109,7 +109,7 @@ export function CustomFieldDefinitionForm() {
       <button
         type="submit"
         disabled={submitting}
-        className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
+        className="w-fit btn-primary"
       >
         {submitting ? t('addingButton') : t('addCustomFieldButton')}
       </button>

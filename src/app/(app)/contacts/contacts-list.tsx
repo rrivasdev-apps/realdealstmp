@@ -85,7 +85,7 @@ export function ContactsList({ contacts, contactTypes }: { contacts: Contact[]; 
         value={query}
         onChange={(event) => setQuery(event.target.value)}
         placeholder={t('filterPlaceholder')}
-        className="mt-4 w-full max-w-md rounded border border-input-border bg-input-background px-3 py-2 text-sm"
+        className="mt-4 w-full max-w-md field-input px-3 py-2 text-sm"
       />
 
       <ul className="mt-4 divide-y divide-border rounded-lg border border-border bg-background">

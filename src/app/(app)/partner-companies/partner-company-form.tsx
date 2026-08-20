@@ -80,7 +80,7 @@ export function PartnerCompanyForm({
           required
           value={values.name}
           onChange={(event) => setValues((prev) => ({ ...prev, name: event.target.value }))}
-          className="rounded border border-input-border bg-input-background px-3 py-2"
+          className="field-input px-3 py-2"
         />
       </label>
 
@@ -90,7 +90,7 @@ export function PartnerCompanyForm({
           type="text"
           value={values.address}
           onChange={(event) => setValues((prev) => ({ ...prev, address: event.target.value }))}
-          className="rounded border border-input-border bg-input-background px-3 py-2"
+          className="field-input px-3 py-2"
         />
       </label>
 
@@ -100,7 +100,7 @@ export function PartnerCompanyForm({
           type="email"
           value={values.email}
           onChange={(event) => setValues((prev) => ({ ...prev, email: event.target.value }))}
-          className="rounded border border-input-border bg-input-background px-3 py-2"
+          className="field-input px-3 py-2"
         />
       </label>
 
@@ -110,7 +110,7 @@ export function PartnerCompanyForm({
           type="tel"
           value={values.phone}
           onChange={(event) => setValues((prev) => ({ ...prev, phone: event.target.value }))}
-          className="rounded border border-input-border bg-input-background px-3 py-2"
+          className="field-input px-3 py-2"
         />
       </label>
 
@@ -135,7 +135,7 @@ export function PartnerCompanyForm({
       <button
         type="submit"
         disabled={submitting}
-        className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
+        className="w-fit btn-primary"
       >
         {submitting ? t('savingButton') : mode === 'create' ? t('createCompanyButton') : t('saveChangesButton')}
       </button>

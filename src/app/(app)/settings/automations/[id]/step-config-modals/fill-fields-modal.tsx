@@ -32,7 +32,7 @@ function FieldPickerList<T extends { key: string; label: string }>({
           onChange={(event) => {
             if (event.target.value) onChange([...selectedKeys, event.target.value])
           }}
-          className="rounded border border-input-border bg-input-background px-3 py-2"
+          className="field-input px-3 py-2"
         >
           <option value="">{t('addFieldPlaceholder')}</option>
           {available.map((option) => (
@@ -163,7 +163,7 @@ export function FillFieldsModal({
             required
             value={name}
             onChange={(event) => setName(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
 
@@ -189,7 +189,7 @@ export function FillFieldsModal({
         <button
           type="submit"
           disabled={submitting}
-          className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
+          className="w-fit btn-primary"
         >
           {submitting ? t('saving') : t('create')}
         </button>

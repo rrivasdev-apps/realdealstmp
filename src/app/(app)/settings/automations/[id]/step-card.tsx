@@ -100,7 +100,7 @@ function TriggerStepInline({
           required
           value={name}
           onChange={(event) => setName(event.target.value)}
-          className="rounded border border-input-border bg-input-background px-3 py-2"
+          className="field-input px-3 py-2"
         />
       </label>
       <AssigneeFields value={assignee} onChange={setAssignee} employeeRoles={employeeRoles} profiles={profiles} />
@@ -111,7 +111,7 @@ function TriggerStepInline({
         type="button"
         onClick={handleSave}
         disabled={submitting}
-        className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
+        className="w-fit btn-primary"
       >
         {submitting ? t('saving') : t('save')}
       </button>

@@ -53,7 +53,7 @@ export function ContactCompanyField({
             )
             onContactChange(newContactId, newLinkedIds.has(companyId) ? companyId : '')
           }}
-          className="rounded border border-input-border bg-input-background px-3 py-2"
+          className="field-input px-3 py-2"
         >
           <option value="">—</option>
           {contacts.map((option) => (
@@ -70,7 +70,7 @@ export function ContactCompanyField({
           value={companyId}
           onChange={(event) => onCompanyChange(event.target.value)}
           disabled={!contactId}
-          className="rounded border border-input-border bg-input-background px-3 py-2 disabled:opacity-50"
+          className="field-input px-3 py-2 disabled:opacity-50"
         >
           <option value="">—</option>
           {filteredCompanies.map((option) => (

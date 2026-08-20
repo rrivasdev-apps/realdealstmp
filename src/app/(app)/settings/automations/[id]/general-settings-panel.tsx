@@ -139,7 +139,7 @@ export function GeneralSettingsPanel({
           required
           value={name}
           onChange={(event) => setName(event.target.value)}
-          className="rounded border border-input-border bg-input-background px-3 py-2"
+          className="field-input px-3 py-2"
         />
       </label>
 
@@ -148,7 +148,7 @@ export function GeneralSettingsPanel({
         <select
           value={folderId}
           onChange={(event) => setFolderId(event.target.value)}
-          className="rounded border border-input-border bg-input-background px-3 py-2"
+          className="field-input px-3 py-2"
         >
           {buildFolderOptions(folders, t('uncategorized')).map((option) => (
             <option key={option.id ?? 'uncategorized'} value={option.id ?? ''}>
@@ -163,7 +163,7 @@ export function GeneralSettingsPanel({
         <select
           value={triggerType}
           onChange={(event) => setTriggerType(event.target.value)}
-          className="rounded border border-input-border bg-input-background px-3 py-2"
+          className="field-input px-3 py-2"
         >
           {triggerOptions.map((option) => (
             <option key={option.value} value={option.value}>
@@ -179,7 +179,7 @@ export function GeneralSettingsPanel({
           <select
             value={triggerDealTypeId}
             onChange={(event) => setTriggerDealTypeId(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           >
             <option value="">{t('anyType')}</option>
             {dealTypes.map((option) => (
@@ -197,7 +197,7 @@ export function GeneralSettingsPanel({
           <select
             value={triggerDealField}
             onChange={(event) => setTriggerDealField(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           >
             <option value="">{t('selectFieldPlaceholder')}</option>
             {dealFields.map((field) => (
@@ -215,7 +215,7 @@ export function GeneralSettingsPanel({
           <select
             value={triggerCustomFieldId}
             onChange={(event) => setTriggerCustomFieldId(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           >
             <option value="">{t('selectCustomFieldPlaceholder')}</option>
             {customFieldDefinitions.map((field) => (
@@ -237,7 +237,7 @@ export function GeneralSettingsPanel({
                 setTriggerSourceTemplateId(event.target.value)
                 setTriggerSourceStepId('')
               }}
-              className="rounded border border-input-border bg-input-background px-3 py-2"
+              className="field-input px-3 py-2"
             >
               <option value="">{t('selectAutomationPlaceholder')}</option>
               {otherTemplates.map((option) => (
@@ -254,7 +254,7 @@ export function GeneralSettingsPanel({
               value={triggerSourceStepId}
               onChange={(event) => setTriggerSourceStepId(event.target.value)}
               disabled={!triggerSourceTemplateId}
-              className="rounded border border-input-border bg-input-background px-3 py-2 disabled:opacity-50"
+              className="field-input px-3 py-2 disabled:opacity-50"
             >
               <option value="">{t('selectStepPlaceholder')}</option>
               {stepsForSourceTemplate.map((option) => (
@@ -274,7 +274,7 @@ export function GeneralSettingsPanel({
             <select
               value={triggerDateField}
               onChange={(event) => setTriggerDateField(event.target.value)}
-              className="rounded border border-input-border bg-input-background px-3 py-2"
+              className="field-input px-3 py-2"
             >
               <option value="">{t('selectDateFieldPlaceholder')}</option>
               {dealDateFields.map((field) => (
@@ -290,7 +290,7 @@ export function GeneralSettingsPanel({
             <select
               value={triggerDateDirection}
               onChange={(event) => setTriggerDateDirection(event.target.value)}
-              className="rounded border border-input-border bg-input-background px-3 py-2"
+              className="field-input px-3 py-2"
             >
               <option value="on">{t('onTheDate')}</option>
               <option value="before">{t('daysBefore')}</option>
@@ -306,7 +306,7 @@ export function GeneralSettingsPanel({
               value={triggerDateOffsetDays}
               disabled={triggerDateDirection === 'on'}
               onChange={(event) => setTriggerDateOffsetDays(event.target.value)}
-              className="rounded border border-input-border bg-input-background px-3 py-2 disabled:opacity-50"
+              className="field-input px-3 py-2 disabled:opacity-50"
             />
           </label>
         </div>
@@ -320,7 +320,7 @@ export function GeneralSettingsPanel({
             min={0}
             value={startDelayDays}
             onChange={(event) => setStartDelayDays(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
 
@@ -331,7 +331,7 @@ export function GeneralSettingsPanel({
             min={0}
             value={firstStepDueDelayDays}
             onChange={(event) => setFirstStepDueDelayDays(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
       </div>
@@ -354,7 +354,7 @@ export function GeneralSettingsPanel({
         <button
           type="submit"
           disabled={submitting}
-          className="rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
+          className="btn-primary"
         >
           {t('saveAutomation')}
         </button>

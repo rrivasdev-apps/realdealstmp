@@ -356,7 +356,7 @@ export function DealForm({
               type="text"
               value={values.apn}
               onChange={(event) => set('apn', event.target.value)}
-              className="rounded border border-input-border bg-input-background px-3 py-2"
+              className="field-input px-3 py-2"
             />
           </label>
 
@@ -367,7 +367,7 @@ export function DealForm({
               step="0.01"
               value={values.lot_size_acres}
               onChange={(event) => set('lot_size_acres', event.target.value)}
-              className="rounded border border-input-border bg-input-background px-3 py-2"
+              className="field-input px-3 py-2"
             />
           </label>
 
@@ -377,7 +377,7 @@ export function DealForm({
               value={values.legal_description}
               onChange={(event) => set('legal_description', event.target.value)}
               rows={2}
-              className="rounded border border-input-border bg-input-background px-3 py-2"
+              className="field-input px-3 py-2"
             />
           </label>
 
@@ -400,7 +400,7 @@ export function DealForm({
             <CurrencyInput
               value={values.mortgage_principal_balance}
               onChange={(value) => set('mortgage_principal_balance', value)}
-              className="rounded border border-input-border bg-input-background px-3 py-2"
+              className="field-input px-3 py-2"
             />
           </label>
 
@@ -411,7 +411,7 @@ export function DealForm({
               step="0.01"
               value={values.mortgage_rate}
               onChange={(event) => set('mortgage_rate', event.target.value)}
-              className="rounded border border-input-border bg-input-background px-3 py-2"
+              className="field-input px-3 py-2"
             />
           </label>
 
@@ -422,7 +422,7 @@ export function DealForm({
               step="1"
               value={values.mortgage_term}
               onChange={(event) => set('mortgage_term', event.target.value)}
-              className="rounded border border-input-border bg-input-background px-3 py-2"
+              className="field-input px-3 py-2"
             />
           </label>
 
@@ -431,7 +431,7 @@ export function DealForm({
             <CurrencyInput
               value={values.total_payoff_amount}
               onChange={(value) => set('total_payoff_amount', value)}
-              className="rounded border border-input-border bg-input-background px-3 py-2"
+              className="field-input px-3 py-2"
             />
           </label>
 
@@ -441,7 +441,7 @@ export function DealForm({
               type="date"
               value={values.foreclosure_date}
               onChange={(event) => set('foreclosure_date', event.target.value)}
-              className="rounded border border-input-border bg-input-background px-3 py-2"
+              className="field-input px-3 py-2"
             />
           </label>
         </div>
@@ -473,7 +473,7 @@ export function DealForm({
           <select
             value={values.market_id}
             onChange={(event) => set('market_id', event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           >
             <option value="">—</option>
             {markets.map((option) => (
@@ -489,7 +489,7 @@ export function DealForm({
           <select
             value={values.property_type_id}
             onChange={(event) => set('property_type_id', event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           >
             <option value="">—</option>
             {propertyTypes.map((option) => (
@@ -505,7 +505,7 @@ export function DealForm({
           <select
             value={values.deal_type_id}
             onChange={(event) => set('deal_type_id', event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           >
             <option value="">—</option>
             {dealTypes.map((option) => (
@@ -521,7 +521,7 @@ export function DealForm({
           <select
             value={values.lead_source_id}
             onChange={(event) => set('lead_source_id', event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           >
             <option value="">—</option>
             {leadSources.map((option) => (
@@ -556,7 +556,7 @@ export function DealForm({
             <select
               value={values.status_id}
               onChange={(event) => set('status_id', event.target.value)}
-              className="rounded border border-input-border bg-input-background px-3 py-2"
+              className="field-input px-3 py-2"
             >
               {dealStatuses.map((option) => (
                 <option key={option.id} value={option.id}>
@@ -574,7 +574,7 @@ export function DealForm({
           <CurrencyInput
             value={values.contract_price}
             onChange={(value) => set('contract_price', value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
           {values.contract_price_renegotiated_date && (
             <span className="text-xs text-muted-foreground">
@@ -588,7 +588,7 @@ export function DealForm({
           <CurrencyInput
             value={values.projected_sales_price}
             onChange={(value) => set('projected_sales_price', value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
 
@@ -598,7 +598,7 @@ export function DealForm({
             type="date"
             value={values.contract_date}
             onChange={(event) => set('contract_date', event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
 
@@ -608,7 +608,7 @@ export function DealForm({
             type="date"
             value={values.closing_date}
             onChange={(event) => set('closing_date', event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
 
@@ -618,7 +618,7 @@ export function DealForm({
             type="date"
             value={values.due_diligence_expiration}
             onChange={(event) => set('due_diligence_expiration', event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
 
@@ -629,7 +629,7 @@ export function DealForm({
               type="date"
               value={values.actual_closing_date}
               onChange={(event) => set('actual_closing_date', event.target.value)}
-              className="rounded border border-input-border bg-input-background px-3 py-2"
+              className="field-input px-3 py-2"
             />
           </label>
         )}
@@ -705,7 +705,7 @@ export function DealForm({
             <select
               value={values.seller_contact_id}
               onChange={(event) => set('seller_contact_id', event.target.value)}
-              className="rounded border border-input-border bg-input-background px-3 py-2"
+              className="field-input px-3 py-2"
             >
               <option value="">—</option>
               {sellerContacts.map((option) => (
@@ -721,7 +721,7 @@ export function DealForm({
             <select
               value={values.ab_purchase_type_id}
               onChange={(event) => set('ab_purchase_type_id', event.target.value)}
-              className="rounded border border-input-border bg-input-background px-3 py-2"
+              className="field-input px-3 py-2"
             >
               <option value="">—</option>
               {purchaseTypes.map((option) => (
@@ -769,7 +769,7 @@ export function DealForm({
                   <CurrencyInput
                     value={values.buyer_contract_price}
                     onChange={(value) => set('buyer_contract_price', value)}
-                    className="rounded border border-input-border bg-input-background px-3 py-2"
+                    className="field-input px-3 py-2"
                   />
                 )}
               </label>
@@ -779,7 +779,7 @@ export function DealForm({
                 <CurrencyInput
                   value={values.renegotiated_bc_price}
                   onChange={(value) => set('renegotiated_bc_price', value)}
-                  className="rounded border border-input-border bg-input-background px-3 py-2"
+                  className="field-input px-3 py-2"
                 />
                 {values.renegotiated_bc_date && (
                   <span className="text-xs text-muted-foreground">
@@ -794,7 +794,7 @@ export function DealForm({
                   type="date"
                   value={values.buyer_contract_date}
                   onChange={(event) => set('buyer_contract_date', event.target.value)}
-                  className="rounded border border-input-border bg-input-background px-3 py-2"
+                  className="field-input px-3 py-2"
                 />
               </label>
 
@@ -804,7 +804,7 @@ export function DealForm({
                   type="date"
                   value={values.bc_contract_closing_date}
                   onChange={(event) => set('bc_contract_closing_date', event.target.value)}
-                  className="rounded border border-input-border bg-input-background px-3 py-2"
+                  className="field-input px-3 py-2"
                 />
               </label>
 
@@ -814,7 +814,7 @@ export function DealForm({
                   type="date"
                   value={values.buyer_inspection_deadline}
                   onChange={(event) => set('buyer_inspection_deadline', event.target.value)}
-                  className="rounded border border-input-border bg-input-background px-3 py-2"
+                  className="field-input px-3 py-2"
                 />
               </label>
 
@@ -823,7 +823,7 @@ export function DealForm({
                 <CurrencyInput
                   value={values.buyer_deposit_amount}
                   onChange={(value) => set('buyer_deposit_amount', value)}
-                  className="rounded border border-input-border bg-input-background px-3 py-2"
+                  className="field-input px-3 py-2"
                 />
               </label>
             </div>
@@ -878,7 +878,7 @@ export function DealForm({
                 <select
                   value={values.jv_split_type_id}
                   onChange={(event) => set('jv_split_type_id', event.target.value)}
-                  className="rounded border border-input-border bg-input-background px-3 py-2"
+                  className="field-input px-3 py-2"
                 >
                   <option value="">—</option>
                   {splitTypes.map((option) => (
@@ -896,7 +896,7 @@ export function DealForm({
                   step="0.01"
                   value={values.jv_split_percent}
                   onChange={(event) => set('jv_split_percent', event.target.value)}
-                  className="rounded border border-input-border bg-input-background px-3 py-2"
+                  className="field-input px-3 py-2"
                 />
               </label>
 
@@ -905,7 +905,7 @@ export function DealForm({
                 <CurrencyInput
                   value={values.split_amount}
                   onChange={(value) => set('split_amount', value)}
-                  className="rounded border border-input-border bg-input-background px-3 py-2"
+                  className="field-input px-3 py-2"
                 />
               </label>
             </div>
@@ -990,7 +990,7 @@ export function DealForm({
                     <CurrencyInput
                       value={values.post_occupancy_hold_back_amount}
                       onChange={(value) => set('post_occupancy_hold_back_amount', value)}
-                      className="rounded border border-input-border bg-input-background px-3 py-2"
+                      className="field-input px-3 py-2"
                     />
                   </label>
                   <label className="field-label">
@@ -999,7 +999,7 @@ export function DealForm({
                       type="date"
                       value={values.post_occupancy_move_out_date}
                       onChange={(event) => set('post_occupancy_move_out_date', event.target.value)}
-                      className="rounded border border-input-border bg-input-background px-3 py-2"
+                      className="field-input px-3 py-2"
                     />
                   </label>
                 </div>
@@ -1022,7 +1022,7 @@ export function DealForm({
                     type="date"
                     value={values.survey_ordered_date}
                     onChange={(event) => set('survey_ordered_date', event.target.value)}
-                    className="rounded border border-input-border bg-input-background px-3 py-2"
+                    className="field-input px-3 py-2"
                   />
                 </label>
               )}
@@ -1045,7 +1045,7 @@ export function DealForm({
                       type="date"
                       value={values.initial_photos_ordered_date}
                       onChange={(event) => set('initial_photos_ordered_date', event.target.value)}
-                      className="rounded border border-input-border bg-input-background px-3 py-2"
+                      className="field-input px-3 py-2"
                     />
                   </label>
                   <label className="field-label">
@@ -1054,7 +1054,7 @@ export function DealForm({
                       type="date"
                       value={values.initial_photos_received_date}
                       onChange={(event) => set('initial_photos_received_date', event.target.value)}
-                      className="rounded border border-input-border bg-input-background px-3 py-2"
+                      className="field-input px-3 py-2"
                     />
                   </label>
                 </div>
@@ -1118,7 +1118,7 @@ export function DealForm({
                       type="date"
                       value={values.on_hold_date}
                       onChange={(event) => set('on_hold_date', event.target.value)}
-                      className="rounded border border-input-border bg-input-background px-3 py-2"
+                      className="field-input px-3 py-2"
                     />
                   </label>
                   {onHoldReasons.length > 0 && (
@@ -1158,7 +1158,7 @@ export function DealForm({
                     type="date"
                     value={values.closing_extension_date}
                     onChange={(event) => set('closing_extension_date', event.target.value)}
-                    className="rounded border border-input-border bg-input-background px-3 py-2"
+                    className="field-input px-3 py-2"
                   />
                 </label>
               )}
@@ -1180,7 +1180,7 @@ export function DealForm({
                     type="date"
                     value={values.due_diligence_extension_date}
                     onChange={(event) => set('due_diligence_extension_date', event.target.value)}
-                    className="rounded border border-input-border bg-input-background px-3 py-2"
+                    className="field-input px-3 py-2"
                   />
                 </label>
               )}
@@ -1202,7 +1202,7 @@ export function DealForm({
                     <CurrencyInput
                       value={values.ab_emd_amount}
                       onChange={(value) => set('ab_emd_amount', value)}
-                      className="rounded border border-input-border bg-input-background px-3 py-2"
+                      className="field-input px-3 py-2"
                     />
                   </label>
                   <label className="flex items-center gap-1.5 text-sm">
@@ -1311,7 +1311,7 @@ export function DealForm({
                         type="date"
                         value={values.cancelled_ab_date}
                         onChange={(event) => set('cancelled_ab_date', event.target.value)}
-                        className="rounded border border-input-border bg-input-background px-3 py-2"
+                        className="field-input px-3 py-2"
                       />
                     </label>
                     <label className="field-label">
@@ -1319,7 +1319,7 @@ export function DealForm({
                       <select
                         value={values.cancelled_ab_party}
                         onChange={(event) => set('cancelled_ab_party', event.target.value)}
-                        className="rounded border border-input-border bg-input-background px-3 py-2"
+                        className="field-input px-3 py-2"
                       >
                         <option value="">{t('chooseAnOption')}</option>
                         <option value="seller">{t('partySeller')}</option>
@@ -1367,7 +1367,7 @@ export function DealForm({
                         type="date"
                         value={values.cancelled_bc_ac_date}
                         onChange={(event) => set('cancelled_bc_ac_date', event.target.value)}
-                        className="rounded border border-input-border bg-input-background px-3 py-2"
+                        className="field-input px-3 py-2"
                       />
                     </label>
                     <label className="field-label">
@@ -1375,7 +1375,7 @@ export function DealForm({
                       <select
                         value={values.cancelled_bc_ac_party}
                         onChange={(event) => set('cancelled_bc_ac_party', event.target.value)}
-                        className="rounded border border-input-border bg-input-background px-3 py-2"
+                        className="field-input px-3 py-2"
                       >
                         <option value="">{t('chooseAnOption')}</option>
                         <option value="seller">{t('partySeller')}</option>
@@ -1451,7 +1451,7 @@ export function DealForm({
                     <select
                       value={stringValue}
                       onChange={(event) => setCustomField(definition.id, event.target.value)}
-                      className="rounded border border-input-border bg-input-background px-3 py-2"
+                      className="field-input px-3 py-2"
                     >
                       <option value="">—</option>
                       {(definition.options ?? []).map((option) => (
@@ -1471,7 +1471,7 @@ export function DealForm({
                     type={definition.field_type === 'number' ? 'number' : definition.field_type === 'date' ? 'date' : 'text'}
                     value={stringValue}
                     onChange={(event) => setCustomField(definition.id, event.target.value)}
-                    className="rounded border border-input-border bg-input-background px-3 py-2"
+                    className="field-input px-3 py-2"
                   />
                 </label>
               )
@@ -1487,7 +1487,7 @@ export function DealForm({
         <button
           type="submit"
           disabled={submitting}
-          className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
+          className="w-fit btn-primary"
         >
           {submitting ? t('saving') : mode === 'create' ? t('createDeal') : t('saveChanges')}
         </button>

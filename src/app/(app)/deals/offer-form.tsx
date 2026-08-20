@@ -106,7 +106,7 @@ export function OfferForm({
           <CurrencyInput
             value={values.offer_price}
             onChange={(value) => set('offer_price', value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
 
@@ -116,7 +116,7 @@ export function OfferForm({
             type="date"
             value={values.offer_date}
             onChange={(event) => set('offer_date', event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
 
@@ -125,7 +125,7 @@ export function OfferForm({
           <select
             value={values.status_id}
             onChange={(event) => set('status_id', event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           >
             {offerStatuses.map((option) => (
               <option key={option.id} value={option.id}>
@@ -140,7 +140,7 @@ export function OfferForm({
           <select
             value={values.purchase_type_id}
             onChange={(event) => set('purchase_type_id', event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           >
             <option value="">—</option>
             {purchaseTypes.map((option) => (
@@ -157,7 +157,7 @@ export function OfferForm({
             type="date"
             value={values.inspection_deadline}
             onChange={(event) => set('inspection_deadline', event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
 
@@ -167,7 +167,7 @@ export function OfferForm({
             type="date"
             value={values.closing_deadline}
             onChange={(event) => set('closing_deadline', event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
 
@@ -177,7 +177,7 @@ export function OfferForm({
             type="date"
             value={values.emd_deadline}
             onChange={(event) => set('emd_deadline', event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
 
@@ -216,7 +216,7 @@ export function OfferForm({
           value={values.notes}
           onChange={(event) => set('notes', event.target.value)}
           rows={3}
-          className="rounded border border-input-border bg-input-background px-3 py-2"
+          className="field-input px-3 py-2"
         />
       </label>
 
@@ -226,7 +226,7 @@ export function OfferForm({
         <button
           type="submit"
           disabled={submitting}
-          className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
+          className="w-fit btn-primary"
         >
           {submitting ? t('savingButton') : mode === 'create' ? t('createOfferButton') : t('saveChangesButton')}
         </button>

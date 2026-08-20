@@ -124,7 +124,7 @@ export function EmployeeForm({
           required
           value={name}
           onChange={(event) => setName(event.target.value)}
-          className="rounded border border-input-border bg-input-background px-3 py-2"
+          className="field-input px-3 py-2"
         />
         <span className="text-xs text-muted-foreground">{t('nameHint')}</span>
       </fieldset>
@@ -154,7 +154,7 @@ export function EmployeeForm({
           <select
             value={employeeType}
             onChange={(event) => setEmployeeType(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           >
             <option value="">{t('emptyOption')}</option>
             <option value="full_time">{t('employeeTypeFullTime')}</option>
@@ -168,7 +168,7 @@ export function EmployeeForm({
             type="date"
             value={hireDate}
             onChange={(event) => setHireDate(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
         <label className="field-label">
@@ -177,7 +177,7 @@ export function EmployeeForm({
             type="date"
             value={birthDate}
             onChange={(event) => setBirthDate(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
         <label className="field-label">
@@ -186,7 +186,7 @@ export function EmployeeForm({
             type="text"
             value={paidVia}
             onChange={(event) => setPaidVia(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
         <label className="field-label sm:col-span-2">
@@ -195,7 +195,7 @@ export function EmployeeForm({
             type="text"
             value={address}
             onChange={(event) => setAddress(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
         <label className="flex items-center gap-1.5 text-sm sm:col-span-2">
@@ -215,7 +215,7 @@ export function EmployeeForm({
           <select
             value={payType}
             onChange={(event) => setPayType(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           >
             <option value="">{t('emptyOption')}</option>
             <option value="hourly">{t('payTypeHourly')}</option>
@@ -229,7 +229,7 @@ export function EmployeeForm({
             step="0.01"
             value={payRate}
             onChange={(event) => setPayRate(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
       </fieldset>
@@ -274,7 +274,7 @@ export function EmployeeForm({
         <button
           type="submit"
           disabled={submitting}
-          className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
+          className="w-fit btn-primary"
         >
           {submitting ? t('savingButton') : t('saveChangesButton')}
         </button>

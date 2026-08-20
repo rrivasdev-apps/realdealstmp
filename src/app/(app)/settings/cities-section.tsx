@@ -118,7 +118,7 @@ export function CitiesSection({ countries, defaultCountryId }: { countries: Coun
           <select
             value={countryId}
             onChange={(event) => setCountryId(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           >
             {countries.length === 0 && <option value="">{t('noCountriesYetOption')}</option>}
             {countries.map((country) => (
@@ -134,7 +134,7 @@ export function CitiesSection({ countries, defaultCountryId }: { countries: Coun
             value={stateId}
             onChange={(event) => setStateId(event.target.value)}
             disabled={!countryId}
-            className="rounded border border-input-border bg-input-background px-3 py-2 disabled:opacity-50"
+            className="field-input px-3 py-2 disabled:opacity-50"
           >
             <option value="">{statesLoading ? t('loadingLabel') : t('selectPlaceholder')}</option>
             {states.map((state) => (
@@ -156,13 +156,13 @@ export function CitiesSection({ countries, defaultCountryId }: { countries: Coun
             value={name}
             onChange={(event) => setName(event.target.value)}
             placeholder={t('cityPlaceholder')}
-            className="rounded border border-input-border bg-input-background px-3 py-2 disabled:opacity-50"
+            className="field-input px-3 py-2 disabled:opacity-50"
           />
         </label>
         <button
           type="submit"
           disabled={submitting || !stateId}
-          className="rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
+          className="btn-primary"
         >
           {submitting ? t('addingButton') : t('addButton')}
         </button>
@@ -189,7 +189,7 @@ export function CitiesSection({ countries, defaultCountryId }: { countries: Coun
             value={query}
             onChange={(event) => handleQueryChange(event.target.value)}
             placeholder={t('searchCitiesPlaceholder')}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
       )}

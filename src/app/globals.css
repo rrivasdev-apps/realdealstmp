@@ -24,47 +24,55 @@
   /* Neutral pill backgrounds (role badges, etc). */
   --muted: #f4f4f5;
 
-  /* Brand -- primary actions, active nav state, links */
-  --brand-50: #f4f2ff;
-  --brand-100: #ebe7ff;
-  --brand-200: #d9d2ff;
-  --brand-300: #bcaeff;
-  --brand-400: #9c85ff;
-  --brand-500: #7c5cff;
-  --brand-600: #6839f2;
-  --brand-700: #572bd1;
-  --brand-800: #4725a8;
-  --brand-900: #3b2185;
+  /* Brand -- primary actions, active nav state, links. A blue ramp anchored
+     on the public landing page's palette (600 = --landing-blue, 900 =
+     --landing-navy, see src/app/_landing/) so the authenticated app and the
+     pre-login funnel read as one brand instead of two. */
+  --brand-50: #eef6fa;
+  --brand-100: #d7ebf2;
+  --brand-200: #b0d7e6;
+  --brand-300: #7fbcd6;
+  --brand-400: #4a9dc0;
+  --brand-500: #2c82aa;
+  --brand-600: #19659c;
+  --brand-700: #135277;
+  --brand-800: #0e3f5c;
+  --brand-900: #033253;
 
-  /* Dark sidebar shell */
-  --sidebar: #101116;
-  --sidebar-foreground: #e7e7ec;
-  --sidebar-muted: #8b8b98;
-  --sidebar-hover: #1b1c24;
-  --sidebar-active: #6839f2;
+  /* Dark sidebar shell -- navy, matching the landing header/hero rather than
+     a brand-neutral near-black. */
+  --sidebar: #033253;
+  --sidebar-foreground: #eaf3f8;
+  --sidebar-muted: #8fb4c8;
+  --sidebar-hover: #0d4166;
+  --sidebar-active: #19659c;
 
   /* Deal status colors -- one per row in deal_statuses, used for badges,
-     KPI cards, and any other place a deal's status needs a color. */
-  --status-for-sale: #d4930a;
-  --status-pending-sale: #4f5fe0;
-  --status-closed: #17915a;
-  --status-on-hold: #6b7280;
-  --status-cancelled: #d43d3d;
+     KPI cards, and any other place a deal's status needs a color. Retuned
+     alongside the brand rebrand to read as one designed palette; Pending
+     Sale moved into the blue family now that brand isn't purple, so it no
+     longer needs an unrelated indigo to stay distinct. */
+  --status-for-sale: #c68a1f;
+  --status-pending-sale: #2c82aa;
+  --status-closed: #178a5a;
+  --status-on-hold: #5b7280;
+  --status-cancelled: #c94343;
 
   /* Contact type colors -- one per row in contact_types, used for the
      Contact Hub's type badges/pills. Soft/muted tones, same "solid text on
-     a 10%-opacity tint" treatment as the deal status colors above. */
-  --contact-type-investor: #0891b2;
-  --contact-type-realtor: #2563eb;
-  --contact-type-lender: #ca8a04;
-  --contact-type-vendor: #64748b;
-  --contact-type-seller: #db2777;
-  --contact-type-mortgage-company: #7c3aed;
-  --contact-type-title-company: #059669;
+     a 10%-opacity tint" treatment as the deal status colors above. Eight
+     hues stay deliberately distinct (a legend needs to keep scanning at a
+     glance) but pulled toward the rebrand's more muted/editorial saturation. */
+  --contact-type-investor: #0e7c94;
+  --contact-type-realtor: #2f5fa8;
+  --contact-type-lender: #b8860f;
+  --contact-type-vendor: #5b7280;
+  --contact-type-seller: #c23a72;
+  --contact-type-mortgage-company: #6d5aad;
+  --contact-type-title-company: #0f8f68;
   --contact-type-other: #6b7280;
 
-  /* Public landing page only -- see src/app/_landing/. Not used by the
-     authenticated app, which keeps --brand-* above. */
+  /* Public landing page only -- see src/app/_landing/. */
   --landing-navy: #033253;
   --landing-blue: #19659c;
   --landing-cyan: #36a0c7;
@@ -182,6 +190,30 @@
   /* Page title (<h1>). */
   .heading-page {
     @apply text-xl font-semibold text-foreground;
+  }
+
+  /* Every text input/select/textarea in the app -- previously copy-pasted
+     as a literal className in 40+ files (border + rounded, no shadow, no
+     focus color). One class now, so the modernized look (softer radius,
+     subtle shadow, brand-colored focus ring) updates everywhere at once. */
+  .field-input {
+    @apply rounded-lg border border-input-border bg-input-background px-3 py-2 text-sm shadow-sm transition
+           placeholder:text-muted-foreground/60
+           focus:border-brand-500 focus:ring-2 focus:ring-brand-500 focus:outline-none;
+  }
+
+  /* Primary action button -- was ad-hoc bg-foreground/text-background
+     (plain black) in 40+ files, so most of the app never actually showed
+     brand color on its buttons. Now brand-colored everywhere it's used. */
+  .btn-primary {
+    @apply rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition
+           hover:bg-brand-700 disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  /* Secondary/cancel action -- pairs with .btn-primary in a footer row. */
+  .btn-secondary {
+    @apply rounded-lg border border-border bg-background px-4 py-2 text-sm font-semibold text-foreground transition
+           hover:bg-muted disabled:pointer-events-none disabled:opacity-50;
   }
 }
 

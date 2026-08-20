@@ -66,7 +66,7 @@ export function NewRunForm({ payPeriods }: { payPeriods: RunnablePayPeriod[] }) 
           <select
             value={payPeriodId}
             onChange={(event) => setPayPeriodId(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           >
             <option value="">{t('adHocOption')}</option>
             {runnablePayPeriods.map((payPeriod) => (
@@ -91,7 +91,7 @@ export function NewRunForm({ payPeriods }: { payPeriods: RunnablePayPeriod[] }) 
               required
               value={payPeriodStart}
               onChange={(event) => setPayPeriodStart(event.target.value)}
-              className="rounded border border-input-border bg-input-background px-3 py-2"
+              className="field-input px-3 py-2"
             />
           </label>
           <label className="field-label">
@@ -101,7 +101,7 @@ export function NewRunForm({ payPeriods }: { payPeriods: RunnablePayPeriod[] }) 
               required
               value={payPeriodEnd}
               onChange={(event) => setPayPeriodEnd(event.target.value)}
-              className="rounded border border-input-border bg-input-background px-3 py-2"
+              className="field-input px-3 py-2"
             />
           </label>
         </div>
@@ -113,7 +113,7 @@ export function NewRunForm({ payPeriods }: { payPeriods: RunnablePayPeriod[] }) 
       <button
         type="submit"
         disabled={submitting || blockedOnEmployees}
-        className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
+        className="w-fit btn-primary"
       >
         {submitting ? t('creatingButton') : t('newRunButton')}
       </button>

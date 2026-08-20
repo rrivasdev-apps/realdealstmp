@@ -52,7 +52,7 @@ export function CountryForm() {
           value={name}
           onChange={(event) => setName(event.target.value)}
           placeholder={t('countryNamePlaceholder')}
-          className="rounded border border-input-border bg-input-background px-3 py-2"
+          className="field-input px-3 py-2"
         />
       </label>
       <label className="w-24 field-label">
@@ -64,13 +64,13 @@ export function CountryForm() {
           value={isoCode}
           onChange={(event) => setIsoCode(event.target.value.toUpperCase())}
           placeholder={t('countryCodePlaceholder')}
-          className="rounded border border-input-border bg-input-background px-3 py-2 uppercase"
+          className="field-input px-3 py-2 uppercase"
         />
       </label>
       <button
         type="submit"
         disabled={submitting}
-        className="rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
+        className="btn-primary"
       >
         {submitting ? t('addingButton') : t('addButton')}
       </button>

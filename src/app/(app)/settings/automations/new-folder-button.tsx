@@ -54,7 +54,7 @@ export function NewFolderButton({ parentFolderId, label }: { parentFolderId: str
         value={name}
         onChange={(event) => setName(event.target.value)}
         placeholder={t('folderNamePlaceholder')}
-        className="rounded border border-input-border bg-input-background px-2 py-1 text-sm"
+        className="field-input px-2 py-1 text-sm"
       />
       <button type="submit" disabled={submitting} className="text-xs font-medium text-foreground underline">
         {t('add')}

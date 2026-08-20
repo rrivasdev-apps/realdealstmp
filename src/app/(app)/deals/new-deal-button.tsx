@@ -129,7 +129,7 @@ export function NewDealButton({
                     required
                     value={dealTypeId}
                     onChange={(event) => setDealTypeId(event.target.value)}
-                    className="rounded border border-input-border bg-input-background px-3 py-2"
+                    className="field-input px-3 py-2"
                   >
                     <option value="" disabled>
                       {t('selectPlaceholder')}
@@ -147,7 +147,7 @@ export function NewDealButton({
                     required
                     value={leadSourceId}
                     onChange={(event) => setLeadSourceId(event.target.value)}
-                    className="rounded border border-input-border bg-input-background px-3 py-2"
+                    className="field-input px-3 py-2"
                   >
                     <option value="" disabled>
                       {t('selectPlaceholder')}
@@ -171,7 +171,7 @@ export function NewDealButton({
                     step="0.01"
                     value={contractPrice}
                     onChange={(event) => setContractPrice(event.target.value)}
-                    className="rounded border border-input-border bg-input-background px-3 py-2"
+                    className="field-input px-3 py-2"
                   />
                 </label>
                 <label className="field-label">
@@ -181,7 +181,7 @@ export function NewDealButton({
                     required
                     value={contractDate}
                     onChange={(event) => setContractDate(event.target.value)}
-                    className="rounded border border-input-border bg-input-background px-3 py-2"
+                    className="field-input px-3 py-2"
                   />
                 </label>
                 <label className="field-label">
@@ -193,7 +193,7 @@ export function NewDealButton({
                     step="0.01"
                     value={projectedSalesPrice}
                     onChange={(event) => setProjectedSalesPrice(event.target.value)}
-                    className="rounded border border-input-border bg-input-background px-3 py-2"
+                    className="field-input px-3 py-2"
                   />
                 </label>
                 <label className="field-label">
@@ -203,7 +203,7 @@ export function NewDealButton({
                     required
                     value={closingDate}
                     onChange={(event) => setClosingDate(event.target.value)}
-                    className="rounded border border-input-border bg-input-background px-3 py-2"
+                    className="field-input px-3 py-2"
                   />
                 </label>
               </div>
@@ -216,7 +216,7 @@ export function NewDealButton({
                   min={0}
                   value={dueDiligenceDays}
                   onChange={(event) => setDueDiligenceDays(event.target.value)}
-                  className="rounded border border-input-border bg-input-background px-3 py-2"
+                  className="field-input px-3 py-2"
                 />
               </label>
 
@@ -225,7 +225,7 @@ export function NewDealButton({
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
+                className="w-fit btn-primary"
               >
                 {submitting ? t('creatingButton') : t('createDealButton')}
               </button>

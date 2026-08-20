@@ -123,7 +123,7 @@ export function DealEmployeeItem({
               type="button"
               onClick={handleSave}
               disabled={submitting}
-              className="rounded bg-foreground px-3 py-1 text-xs text-background disabled:opacity-50"
+              className="btn-primary px-3 py-1 text-xs"
             >
               {submitting ? t('savingButton') : t('saveButton')}
             </button>

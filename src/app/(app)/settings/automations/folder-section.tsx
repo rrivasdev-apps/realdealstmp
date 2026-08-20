@@ -104,7 +104,7 @@ export function FolderSection({
                 autoFocus
                 value={draftName}
                 onChange={(event) => setDraftName(event.target.value)}
-                className="rounded border border-input-border bg-input-background px-2 py-0.5 text-sm"
+                className="field-input px-2 py-0.5 text-sm"
               />
               <button type="submit" disabled={submitting} className="text-xs font-medium text-foreground underline">
                 {t('save')}

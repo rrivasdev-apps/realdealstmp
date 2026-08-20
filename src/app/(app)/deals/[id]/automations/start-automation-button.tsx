@@ -42,7 +42,7 @@ export function StartAutomationButton({
         <select
           value={templateId}
           onChange={(event) => setTemplateId(event.target.value)}
-          className="rounded border border-input-border bg-input-background px-3 py-2 text-sm"
+          className="field-input px-3 py-2 text-sm"
         >
           <option value="">{t('chooseAutomationPlaceholder')}</option>
           {availableTemplates.map((template) => (
@@ -55,7 +55,7 @@ export function StartAutomationButton({
           type="button"
           onClick={handleStart}
           disabled={submitting || !templateId}
-          className="rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
+          className="btn-primary"
         >
           {submitting ? t('starting') : t('startManually')}
         </button>

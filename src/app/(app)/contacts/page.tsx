@@ -46,7 +46,7 @@ export default async function ContactsPage() {
     <div>
       <div className="flex items-center justify-between">
         <h1 className="heading-page">{t('title')}</h1>
-        <Link href="/contacts/new" className="rounded bg-foreground px-4 py-2 text-sm text-background">
+        <Link href="/contacts/new" className="btn-primary">
           {t('newContactButton')}
         </Link>
       </div>

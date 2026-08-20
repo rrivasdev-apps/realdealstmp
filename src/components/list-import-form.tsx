@@ -65,14 +65,14 @@ export function ListImportForm({
           value={text}
           onChange={(event) => setText(event.target.value)}
           placeholder={placeholder}
-          className="rounded border border-input-border bg-input-background px-3 py-2 font-mono text-xs"
+          className="field-input px-3 py-2 font-mono text-xs"
         />
       </label>
       <p className="text-xs text-muted-foreground">{hint}</p>
       <button
         type="submit"
         disabled={submitting || !text.trim()}
-        className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
+        className="w-fit btn-primary"
       >
         {submitting ? t('importingButton') : t('importButton')}
       </button>

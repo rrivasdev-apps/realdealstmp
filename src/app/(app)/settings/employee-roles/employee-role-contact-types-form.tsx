@@ -67,7 +67,7 @@ export function EmployeeRoleContactTypesForm({
       <button
         type="submit"
         disabled={submitting}
-        className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
+        className="w-fit btn-primary"
       >
         {submitting ? t('savingButton') : t('saveContactTypesButton')}
       </button>

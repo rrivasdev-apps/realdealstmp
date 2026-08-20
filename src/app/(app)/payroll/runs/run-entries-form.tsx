@@ -99,7 +99,7 @@ export function RunEntriesForm({
                     step="0.01"
                     value={hours[entry.id] ?? ''}
                     onChange={(event) => setHours((prev) => ({ ...prev, [entry.id]: event.target.value }))}
-                    className="w-24 rounded border border-input-border bg-input-background px-3 py-2"
+                    className="w-24 field-input px-3 py-2"
                   />
                 </label>
               ) : (
@@ -133,7 +133,7 @@ export function RunEntriesForm({
               type="button"
               onClick={handleFinalize}
               disabled={submitting}
-              className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
+              className="w-fit btn-primary"
             >
               {submitting ? t('finalizingButton') : t('finalizeRunButton')}
             </button>

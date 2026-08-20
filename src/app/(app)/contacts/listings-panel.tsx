@@ -227,7 +227,7 @@ function ListingForm({
           type="text"
           value={form.address}
           onChange={(event) => setForm((prev) => ({ ...prev, address: event.target.value }))}
-          className="rounded border border-input-border bg-input-background px-2 py-1"
+          className="field-input px-2 py-1"
         />
       </label>
       <label className="field-label">
@@ -235,7 +235,7 @@ function ListingForm({
         <CurrencyInput
           value={form.list_price}
           onChange={(value) => setForm((prev) => ({ ...prev, list_price: value }))}
-          className="rounded border border-input-border bg-input-background px-2 py-1"
+          className="field-input px-2 py-1"
         />
       </label>
       <label className="field-label">
@@ -243,7 +243,7 @@ function ListingForm({
         <select
           value={form.status_id}
           onChange={(event) => setForm((prev) => ({ ...prev, status_id: event.target.value }))}
-          className="rounded border border-input-border bg-input-background px-2 py-1"
+          className="field-input px-2 py-1"
         >
           <option value="">—</option>
           {listingStatuses.map((status) => (
@@ -259,7 +259,7 @@ function ListingForm({
           type="date"
           value={form.listing_date}
           onChange={(event) => setForm((prev) => ({ ...prev, listing_date: event.target.value }))}
-          className="rounded border border-input-border bg-input-background px-2 py-1"
+          className="field-input px-2 py-1"
         />
       </label>
       <label className="field-label">
@@ -268,7 +268,7 @@ function ListingForm({
           value={form.notes}
           onChange={(event) => setForm((prev) => ({ ...prev, notes: event.target.value }))}
           rows={2}
-          className="rounded border border-input-border bg-input-background px-2 py-1"
+          className="field-input px-2 py-1"
         />
       </label>
       {error && <p className="text-xs text-danger">{error}</p>}
@@ -277,7 +277,7 @@ function ListingForm({
           type="button"
           onClick={onSave}
           disabled={submitting}
-          className="rounded bg-foreground px-3 py-1 text-xs text-background disabled:opacity-50"
+          className="btn-primary px-3 py-1 text-xs"
         >
           {submitting ? t('savingButton') : t('saveButton')}
         </button>

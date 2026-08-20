@@ -109,7 +109,7 @@ function SignupFields({
             required
             value={companyName}
             onChange={(event) => setCompanyName(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
 
@@ -120,7 +120,7 @@ function SignupFields({
             required
             value={name}
             onChange={(event) => setName(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
 
@@ -131,7 +131,7 @@ function SignupFields({
             required
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
 
@@ -143,7 +143,7 @@ function SignupFields({
             minLength={8}
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
 
@@ -153,7 +153,7 @@ function SignupFields({
             required
             value={homeCountryCode}
             onChange={(event) => setHomeCountryCode(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           >
             {countries.map((country) => (
               <option key={country.iso_code} value={country.iso_code}>
@@ -170,7 +170,7 @@ function SignupFields({
             required
             value={locale}
             onChange={(event) => onLocaleChange(event.target.value as Locale)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           >
             <option value="en">{t('languageEnglish')}</option>
             <option value="es">{t('languageSpanish')}</option>

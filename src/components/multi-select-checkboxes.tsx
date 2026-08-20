@@ -81,7 +81,7 @@ export function MultiSelectCheckboxes({
             value={draftName}
             onChange={(event) => setDraftName(event.target.value)}
             placeholder={t('addNewOptionPlaceholder', { label: label.toLowerCase() })}
-            className="flex-1 rounded border border-input-border bg-input-background px-2 py-1"
+            className="flex-1 field-input px-2 py-1"
           />
           <button
             type="button"

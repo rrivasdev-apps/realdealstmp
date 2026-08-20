@@ -54,7 +54,7 @@ export function SetPasswordForm() {
           required
           value={name}
           onChange={(event) => setName(event.target.value)}
-          className="rounded border border-input-border bg-input-background px-3 py-2"
+          className="field-input px-3 py-2"
         />
       </label>
 
@@ -66,7 +66,7 @@ export function SetPasswordForm() {
           minLength={8}
           value={password}
           onChange={(event) => setPassword(event.target.value)}
-          className="rounded border border-input-border bg-input-background px-3 py-2"
+          className="field-input px-3 py-2"
         />
       </label>
 
@@ -75,7 +75,7 @@ export function SetPasswordForm() {
       <button
         type="submit"
         disabled={submitting}
-        className="mt-2 rounded bg-foreground px-4 py-2 text-background disabled:opacity-50"
+        className="mt-2 btn-primary"
       >
         {submitting ? t('savingButton') : t('setPasswordButton')}
       </button>

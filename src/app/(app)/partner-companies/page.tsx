@@ -26,7 +26,7 @@ export default async function PartnerCompaniesPage() {
     <div>
       <div className="flex items-center justify-between">
         <h1 className="heading-page">{t('title')}</h1>
-        <Link href="/partner-companies/new" className="rounded bg-foreground px-4 py-2 text-sm text-background">
+        <Link href="/partner-companies/new" className="btn-primary">
           {t('newCompanyButton')}
         </Link>
       </div>

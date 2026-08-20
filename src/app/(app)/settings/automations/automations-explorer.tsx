@@ -109,7 +109,7 @@ function SearchBox({ query, onChange }: { query: string; onChange: (value: strin
       value={query}
       onChange={(event) => onChange(event.target.value)}
       placeholder={t('searchPlaceholder')}
-      className="w-full max-w-sm rounded border border-input-border bg-input-background px-3 py-2 text-sm"
+      className="w-full max-w-sm field-input px-3 py-2 text-sm"
     />
   )
 }

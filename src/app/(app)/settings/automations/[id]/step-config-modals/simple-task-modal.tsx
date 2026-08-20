@@ -131,7 +131,7 @@ export function SimpleTaskModal({
             required
             value={name}
             onChange={(event) => setName(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
 
@@ -141,7 +141,7 @@ export function SimpleTaskModal({
             value={description}
             onChange={(event) => setDescription(event.target.value)}
             rows={3}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
 
@@ -165,7 +165,7 @@ export function SimpleTaskModal({
                   <select
                     value={draftAudience}
                     onChange={(event) => setDraftAudience(event.target.value as DraftAudience)}
-                    className="rounded border border-input-border bg-input-background px-3 py-2"
+                    className="field-input px-3 py-2"
                   >
                     {DRAFT_AUDIENCES.map((audience) => (
                       <option key={audience} value={audience}>
@@ -183,7 +183,7 @@ export function SimpleTaskModal({
                     maxLength={MAX_PURPOSE_LENGTH}
                     onChange={(event) => setDraftPurpose(event.target.value)}
                     placeholder={t('aiDraftPurposePlaceholder')}
-                    className="rounded border border-input-border bg-input-background px-3 py-2"
+                    className="field-input px-3 py-2"
                   />
                 </label>
               </div>
@@ -200,7 +200,7 @@ export function SimpleTaskModal({
         <button
           type="submit"
           disabled={submitting}
-          className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
+          className="w-fit btn-primary"
         >
           {submitting ? t('saving') : t('create')}
         </button>

@@ -81,7 +81,7 @@ export function StatesSection({ countries, defaultCountryId }: { countries: Coun
         <select
           value={countryId}
           onChange={(event) => setCountryId(event.target.value)}
-          className="rounded border border-input-border bg-input-background px-3 py-2"
+          className="field-input px-3 py-2"
         >
           {countries.length === 0 && <option value="">{t('noCountriesYetOption')}</option>}
           {countries.map((country) => (
@@ -102,7 +102,7 @@ export function StatesSection({ countries, defaultCountryId }: { countries: Coun
             value={name}
             onChange={(event) => setName(event.target.value)}
             placeholder={t('stateNamePlaceholder')}
-            className="rounded border border-input-border bg-input-background px-3 py-2 disabled:opacity-50"
+            className="field-input px-3 py-2 disabled:opacity-50"
           />
         </label>
         <label className="w-20 field-label">
@@ -113,13 +113,13 @@ export function StatesSection({ countries, defaultCountryId }: { countries: Coun
             value={code}
             onChange={(event) => setCode(event.target.value.toUpperCase())}
             placeholder={t('stateCodePlaceholder')}
-            className="rounded border border-input-border bg-input-background px-3 py-2 uppercase disabled:opacity-50"
+            className="field-input px-3 py-2 uppercase disabled:opacity-50"
           />
         </label>
         <button
           type="submit"
           disabled={submitting || !countryId}
-          className="rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
+          className="btn-primary"
         >
           {submitting ? t('addingButton') : t('addButton')}
         </button>

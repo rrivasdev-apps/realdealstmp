@@ -77,7 +77,7 @@ export function SearchAddMultiSelect({
           onFocus={() => setShowResults(true)}
           onBlur={() => setTimeout(() => setShowResults(false), 150)}
           placeholder={t('searchPlaceholder', { label: label.toLowerCase() })}
-          className="w-full rounded border border-input-border bg-input-background px-2 py-1"
+          className="w-full field-input px-2 py-1"
         />
         {showResults && (results.length > 0 || (onCreate && trimmedQuery && !exactMatch)) && (
           <ul className="absolute z-10 mt-1 w-full rounded border border-border bg-background shadow-lg">

@@ -206,7 +206,7 @@ export function AddressFields({
             onFocus={() => setShowPredictions(true)}
             onBlur={() => setTimeout(() => setShowPredictions(false), 150)}
             autoComplete="off"
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
         {showPredictions && predictions.length > 0 && (
@@ -232,7 +232,7 @@ export function AddressFields({
           <select
             value={value.countryId}
             onChange={(event) => handleCountryChange(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           >
             <option value="">{t('selectPlaceholder')}</option>
             {countries.map((country) => (
@@ -248,7 +248,7 @@ export function AddressFields({
             value={value.stateId}
             onChange={(event) => handleStateChange(event.target.value)}
             disabled={!value.countryId}
-            className="rounded border border-input-border bg-input-background px-3 py-2 disabled:opacity-50"
+            className="field-input px-3 py-2 disabled:opacity-50"
           >
             <option value="">{statesLoading ? t('loadingPlaceholder') : t('selectPlaceholder')}</option>
             {states.map((state) => (
@@ -269,7 +269,7 @@ export function AddressFields({
               onBlur={handleCityBlur}
               disabled={!value.stateId}
               autoComplete="off"
-              className="rounded border border-input-border bg-input-background px-3 py-2 disabled:opacity-50"
+              className="field-input px-3 py-2 disabled:opacity-50"
             />
           </label>
           {showCityResults && value.stateId && trimmedCityQuery && (
@@ -308,7 +308,7 @@ export function AddressFields({
             type="text"
             value={value.zipCode}
             onChange={(event) => onChange({ ...value, zipCode: event.target.value })}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
       </div>

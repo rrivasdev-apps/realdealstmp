@@ -55,13 +55,13 @@ export function InviteForm() {
             required
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
         <button
           type="submit"
           disabled={submitting}
-          className="rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
+          className="btn-primary"
         >
           {submitting ? t('sendingButton') : t('sendInviteButton')}
         </button>

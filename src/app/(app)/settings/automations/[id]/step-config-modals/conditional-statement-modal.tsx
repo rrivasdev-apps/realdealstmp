@@ -97,7 +97,7 @@ export function ConditionalStatementModal({
             value={question}
             onChange={(event) => setQuestion(event.target.value)}
             rows={2}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
 
@@ -110,7 +110,7 @@ export function ConditionalStatementModal({
               required
               value={option1.label}
               onChange={(event) => setOption1({ ...option1, label: event.target.value })}
-              className="rounded border border-input-border bg-input-background px-3 py-2"
+              className="field-input px-3 py-2"
             />
           </label>
           <NextStepFields
@@ -136,7 +136,7 @@ export function ConditionalStatementModal({
               required
               value={option2.label}
               onChange={(event) => setOption2({ ...option2, label: event.target.value })}
-              className="rounded border border-input-border bg-input-background px-3 py-2"
+              className="field-input px-3 py-2"
             />
           </label>
           <NextStepFields
@@ -158,7 +158,7 @@ export function ConditionalStatementModal({
         <button
           type="submit"
           disabled={submitting}
-          className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
+          className="w-fit btn-primary"
         >
           {submitting ? t('saving') : t('create')}
         </button>

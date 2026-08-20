@@ -361,7 +361,7 @@ export function ContactForm({
                 <select
                   value={companyToLink}
                   onChange={(event) => setCompanyToLink(event.target.value)}
-                  className="flex-1 rounded border border-input-border bg-input-background px-2 py-1"
+                  className="flex-1 field-input px-2 py-1"
                 >
                   <option value="">{t('selectCompanyToLinkPlaceholder')}</option>
                   {linkableCompanies.map((company) => (
@@ -571,7 +571,7 @@ export function ContactForm({
             required
             value={values.name}
             onChange={(event) => setValues((prev) => ({ ...prev, name: event.target.value }))}
-            className="rounded border border-input-border bg-input-background px-3 py-2"
+            className="field-input px-3 py-2"
           />
         </label>
 
@@ -598,7 +598,7 @@ export function ContactForm({
               <select
                 value={row.type_id}
                 onChange={(event) => updatePhone(index, { type_id: event.target.value })}
-                className="rounded border border-input-border bg-input-background px-2 py-1"
+                className="field-input px-2 py-1"
               >
                 {phoneTypes.map((type) => (
                   <option key={type.id} value={type.id}>
@@ -610,7 +610,7 @@ export function ContactForm({
                 type="tel"
                 value={row.phone}
                 onChange={(event) => updatePhone(index, { phone: event.target.value })}
-                className="flex-1 rounded border border-input-border bg-input-background px-3 py-1"
+                className="flex-1 field-input px-3 py-1"
               />
               <button type="button" onClick={() => removePhone(index)} className="text-xs text-danger">
                 {t('removeButton')}
@@ -631,7 +631,7 @@ export function ContactForm({
               <select
                 value={row.type_id}
                 onChange={(event) => updateEmail(index, { type_id: event.target.value })}
-                className="rounded border border-input-border bg-input-background px-2 py-1"
+                className="field-input px-2 py-1"
               >
                 {emailTypes.map((type) => (
                   <option key={type.id} value={type.id}>
@@ -643,7 +643,7 @@ export function ContactForm({
                 type="email"
                 value={row.email}
                 onChange={(event) => updateEmail(index, { email: event.target.value })}
-                className="flex-1 rounded border border-input-border bg-input-background px-3 py-1"
+                className="flex-1 field-input px-3 py-1"
               />
               <button type="button" onClick={() => removeEmail(index)} className="text-xs text-danger">
                 {t('removeButton')}
@@ -729,7 +729,7 @@ export function ContactForm({
               value={values.notes}
               onChange={(event) => setValues((prev) => ({ ...prev, notes: event.target.value }))}
               rows={4}
-              className="rounded border border-input-border bg-input-background px-3 py-2"
+              className="field-input px-3 py-2"
             />
           </label>
 
@@ -766,7 +766,7 @@ export function ContactForm({
       <button
         type="submit"
         disabled={submitting}
-        className="w-fit rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
+        className="w-fit btn-primary"
       >
         {submitting ? t('savingButton') : mode === 'create' ? t('createContactButton') : t('saveChangesButton')}
       </button>

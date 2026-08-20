@@ -41,7 +41,7 @@ export function NewAutomationButton({ folderId, label }: { folderId?: string; la
         type="button"
         onClick={handleClick}
         disabled={submitting}
-        className="rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
+        className="btn-primary"
       >
         {submitting ? t('creating') : label}
       </button>

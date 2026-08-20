@@ -44,7 +44,7 @@ export function DefaultCountryForm({ countries, defaultCountryId }: { countries:
         <select
           value={countryId}
           onChange={(event) => setCountryId(event.target.value)}
-          className="rounded border border-input-border bg-input-background px-3 py-2"
+          className="field-input px-3 py-2"
         >
           <option value="" disabled>
             {t('selectPlaceholder')}
@@ -59,7 +59,7 @@ export function DefaultCountryForm({ countries, defaultCountryId }: { countries:
       <button
         type="submit"
         disabled={submitting || !countryId}
-        className="rounded bg-foreground px-4 py-2 text-sm text-background disabled:opacity-50"
+        className="btn-primary"
       >
         {submitting ? t('savingButton') : t('saveButton')}
       </button>

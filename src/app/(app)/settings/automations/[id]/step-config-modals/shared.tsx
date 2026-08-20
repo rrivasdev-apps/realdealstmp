@@ -7,12 +7,20 @@ import type { AutomationStep, LookupOption } from '../types'
 export function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
   const t = useTranslations('Automations')
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="flex max-h-[90vh] w-full max-w-lg flex-col overflow-y-auto rounded-lg border border-border bg-background p-5">
-        <div className="mb-4 flex items-center justify-between gap-4">
-          <h3 className="text-sm font-semibold">{title}</h3>
-          <button type="button" onClick={onClose} aria-label={t('closeAria')} className="text-muted-foreground hover:text-foreground">
-            ✕
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+      <div className="flex max-h-[90vh] w-full max-w-lg flex-col overflow-y-auto rounded-2xl border border-border bg-background p-6 shadow-xl">
+        <div className="mb-5 flex items-center justify-between gap-4 border-b border-border pb-4">
+          <h3 className="text-base font-semibold text-foreground">{title}</h3>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label={t('closeAria')}
+            className="rounded-full p-1.5 text-muted-foreground transition hover:bg-muted hover:text-foreground focus:outline-none focus:ring-2 focus:ring-brand-500"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+              <path d="M18 6 6 18" />
+              <path d="m6 6 12 12" />
+            </svg>
           </button>
         </div>
         {children}
@@ -56,18 +64,18 @@ export function AssigneeFields({
     <div className="field-label">
       <span>{t('taskAssignee')}</span>
       <div className="flex items-center gap-2">
-        <div className="flex overflow-hidden rounded border border-input-border">
+        <div className="flex overflow-hidden rounded-lg border border-input-border">
           <button
             type="button"
             onClick={() => onChange({ assigned_role_id: employeeRoles[0]?.id ?? null, assigned_profile_id: null })}
-            className={`px-3 py-1.5 text-sm ${mode === 'role' ? 'bg-foreground text-background' : ''}`}
+            className={`px-3 py-1.5 text-sm ${mode === 'role' ? 'bg-brand-600 text-white' : 'hover:bg-muted'}`}
           >
             {t('assignToRole')}
           </button>
           <button
             type="button"
             onClick={() => onChange({ assigned_role_id: null, assigned_profile_id: profiles[0]?.id ?? null })}
-            className={`px-3 py-1.5 text-sm ${mode === 'user' ? 'bg-foreground text-background' : ''}`}
+            className={`px-3 py-1.5 text-sm ${mode === 'user' ? 'bg-brand-600 text-white' : 'hover:bg-muted'}`}
           >
             {t('specificUser')}
           </button>
@@ -77,7 +85,7 @@ export function AssigneeFields({
           <select
             value={value.assigned_role_id ?? ''}
             onChange={(event) => onChange({ assigned_role_id: event.target.value, assigned_profile_id: null })}
-            className="flex-1 rounded border border-input-border bg-input-background px-3 py-2"
+            className="flex-1 field-input px-3 py-2"
           >
             {employeeRoles.map((role) => (
               <option key={role.id} value={role.id}>
@@ -89,7 +97,7 @@ export function AssigneeFields({
           <select
             value={value.assigned_profile_id ?? ''}
             onChange={(event) => onChange({ assigned_role_id: null, assigned_profile_id: event.target.value })}
-            className="flex-1 rounded border border-input-border bg-input-background px-3 py-2"
+            className="flex-1 field-input px-3 py-2"
           >
             {profiles.map((profile) => (
               <option key={profile.id} value={profile.id}>
@@ -138,7 +146,7 @@ export function NextStepFields({
   return (
     <div className="flex flex-col gap-2 text-sm">
       <span>{label ?? t('thenLabel')}</span>
-      <div className="flex overflow-hidden rounded border border-input-border w-fit">
+      <div className="flex overflow-hidden rounded-lg border border-input-border w-fit">
         <button
           type="button"
           onClick={() =>
@@ -149,14 +157,14 @@ export function NextStepFields({
             })
           }
           disabled={availableSteps.length === 0}
-          className={`px-3 py-1.5 text-sm disabled:opacity-50 ${goesToStep ? 'bg-foreground text-background' : ''}`}
+          className={`px-3 py-1.5 text-sm disabled:opacity-50 ${goesToStep ? 'bg-brand-600 text-white' : 'hover:bg-muted'}`}
         >
           {t('goToAnotherStep')}
         </button>
         <button
           type="button"
           onClick={() => onChange({ next_step_id: null, completes_automator: true, next_step_due_delay_days: null })}
-          className={`px-3 py-1.5 text-sm ${!goesToStep ? 'bg-foreground text-background' : ''}`}
+          className={`px-3 py-1.5 text-sm ${!goesToStep ? 'bg-brand-600 text-white' : 'hover:bg-muted'}`}
         >
           {t('completeAutomation')}
         </button>
@@ -171,7 +179,7 @@ export function NextStepFields({
               onChange={(event) =>
                 onChange({ ...value, next_step_id: event.target.value, completes_automator: false })
               }
-              className="rounded border border-input-border bg-input-background px-3 py-2"
+              className="field-input px-3 py-2"
             >
               {availableSteps.map((step) => (
                 <option key={step.id} value={step.id}>
@@ -188,7 +196,7 @@ export function NextStepFields({
               min={0}
               value={value.next_step_due_delay_days ?? 0}
               onChange={(event) => onChange({ ...value, next_step_due_delay_days: Number(event.target.value) })}
-              className="rounded border border-input-border bg-input-background px-3 py-2"
+              className="field-input px-3 py-2"
             />
           </label>
         </div>
