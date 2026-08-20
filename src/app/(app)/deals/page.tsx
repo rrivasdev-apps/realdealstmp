@@ -221,15 +221,21 @@ async function DealSection({ title, deals }: { title: string; deals: Deal[] }) {
   return (
     <section className="mt-8">
       <h2 className="heading-subsection">{title}</h2>
-      <ul className="mt-2 divide-y divide-border rounded-lg border border-border bg-background">
+      <ul className="mt-2 list-container">
         {deals.map((deal) => {
           const profit = calculateProfit(deal)
+          const colors = statusColors(deal.deal_statuses?.name)
           return (
-            <li key={deal.id} className="flex items-center justify-between px-4 py-3">
+            <li key={deal.id} className="list-row">
               <div>
-                <Link href={`/deals/${deal.id}`} className="font-medium text-foreground hover:text-brand-600">
-                  {deal.address}
-                </Link>
+                <div className="flex items-center gap-2">
+                  <Link href={`/deals/${deal.id}`} className="font-medium text-foreground hover:text-brand-600">
+                    {deal.address}
+                  </Link>
+                  {deal.deal_statuses?.name && (
+                    <span className={`pill ${colors.bg} ${colors.text}`}>{deal.deal_statuses.name}</span>
+                  )}
+                </div>
                 <div className="text-sm text-muted-foreground">
                   {deal.closing_date ? t('closingOn', { date: deal.closing_date }) : t('noClosingDate')}
                 </div>

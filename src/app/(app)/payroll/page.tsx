@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server'
 import Link from 'next/link'
 
+import { Avatar } from '@/components/avatar'
 import { requirePermission } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
@@ -72,16 +73,16 @@ export default async function PayrollPage() {
 
       <section className="mt-8">
         <h2 className="heading-subsection">{t('historyHeading')}</h2>
-        <ul className="mt-2 divide-y divide-border rounded-lg border border-border bg-background">
+        <ul className="mt-2 list-container">
           {(payments ?? []).map((payment) => (
-            <li
-              key={payment.id}
-              className="flex flex-col gap-1 px-4 py-3 text-sm sm:flex-row sm:items-center sm:justify-between"
-            >
-              <div>
-                <span className="font-medium">{payment.profiles?.name ?? t('unknownEmployee')}</span>
-                <div className="text-muted-foreground">
-                  {payment.pay_period_start} – {payment.pay_period_end}
+            <li key={payment.id} className="list-row">
+              <div className="flex items-center gap-3">
+                <Avatar name={payment.profiles?.name ?? t('unknownEmployee')} />
+                <div>
+                  <span className="font-medium text-foreground">{payment.profiles?.name ?? t('unknownEmployee')}</span>
+                  <div className="text-muted-foreground">
+                    {payment.pay_period_start} – {payment.pay_period_end}
+                  </div>
                 </div>
               </div>
               <span>{payment.amount != null ? currency.format(payment.amount) : '—'}</span>
@@ -105,16 +106,20 @@ export default async function PayrollPage() {
                 }))}
               />
             </div>
-            <ul className="mt-4 divide-y divide-border rounded-lg border border-border bg-background">
+            <ul className="mt-4 list-container">
               {(runs ?? []).map((run) => (
-                <li key={run.id} className="flex items-center justify-between gap-3 px-4 py-3 text-sm">
+                <li key={run.id} className="list-row">
                   <div>
-                    <Link href={`/payroll/runs/${run.id}`} className="font-medium hover:underline">
+                    <Link href={`/payroll/runs/${run.id}`} className="font-medium text-foreground hover:underline">
                       {run.pay_period_start} – {run.pay_period_end}
                     </Link>
                     <div className="text-muted-foreground">{run.pay_periods?.name ?? t('adHocRunLabel')}</div>
                   </div>
-                  <span className="rounded bg-muted px-2 py-1 text-xs font-medium">
+                  <span
+                    className={
+                      run.status === 'finalized' ? 'pill bg-success/10 text-success' : 'pill bg-muted text-muted-foreground'
+                    }
+                  >
                     {STATUS_LABELS[run.status] ?? run.status}
                   </span>
                 </li>

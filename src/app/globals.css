@@ -225,6 +225,26 @@
   .field-group-title {
     @apply w-full border-b border-border pb-3 text-base font-semibold text-foreground;
   }
+
+  /* A bordered, dividing-line list -- Whiteboard/Contacts/Team/Payroll all
+     copy-pasted this same container+row shape with no hover state. One
+     class now; .list-row alone (no .list-container) is for rows already
+     inside a .field-group card, where the card's own border/bg would
+     otherwise be doubled up by a second box. */
+  .list-container {
+    @apply divide-y divide-border rounded-lg border border-border bg-background;
+  }
+  .list-row {
+    @apply flex flex-col gap-1 px-4 py-3 text-sm transition-colors hover:bg-muted/50
+           sm:flex-row sm:items-center sm:justify-between;
+  }
+
+  /* Bare pill shape -- pair with a color lookup's bg/text classes
+     (statusColors()/contactTypeColors()) or a literal tint/solid-text pair
+     (e.g. bg-brand-600 at 10% opacity with text-brand-600). */
+  .pill {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+  }
 }
 
 body {

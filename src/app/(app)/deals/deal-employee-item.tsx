@@ -4,6 +4,8 @@ import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
+import { Avatar } from '@/components/avatar'
+
 const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
 
 type EmployeeRole = { id: string; name: string }
@@ -84,13 +86,16 @@ export function DealEmployeeItem({
   }
 
   return (
-    <li className="px-4 py-3">
+    <li className="px-4 py-3 transition-colors hover:bg-muted/50">
       <div className="flex items-start justify-between gap-3">
-        <div>
-          <div className="text-sm font-medium">{profileName}</div>
-          {!editing && (
-            <div className="text-xs text-muted-foreground">{roleNames || t('noRoleSelected')}</div>
-          )}
+        <div className="flex items-center gap-3">
+          <Avatar name={profileName} />
+          <div>
+            <div className="text-sm font-medium text-foreground">{profileName}</div>
+            {!editing && (
+              <div className="text-xs text-muted-foreground">{roleNames || t('noRoleSelected')}</div>
+            )}
+          </div>
         </div>
         {!editing && (
           <div className="flex shrink-0 gap-2 text-xs">

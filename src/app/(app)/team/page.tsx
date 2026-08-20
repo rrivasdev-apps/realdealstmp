@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server'
 import Link from 'next/link'
 
+import { Avatar } from '@/components/avatar'
 import { requireTeamAccess } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
@@ -70,25 +71,32 @@ export default async function TeamPage({ searchParams }: { searchParams: Promise
         </Link>
       </nav>
 
-      <ul className="mt-4 divide-y divide-border">
+      <ul className="mt-4 list-container">
         {members?.map((member) => (
-          <li key={member.id} className="flex flex-col gap-2 py-3 text-sm sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <Link href={`/team/${member.id}`} className="font-medium hover:underline">
-                {member.name}
-              </Link>
-              <div className="text-muted-foreground">
-                {[
-                  member.email,
-                  member.profile_employee_roles.map((assignment) => assignment.employee_roles?.name).filter(Boolean).join(', '),
-                  member.deleted_at ? t('deletedOn', { date: member.deleted_at.slice(0, 10) }) : null,
-                ]
-                  .filter(Boolean)
-                  .join(' · ')}
+          <li key={member.id} className="list-row">
+            <div className="flex items-center gap-3">
+              <Avatar name={member.name} />
+              <div>
+                <Link href={`/team/${member.id}`} className="font-medium text-foreground hover:underline">
+                  {member.name}
+                </Link>
+                <div className="text-muted-foreground">
+                  {[
+                    member.email,
+                    member.profile_employee_roles.map((assignment) => assignment.employee_roles?.name).filter(Boolean).join(', '),
+                    member.deleted_at ? t('deletedOn', { date: member.deleted_at.slice(0, 10) }) : null,
+                  ]
+                    .filter(Boolean)
+                    .join(' · ')}
+                </div>
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <span className="rounded-full bg-muted px-2 py-1 text-xs font-medium">
+              <span
+                className={
+                  member.role === 'admin' ? 'pill bg-brand-600/10 text-brand-600' : 'pill bg-muted text-muted-foreground'
+                }
+              >
                 {member.role === 'admin' ? t('roleAdmin') : t('roleStandard')}
               </span>
               <EmployeeStatusButton
@@ -100,7 +108,7 @@ export default async function TeamPage({ searchParams }: { searchParams: Promise
           </li>
         ))}
         {members?.length === 0 && (
-          <li className="py-3 text-sm text-muted-foreground">
+          <li className="px-4 py-3 text-sm text-muted-foreground">
             {showingDeleted ? t('noDeletedEmployees') : t('noActiveEmployees')}
           </li>
         )}

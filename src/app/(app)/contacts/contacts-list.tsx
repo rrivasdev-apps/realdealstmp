@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
 
+import { Avatar } from '@/components/avatar'
 import { contactTypeColors } from '@/lib/contacts/type-colors'
 
 type ContactType = { id: string; name: string }
@@ -88,15 +89,31 @@ export function ContactsList({ contacts, contactTypes }: { contacts: Contact[]; 
         className="mt-4 w-full max-w-md field-input px-3 py-2 text-sm"
       />
 
-      <ul className="mt-4 divide-y divide-border rounded-lg border border-border bg-background">
+      <ul className="mt-4 list-container">
         {filtered.map((contact) => (
-          <li key={contact.id} className="px-4 py-1.5">
-            <Link href={`/contacts/${contact.id}`} className="text-sm font-medium hover:underline">
-              {contact.name}
-            </Link>
+          <li key={contact.id} className="list-row">
+            <div className="flex items-center gap-3">
+              <Avatar name={contact.name} />
+              <div>
+                <Link href={`/contacts/${contact.id}`} className="text-sm font-medium text-foreground hover:underline">
+                  {contact.name}
+                </Link>
+                {contact.typeNames.length > 0 && (
+                  <div className="mt-1 flex flex-wrap gap-1">
+                    {contact.typeNames.map((typeName) => {
+                      const colors = contactTypeColors(typeName)
+                      return (
+                        <span key={typeName} className={`pill ${colors.bg} ${colors.text}`}>
+                          {typeName}
+                        </span>
+                      )
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
             <div className="text-xs text-muted-foreground">
-              {[contact.typeNames.join(', '), contact.phones[0], contact.emails[0]].filter(Boolean).join(' · ') ||
-                t('noDetailsYet')}
+              {[contact.phones[0], contact.emails[0]].filter(Boolean).join(' · ') || t('noDetailsYet')}
             </div>
           </li>
         ))}

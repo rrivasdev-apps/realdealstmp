@@ -288,13 +288,13 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
             {t('addOffer')}
           </Link>
         </div>
-        <ul className="divide-y divide-border rounded-lg border border-border bg-background">
+        <ul className="divide-y divide-border">
           {(offers ?? []).map((offer) => (
-            <li key={offer.id} className="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+            <li key={offer.id} className="list-row">
               <div>
                 <Link
                   href={`/deals/${id}/offers/${offer.id}`}
-                  className="text-sm font-medium hover:underline"
+                  className="text-sm font-medium text-foreground hover:underline"
                 >
                   {offer.offer_price != null ? currency.format(offer.offer_price) : t('noPriceSet')}
                 </Link>
@@ -302,7 +302,7 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
                   {[offer.offer_date, offer.purchase_types?.name].filter(Boolean).join(' · ') || t('noDetailsYet')}
                 </div>
               </div>
-              <span className="rounded bg-muted px-2 py-1 text-xs font-medium">
+              <span className="pill bg-muted text-muted-foreground">
                 {offer.offer_statuses?.name ?? t('unknown')}
               </span>
             </li>
@@ -320,13 +320,13 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
             {t('addShowing')}
           </Link>
         </div>
-        <ul className="divide-y divide-border rounded-lg border border-border bg-background">
+        <ul className="divide-y divide-border">
           {(showings ?? []).map((showing) => (
-            <li key={showing.id} className="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+            <li key={showing.id} className="list-row">
               <div>
                 <Link
                   href={`/deals/${id}/showings/${showing.id}`}
-                  className="text-sm font-medium hover:underline"
+                  className="text-sm font-medium text-foreground hover:underline"
                 >
                   {showing.showing_date ?? t('noDateSet')}
                 </Link>
@@ -334,7 +334,7 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
                   {showing.buyer?.name ?? t('noBuyerContact')}
                 </div>
               </div>
-              <span className="rounded bg-muted px-2 py-1 text-xs font-medium">
+              <span className="pill bg-muted text-muted-foreground">
                 {showing.showing_statuses?.name ?? t('unknown')}
               </span>
             </li>
@@ -352,7 +352,7 @@ export default async function EditDealPage({ params }: { params: Promise<{ id: s
         <div>
           <DealEmployeeForm dealId={id} availableProfiles={availableProfiles} />
         </div>
-        <ul className="divide-y divide-border rounded-lg border border-border bg-background">
+        <ul className="divide-y divide-border">
           {(dealEmployees ?? []).map((dealEmployee) => {
             const employeePayments = paymentsByProfile.get(dealEmployee.profile_id) ?? []
             const companyProfile = (companyProfiles ?? []).find((p) => p.id === dealEmployee.profile_id)

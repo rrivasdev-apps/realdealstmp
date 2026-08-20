@@ -4,6 +4,8 @@ import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
+import { Avatar } from '@/components/avatar'
+
 const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
 
 type Entry = {
@@ -80,15 +82,18 @@ export function RunEntriesForm({
   return (
     <div className="flex flex-col gap-4">
       <form onSubmit={handleSave} className="flex flex-col gap-3">
-        <ul className="divide-y divide-border rounded-lg border border-border bg-background">
+        <ul className="list-container">
           {initialEntries.map((entry) => (
-            <li key={entry.id} className="flex flex-col gap-2 px-4 py-3 text-sm sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <span className="font-medium">{entry.profile_name}</span>
-                <div className="text-muted-foreground">
-                  {entry.pay_type === 'hourly'
-                    ? t('hourlyRateSuffix', { amount: currency.format(entry.pay_rate ?? 0) })
-                    : t('salaryLabel')}
+            <li key={entry.id} className="list-row">
+              <div className="flex items-center gap-3">
+                <Avatar name={entry.profile_name} />
+                <div>
+                  <span className="font-medium text-foreground">{entry.profile_name}</span>
+                  <div className="text-muted-foreground">
+                    {entry.pay_type === 'hourly'
+                      ? t('hourlyRateSuffix', { amount: currency.format(entry.pay_rate ?? 0) })
+                      : t('salaryLabel')}
+                  </div>
                 </div>
               </div>
               {entry.pay_type === 'hourly' && isDraft ? (
